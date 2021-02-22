@@ -1,0 +1,737 @@
+2.0.0
+    COMPLETE REWRITE OF QAV
+
+
+1.0.81c
+    - Added caller for playerMoveEvent if they are in vehicle.
+
+1.0.81b
+    - Quickfix for shutdown error
+    - Quickfix for 1.12 skulls.
+    - Fix for picking up vehicles when garage is enabled.
+
+1.0.81
+    - Fixed error with passager seats
+    - Fixed Cannon for T50 (t50 cannot fire still though)
+    - Fixed possible error with EasyGUI
+
+1.0.80
+    - Updated models
+    - Fixed bug with interacting with passager seats
+    - Added framework for multi-armorstand model support
+
+1.0.79c
+    - Possible quickfix for vehicle error while disconnecting
+
+1.0.79b
+    - Quickfix for vehicles without complex parts
+    - Quickfix for passagers not being teleported where they should be.
+
+1.0.79
+    - Quick bug fixes
+
+1.0.78
+    - Added "ComplexAdditions"
+    - Broke T50. Will fix soon
+    - Added More API methods
+    - Fixed other minor bugs
+    - Added "qualityarmoryvehicles.pickupvehicle" permission
+
+1.0.77
+    - Fix for backwards speed
+    - Fix for interacting with lamborghini
+
+1.0.76
+    - Added Fuel Canister
+    - Swapped fuel from using item durability to CustomModelData tags
+
+1.0.75e
+    - Fixed shop menu for inventories with over 45 items.
+    - Quickfix: Garage vehicles cannot be picked up into inventories
+
+1.0.75d
+    - Changed give command to respect unlockable vehicles
+    - Fixed shops respecting player vehicle limits.
+
+1.0.75c
+    - Quickfix for shop menus
+
+1.0.75b
+    - Quickfix for interaction
+
+1.0.75
+    - Added School Bus
+    - Added BMW
+    - Fixed vehicle damage
+    - Changed method for getting vehicles a player is looking at.
+
+1.0.74
+    - Added more API methods
+
+1.0.73
+    - Added enable_RequirePermToBuyVehicle to require the player be able to drive a vehicle type before they can buy it
+    - Fixed GUI not updating correctly when player gets a new vehicle added to their garage.
+
+1.0.72C
+    - Possible fix for vehicles crashing
+
+1.0.72B
+    - Fixed police car texture
+    - Revamped a bunch of other textures
+    - Fixed command help menu to use /qav
+
+1.0.72
+    - Added Halo's Warthog
+    - Added Halo's Falcon
+    - Added "enable_VehiclesHaveTrunks" to disable trunks
+    - Fixed cars not reapparing in inventory after logging out.
+    - Fixed tanks holding non-fuel items
+    - Fixed stackable vehicles in inventories
+    - Fixed stacked vehicles removing whole stack on being placed.
+
+1.0.71C
+    - Fixed seat slots to include the last seat, and remove duplicated first seat
+    - Fixed driverseat not showing up in GUI
+    - Updated QA maven entry
+
+1.0.71B
+    - Fixed naming issues
+
+1.0.71
+    - Changed way vehicle sizes are stored
+    - Changed way offhand items are stored
+    - Fixed model duplication
+    - Added 2 extra seats to private plane
+    - Revamped Ladaniva, moskvitch, privateplane, UFO, PresidentialLimo, and B2 models
+    - Changed driving noise to be less annoying
+
+1.0.70
+    - Moved ExpansionHandler to Main class since it is no longer depending entirely on QA
+    - Updated textures for some vehicles
+
+1.0.69
+    - Increased descent speed
+    - Made descent speed configurable
+    - Added possible fix for unregistered vehicles.
+
+1.0.68
+    Fixed error with lookAtVehicle
+    Fixed synch error for dismounting
+
+1.0.67
+    Fixed look at vehicle getting vehicle even behind blocks.
+
+1.0.66
+    Fixed some typos
+    Added more messages to messages.yml
+    
+1.0.65
+    Fixed init error
+
+1.0.64
+    Added quick fix for duplication of models.
+
+1.0.63
+    Fixed vehicles being randomly deleted for paper
+    Possible fix for vehicles not being saved to config.
+
+1.0.62
+    Fixed NPE when car takes damage.
+    Fixed NPE when riding an entity that is not a vehicle
+    Updated QA jar file
+
+1.0.61
+    Fixed bounding box spawning.
+    Fixed editable files
+
+1.0.60
+    Updated bounding box core
+    Updated yml system to remove the "AllowUserModification" setting
+
+1.0.59b
+    Quickfix: If the driverseat is null, it will try to find the armorstand again.
+
+1.0.59
+    Fixed model duplication on reloads
+    Fixed trunk duplication glitch
+    Fixed vehicle duplication glitch
+
+1.0.58
+    Updated to 1.15.
+    Fixed NPE with /qav callback
+    Added /qav debug_removeAllBuggedVehicles to remove all bugged vehicles
+    FIXED VEHICLES BREAKING ON RELOAD!!!!!
+
+1.0.57
+    Fixed help message coloring.
+    Added FAQ file (like anyone reads the FAQ, lol)
+    Added checker to make sure vehicles do not slide.
+
+1.0.56
+    Fixed NPE on isWithin
+    Fixed server crashes when opening whitelist with a lot of players.
+    Made command help messages configurable.
+
+1.0.55
+    Fixed some other minor errors.
+
+1.0.54b
+    Fixed error due to a misplaced null check.
+
+1.0.54
+    Added Lamborghini (1.14+ only)
+    Fixed gui error for shops.
+    Removed specialty stores *(/qav carshop) as they break the default shop. Commands will redirect to default shop
+    Fixed players disconnecting removing vehicles.
+    Fixed passager seat heights relative to main seat
+    Added ability to change the Y offset height for passager seat to be above 2 or below 0
+    Fixed issue where vehicles with low seats would sometimes break if stuck in block.
+    Fixed issue where sometimes seats would not update correctly if players leave
+
+1.0.53
+    Fixed some errors.
+    Code cleanup
+
+1.0.52
+    Fixed GUI system.
+    Fixed vehicle rotation error.
+    Fixed vehicle detection system
+
+1.0.51
+    Collapsed logging for loading vehicles.
+    Added permission check to getting vehicle from garage
+    Fixed enable-file creation setting
+    Added /qav addVehicle and /qav removeVehicle to add/remove vehicle from player's garage.
+    Fixed resourcepack
+
+1.0.50
+    Bugfix: Fixed custom item system
+    Bugfix: Fixed vehicle finding system
+    Bugfix: Fixed offset not being applied to passager seats based on offset
+
+1.0.49
+    **   MASSIVE UPDATE  ****
+    This update changes the models used for vehicles. In order to make it easier
+    to integrate QAV with other plugins, models now use Custom Model data tags.
+    This means all user-made custom models used in previous versions will need to be upgraded
+    Also, the base-item for 1.14+ has been changed to the rabbit-hide, to avoid conflicts with other
+    plugins. This does not affect 1.8-1.13, but should be noted for newer servers on 1.14.
+
+    Also, because of this change, all vehicles on 1.14 servers will no longer work.
+    I recommend updating only if you wish remove all vehicles from the server first.
+
+    If you wish to use the old 1.13 system on 1.14 still, set "USE_1_13_MODEL_SYSTEM" to true in the config.
+    **   MASSIVE UPDATE  ****
+
+    Added option to right click on seat of vehicle to access GUI
+    Added 1.14 Custom-Model-Data NBT tag system for vehicles. To revert back to 1.13 system, enable "USE_1_13_MODEL_SYSTEM"
+    Added FireTruck
+    Added Taxi
+    Added Hearse
+    Added UFO
+    Added SWAT Van
+    Added News Van
+    Added Garbage Truck
+    Added Presidential Limo
+    Added Orange Helicopter
+    Updated Police car model
+    Updated UnmarkedVan model
+    Updated Motorcycle model
+    Updated Jeep
+    Fixed limiter for garages so vehicles can only be placed once, so no duplications can occur.
+    Added /qav sittingInWhatVehicle <player> to get the name of a vehicle
+    Planes are now a lot more forgiving when you land.
+    Fixed Y offset for passagers in planes
+
+1.0.48
+    Optimized entity finding on reload, which should drastically increase preformance of server.
+    Fixed a few bugs with GUIS/garage.
+    Fixed onQuit bug for vehicles that dont have an owner
+
+1.0.47
+    Included source code in the jar.
+    Fixed issue with multiple vehicles using the same ID.
+    Helicopters no longer play sound when no one is driving them.
+    Fixed issue with GUIs if inventory size is too small.
+
+    Fixed some minor issues.
+
+1.0.46
+    Fixed possible error loading vehicles on disable
+
+1.0.45
+    Added config option to disable kick messages for resourcepacks
+    Added NPE checks for invalid vehicles
+
+1.0.44
+    Updated Menu system to EasyGUI.
+    Fixed lore for GUI systems.
+
+1.0.43b
+    Added option to destory vehicles when a player leaves the server.
+
+1.0.43
+	Changed debug manager to display debug messages in chat for users.
+	Added /qav debug to manage debug messages for users
+	Added option to remove vehicles on vehicles being emptied
+	Added option to blacklist vehicles from being placed in certain worlds.
+	Allowed vehicles to drive through signs
+	Allowed vehicles to properly jump over fences, gates, and stone walls.
+	Made vehicle jump height customizable
+	reduced vehicle model lag for offset-driverseats
+	Fixed collision when players walk near vehicle that is 1 block above them.
+	Fixed model duplication on reload
+	Fixed model separation on reload
+	Fixed model rotation on reloads (does require the vehicle to turn for models to update)
+
+1.0.42b
+	Quick fix for WG. Needed to register flags in onLoad
+
+1.0.42
+	Possible fix for worldguard flags
+	Fixed Bus collision offset.
+	Fixed NPE when leaving unregistered vehicles
+	Possible fix for glitch when detecting clicked vehicle.
+	Updated to maven!
+
+1.0.41
+	Updated to 1.14.
+	Possibly fixed crash radius issue
+
+1.0.40
+	Added /qav planeshop, /qav carshop. /qav boatshop, /qav trainshop, and /qav helishop to separate all of the vehicle types. 
+	Fixed NPE when getting vehicle type for non existent models
+	Added /qav debug_pl for admins. If vehicles are not working with the new ProtocolLib, run this command to see if the packet listener is working.
+
+1.0.39
+	Fixed fuels.yml clearing for new installs.
+	Fixed naming format for fuel names.
+	Fixed vehicles being rotated incorrectly after reloads.
+	Fixed multiple models appearing on reloads.
+	Fixed multiple models appearing when players move too far away.
+
+1.0.38
+	Added custom fuels! Now you can register custom items with custom names and lores for fuels.
+	Added /qav registerFuel <fuel-level> to register the item in the player's hand as fuel. Requires qualityarmoryvehicles.registerfuel
+	Added WorldGuard flag "allow-vehicle-driving" to stop vehicles from being able to be driven.
+	Added WorldGuard flag "allow-vehicle-spawn" to stop vehicles from being able to be spawned.
+	Added setting so vehicles with -1 health are now indestructible (from being damaged by players/entities)
+	Added ability to customize volume of sounds.
+
+1.0.37
+	Added /qav getResourcepack to manually get the resourcepack 
+	Added more debug messages to inputs. Should help for debugging if vehicles are not moving even when fuel is added.
+	Fixed NPE on player leave
+
+1.0.36f
+	Added option to swap endermites with chickens (Slightly higher. Used only if endermite still attacks player)
+	Added option to disable cars being fueled when spawned from garages
+	Fixed damaging system so players cant be damaged from fall damage when in vehicles.
+
+1.0.36e
+	[Hopefully the last patch for the night]
+	Cancels damage to vehicle if the it is being damaged by itself (the endermite for 1.12)
+
+1.0.36d
+	Added logging of reason for deconstructing.
+	Added debug messages for vehicles exploding.
+
+1.0.36c
+	Added debug messages for health.
+	Fixed item duping for inventories
+
+1.0.36b
+	Added option to disable vehicle-player based collisions.
+	Fixed vehicles from being damaged by drowning.
+	Fixed boats being able to drive on land
+	Fixed vehicles damaging players if low-rider is used.
+	Fixed direction of vehicle when spawning using commands/garage.
+
+1.0.36
+	Added setting to enable/disable vehicle destruction
+	Added planes exploding when crashing into a wall
+	[Planes can now crash when landing. Be careful!]
+	Fixed issues where vehicles could fly on 1.12 and lower.
+	Fixed seat heights for 1.12 and lower.
+
+1.0.35
+	Added radius specification to /qav callback and /qav callbackall
+	Added ability to make vehicles public/private, so players can ride as passagers, but not drive it.
+	Added ability to disable entity pushing when the vehicle collides with an entity
+	Added check so damage done to the player, if the vehicle stops melee damage, is applied to the vehicle instead.
+	Fixed bug where heads could be taken from GUI menu
+	Fixed issue where hitting vehicle would not play a damage sound.
+
+1.0.34
+	Fixed VehicleBoundingBox so drivers can not shoot their own vehicle.
+
+1.0.33
+	Added support so Citizens NPC are not able to be pushed.
+	Added "updateSteering" to control a vehicle's inputs without player control.
+	Fixed shop if QA is enabled	
+	Modified offsets for spawned entities. Now, players should be able to be offset into the ground.
+
+1.0.32
+	Added "BULLETS_556" as an FInput if QualityArmory is also enabled.
+	Added the ability to link multiple key inputs to one vehicle, and to select whether it will be RMB, LMB, or F to activate it.
+	
+1.0.31b
+	Fixed issue whith disabling item duping
+	Fixed cars not being able to drive over carpets
+	Added option to disable cars being pushed on crash
+	Fixed economy for QAMini
+
+1.0.31
+	Added "qualityarmoryvehicles.overrideWhitelist" permission. Thisa allows users to ride a vehicle even if they are not in the whitelist. They cannot access the trunk or fuel however.
+	Added optional setting to disable vehicles from being duplicated in creative 
+
+1.0.30b
+	Possible fix for vehicle serialization.
+
+1.0.30
+	Added vehicle collision when players walk.
+	Added ability to customize which sound plays for engine
+	Fixed error where driverseat uuid can be null.
+	Possible fix to incorrect ejecting.
+	Increased turning rate for all vehicles
+
+1.0.29b
+	Fixed imports for particles
+
+1.0.29
+	Possible fix for vehicle files being removed
+	Cleaned entries for serializing vehicles
+	Fixed vehicles not removing the last item for fuels.
+
+1.0.28
+	Fixed bad import for QAMini
+	Added creation of vehicle if it exists but is not registered.
+	Added auto-saver for every 30 minutes, just to make sure that most vehicles will be safe if the server crashes.
+	Allowed vehicledata to be saved back to config in case serverhost does not allow new files
+
+1.0.27
+	Fixed model jitters. Corrections to the model's location will be applied every tick now instead of only after it is already too far away. This is slightly more process intensive, but models should no longer jump too much. 
+	Fixed passager tracking. The passager seats should now have better corrections.
+	Added rail support for pre-1.13
+	Added extra check to make sure models for vehicles are properly taken care of and don't leave ghosts
+
+1.0.26c
+	Fixed Reload crashes due to removing the dependency downloader
+	Fixed vehicle bounding box issues where invalid vehicles were still being checked, throwing errors
+	Fixed debug messages so QAMini will be displayed for all debug messages, letting me know there is no QA installed.
+	Possible fix to weird protocollib issue where it was throwing an error for an unknown reason when QA was removed.
+
+1.0.26
+	Added a new handler for QA. The plugin should now MOSTLY work even if you do not have QA installed.
+	Possible fix for players being stuck sneaking after leaving passager seats
+	Fixed NPE when clicking on an invalid vehicle.
+	Possible fix for when users click on passager seats.
+
+1.0.25
+	Added ability to have vehicles disappear while player is offline (configurable)
+	Changed vehicle system so it is no longer based on an entity. You can now have vehicles stored even if the driverseat is gone.
+	Changed seat system to use parrots instead of cavespiders to bring players closer to the ground.
+	Fixed error for passager seats being removed if no longer valid
+
+1.0.24d	
+	Fixed error for updating fuels for some java versions.
+	Finally fixed async vehicle checks.
+	Fixed NPE when getting car from garage
+	Fixed passager seat fix if the seat height changes
+
+1.0.24c
+	Possible fix for glitch where players remain sneaking after exiting passager seats
+
+1.0.24B
+	Added more velocity modulation, should help reduce the jumps for vehicles
+	Fixed async vehicle checks
+
+1.0.24
+	Fixed vehicle heights stopping the player from driving.
+
+1.0.23
+	Added ability to customize height and offset for the driver seat
+	
+1.0.22C
+	Fixed problems with 1.9.
+
+1.0.22B
+	Fixed fuel handlers for some java versions.
+
+1.0.22
+	Reduced vehicle-checker speed, so that vehicles can be loaded before players can eject from seats.
+	Added more checks to make sure vehcile-checkers only activate when the world is loaded, reducing unnecessary checks
+	Fixed checks for right clicking vehicles puts you in the driver seat, not passagers
+
+1.0.21
+	Fixed passagers for lower updates
+	possible fix for serialization
+
+1.0.21
+	Added ability to spawn a vehicle at a specific coordinate
+	Added config option to allow vehicles to automatically assign ownership if vehicle is unowned
+	Fixed checks for low-riding vehicles. Players should no longer be able to remove models
+
+1.0.20B
+	Possible event cancel for items
+
+1.0.20
+	Added BumperCar (Red)
+	Rewrote large portions of the code. Vehicles can now be independent from the armorstands for models
+	Added ability to toggle "lowToGround" mode, which now means the player does not have to stand 1 block above the floor (useful for small vehicles)
+
+1.0.19
+	Added Trolley Streetcar 
+	Added TRAIN Type. You can now make sure a vehicle rides on rails.
+	Added option to customize acceleration reduction in config for certain blocks.
+	Made Heli-Blades a part of the helicopter object. No more glitchy models
+	Possible fix for fuel-crashing (Delayed messages in case certain server archs' can't handle it on packet sending)
+
+1.0.18C
+	Added the ability to reload vehicle yml files using /qav reload
+	Refactored code. Vehicle types that have the same ID, but different materials should not override eachother
+
+1.0.18B
+	Added /qav reload to reload config.yml values in-game.
+
+1.0.18
+	Added fix for passagers. If the passager seat is "flying", there will no longer be any jumping
+
+1.0.17
+	Fixed weird vehicle movements when passagers are present
+	Increased default steering rate for vehicles. It should be easier to make turns.
+	Improved systems so passager seats follow the vehicle better (before, the speed for the passager used the speed of the vehicle in the previous tick instead of the current one)
+
+1.0.16
+	Added Ambulance
+	Added StarWars Land Speeder
+	Added StarWars Speeder Bike
+	Added config option to disable jumping configurable per vehicle
+	Added config option so vehicles cannot be picked up if someone is driving it.
+	Modified passager speed to check to hopefully get it closer to back to correct position without teleports.
+	Fixed ConcurrentModificationError if vehicle is destroyed while it is moving.
+
+1.0.15D
+	Added (possible) fix for crashing when using proxy
+	Added more fine-tuning before players are ejected to put passagers in correct location.
+
+1.0.15C
+	Added config option to disable vehicle damage
+	Fixed configs so max acceleration is always displayed
+
+1.0.15B
+	Added possible fix for exiting events
+
+1.0.15
+	Added config option to override all fuel checks.
+
+1.0.14C
+	Added Fix for siens. They can now be activated after being deactivated.
+	Fixed issue where vehicles are not set to invalid after being deconstructed
+	Fixed issue with helicopter blades
+
+1.0.14B
+	Added fix for unregistered vehicles
+
+1.0.14
+	Added The B-2
+	Added Private Planes
+	Added new handling system for F inputs. You can now specify what action a vehicle does
+	Added Sirens to police vehicles on F inputs
+	Added Mininuke (from QA core) Bomber system. 
+	Added TNTBomber system.
+	Added 40mmLauncher system, which allows vehicles to shoot 40mm rounds.
+	Added Menu button for adding player to seats.
+	Added better detection system for car models. The interact zone for vehicles will be much smaller
+	Added item-lore support
+	Added VehicleEntity.teleport() and QualityArmoryVehicle.teleportVehicle() to the API.
+	Updated Fuel system to support custom materials, and to store the fuels as Itemstacks. No longer will coal items get converted to blocks
+	Rescaled and improved T50. All existing T50's should be picked up and replaced to apply these changes
+	Fixed sound system, so helicopter blades and plane sounds can be disabled.
+	Fixed incorrect plane pitch collision check
+	Fixed permission check for amount of vehicles players can own
+	Fixed plane handling so planes that are above the height limit can still accelerate downwards.
+	Fixed issue where players were able to damage the vehicle they are riding.
+	Fixed issue where players that are not owners of the vehicle cannot take the vehicle off of the armorstand.
+	Fixed issue where passager seats would not despawn correctly. 
+	Fixed issue where setAsPassager would throw AOOB-Error
+	Fixed issue where vehicle ownership would be removed on player relogs
+	Fixed issue where vehicle would be overriden if the armorstands were not registered
+	Fixed issue where player would not be able to ride vehicle if they were incorrectly ejected
+	Fixed unbreakable issue for 1.9 and 1.10
+	Added more debug messages for when players are not allowed in vehicle. Could help figure out how the system determines if a player can interact with a vehicle, and because of that, know why cracked players can bypass this check.
+
+1.0.13B
+	Fixed issue for when a vehicle is damaged
+
+1.0.13
+	Added API Events VehicleChangeSpeedEvent and VehicleTurnEvent to listen for when a the vehicle accelerates or turns, respectively
+	Added API Events PlayerEnterQAVehicleEvent and PlayerExitQAVehicleEvent to listen for when player are added or ejected from the driver seat or passager seat.
+	Added config option to globally disable ownership on vehicle placement.
+	Fixed bug where helicopter does not get destroyed on going under water.
+	
+
+1.0.12H
+	Added fix for crash when players dismount
+
+1.0.12G
+	Added more debug lines.
+	Fixed error when trying to save vehicles.
+
+1.0.12F
+	Added fix for crashes when a vehicle is deconstructed while players are in the vehicle
+	Fixed error for vehicles that are no longer valid.
+
+1.0.12E
+	Fix for NPE for API
+	Fix for AbstractPlane NPE
+	Added debug code for players entering vehicles.
+
+1.0.12D
+	Fixed console spam when vehicle world is not loaded
+
+1.0.12b
+	Added API method for getting the vehicle as an itemstack.
+	Fixed models for Poli, Mig1, and civiboat
+	Fixed some issues regarding whitelisting and ownership
+
+1.0.12
+	Added F Input states. Will be used in the future to set states for vehicles.
+	Added F Input for Helicopters so vehicles can descend faster
+	Added F Input for cars horns
+	Fixed issue where check fuel does not always update
+	Fixed bug where vehicles were not saving properly and could break all vehicles if a single vehicle did not have an owner
+	Fixed issue where players would be able to access other vehicles
+	Fixed API call where setting health to less than 0 does not deconstruct the vehicle.
+	Made Helicopter blade materials configurable in the config
+	
+1.0.11C
+	Fixed player damage when landing with helicopter
+	
+1.0.11B
+	Added fix for if player clicks to place vehicle in air.
+
+1.0.11
+	Revamped almost all car models. The tires are now (somewhat) circular.
+	Added VehicleSpawnEvent to the API. You can now get when a vehicle spawns.
+	Added VehicleDamageEvent to the API
+	Added VehicleDestroyEvent to the API
+
+1.0.10b
+	Added fix where removeAllVehicles removes leftover complex parts
+
+1.0.10
+	Added API (QualityArmoryVehicles.class)
+
+1.0.9
+	Added ability to remove ownership of vehicles.
+	Added (possible) fix to issue where ejecting from vehicle caused client to crash on some servers
+	Added perm to allow users to use vehicle GUIs. Can be removed to stop players from interacting with vehicle
+	Fixed bus activation radius. Should be easier to enter a bus now
+
+1.0.8
+	Added Bus
+	Added the commands /qav addToWhitelist and /qav removeFromWhitelist to modify the vehicle's whitelist through commands.
+	Added ability to send "out of fuel" message to the chat instead of hotbar.
+
+1.0.7D
+	Added debug messages for menu
+
+1.0.7C
+	Added possible fix for invalid vehicles for menu
+
+1.0.7B
+	Fixed NPE for invalid vehicles
+
+1.0.7
+	Added Police Vehicles
+	Added "Unmarked van"
+	Added "enable_RequirePermsToDriveType", which will require players to have "qualityarmoryvehicles.candrive.XXX" to drive vehicle XXX
+
+1.0.6C
+	Added fix for CE
+	Removed debug code.
+	Added a fix for 
+
+1.0.6B
+	Added fix for 1.13 and wallsigns
+
+1.0.6
+	Added Vehicle Health
+	Added Collision boxes for all vehicles. First step to a decent terrain height detector for large models.
+	Added Ability to limit vehicles spawned per player
+	Added permissions to determine how many vehicles a player can spawn (default is 1, OP is unlimited)
+	Added shops!
+	Added the ability to open shop using signs (default sign is [QAV-Shop] for the first line of sign)
+	Added fix for unbreakable tag for vehicles in menus
+	Added optional feature for "unlockable vehicles".  Vehicles bought will be added to a "garage", which allows the player to spawn the vehicle as many times as they want (even if it breaks)
+	Added Shopping carts
+
+1.0.5E
+	Fixed heli blades breaking
+
+1.0.5D
+	Fixed material used in enum for vehicles with different material types
+
+1.0.5C
+	Fixed naming for materials
+
+1.0.5B
+	Added ability to specific material used for vehicle
+
+1.0.5
+	Added Trunks
+	Added ability to pickup vehicles
+	Fixed CoalBlock issue with tanks
+	Fixed armorstands not being invisible
+
+1.0.4D
+	Fixed coal-conversion
+	Fixed player-body rotation with vehicle for some vehicles (applys only to vehicles where player's body is viewable in 3rd person).
+	Fixed planes actually increasing speed by going up (without pressing space)
+	Fixed issue where vehicle's armorstand could get stuck in a hole, with a block infront/inside the vehicle, and it would not be able to go up.
+1.0.4c
+	Added fix for old vehicles or vehicles not stored in the list.
+
+1.0.4b
+	Allowed CoalBlocks to be used as fuel.
+	Fixed fuel consumption for Helicopters and Planes
+
+1.0.4
+	VEHICLE SYSTEM REWRITE: A majority of the code has been rewritten to make sure that all data regarding vehicles are stored together
+	Added Breaking for cars (use [Space])
+	Added Motorcycles
+	Added Semi-Trailer Trucks
+	Fixed Lada Niva model.
+	Fixed Lada Niva filename (was originally "ladanivda" with an added 'd')
+	Fixed Wheel height
+	Increased MaxSpeed
+	Set it so plane velocities take into account changes in pitch. Flying down will no longer make the plane fly faster than the max speed
+	Made acceleration and maxAcceleration customizable in the vehicles yml. 
+	Added ability to stop certain damage for certain vehicles
+	Added fix for if passagers are far away from the car
+	Added Whitelist for vehicles. Only players added to the whitelist can drive/ride the car
+	Added custom menu to configure parts of cars. Currently, only configures whitelist
+	Added Messages.yml
+	Added ability to have turning scale with speed of car if specified
+	Added Fuel Requirement to cars. This can be disabled in the car's yml file. Vehicles require coal to work
+
+1.0.3
+	Added Cadillac-Series62
+	Renamed file to represent the actual plugin's name
+	Fixed files continually updating with no change
+
+1.0.2
+	Fixed issue where planes, boats, and helis were treated as Cars
+	Fixed issue with AOB for setPassager
+	Fixed issue where setpassager would not find the nearest vehicle
+	Added permissions.
+	Vehicle models will be updated (requires update for QualityArmory)
+
+1.0.1
+	Added ability to customize or create new vehicles
+	Fixed offset when placing cars
+	Fixed displaynames for vehicles.
+
+1.0.0
+Init post
