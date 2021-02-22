@@ -25,6 +25,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,7 +54,7 @@ public class Main extends JavaPlugin {
 	public static String PASSAGER_PREFIX = "QA-Passager=";
 	public static boolean enableGarage=false;
 	public static boolean useChatForMessage=false;
-	public static String VEHICLEPREFIX = "[QAV]";
+	public static String VEHICLEPREFIX = "(QAV)";
 	public ProtocolManager protocolManager;
 	public static File carData;
 	public static final double YOFFSET = Math.PI * 3 / 2;// Math.PI*3/2;//Math.PI * 69 / 64;
@@ -111,6 +113,8 @@ public class Main extends JavaPlugin {
 	}
 
 	public void onEnable() {
+		ConfigurationSerialization.registerClass(VehicleEntity.class);
+
 
 		carData = new File(getDataFolder(),"vehicles");
 		if(!carData.exists()){
@@ -161,7 +165,12 @@ public class Main extends JavaPlugin {
 		EasyGUI.INIT(this);
 
 		FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
-		dataconfig.get("data");
+
+
+		for(VehicleEntity ve : ((List<VehicleEntity>)dataconfig.get("data"))){
+			if(ve!=null && ve.getDriverSeat()!=null)
+				vehicles.add(ve);
+		}
 
 
 		protocolManager = ProtocolLibrary.getProtocolManager();
@@ -170,7 +179,8 @@ public class Main extends JavaPlugin {
 
 		new BukkitRunnable(){
 			public void run(){
-				for(VehicleEntity ve : vehicles){
+				for(VehicleEntity ve : new ArrayList<>(vehicles)){
+					if(ve!=null && ve.getDriverSeat()!=null)
 					ve.tick();
 				}
 			}
@@ -223,6 +233,11 @@ public class Main extends JavaPlugin {
 	public void onDisable() {
 		FileConfiguration yaml = YamlConfiguration.loadConfiguration(vehicledatayml);
 		yaml.set("data",vehicles);
+		try {
+			yaml.save(vehicledatayml);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void initVals() {

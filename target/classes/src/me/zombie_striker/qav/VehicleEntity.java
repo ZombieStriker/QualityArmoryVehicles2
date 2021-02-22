@@ -5,6 +5,7 @@ import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
@@ -12,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	private Vector centerOffset = new Vector(0, 0, 0);
 	private BoundingBox boundingBox;
 	private double speed = 0;
-	private UUID vehicleUUID;
+	private UUID vehicleUUID = UUID.randomUUID();
 
 	private UUID owner;
 
@@ -36,7 +36,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	private Inventory inventory;
 	private Inventory fuels;
 	private int fuel = 0;
-	private double yheight=0;
+	private double yheight = 0;
 	private List<UUID> whitelist = new ArrayList<>();
 	private double health;
 
@@ -53,16 +53,20 @@ public class VehicleEntity implements ConfigurationSerializable {
 		Main.vehicles.add(this);
 	}
 
-	public VehicleEntity(HashMap<String, Object> data) {
+	public VehicleEntity(Map<String, Object> data) {
 		vehicleUUID = UUID.fromString((String) data.get("uuid"));
+		vehicleType = QualityArmoryVehicles.getVehicle((String) data.get("type"));
+		if(vehicleType==null)
+			return;
 		Location loc = (Location) data.get("loc");
+		if(loc==null)
+			return;
 		if (!loc.isWorldLoaded()) {
 			loc.getChunk().load();
 		}
 		for (Entity e : loc.getWorld().getNearbyEntities(loc, 6, 6, 6)) {
 			if (e.getCustomName() != null && e.getCustomName().startsWith(Main.VEHICLEPREFIX)) {
-				String split = e.getCustomName().split(Main.VEHICLEPREFIX)[1];
-				if (split.equalsIgnoreCase(vehicleUUID.toString())) {
+				if (e.getCustomName().trim().endsWith(vehicleUUID.toString().trim())) {
 					driverseat = e;
 					if (e instanceof ArmorStand)
 						modelParts.add((ArmorStand) e);
@@ -70,44 +74,50 @@ public class VehicleEntity implements ConfigurationSerializable {
 			}
 		}
 
-		if(data.containsKey("owner"))
-		owner=UUID.fromString((String) data.get("owner"));
+		if (data.containsKey("owner"))
+			owner = UUID.fromString((String) data.get("owner"));
 
 		fuel = (int) data.get("fuel");
+		if(data.containsKey("fuels"))
 		getFuels().setContents((ItemStack[]) data.get("fuels"));
-		getTrunk().setContents((ItemStack[])data.get("inventory"));
+		if(data.containsKey("inventory"))
+		getTrunk().setContents((ItemStack[]) data.get("inventory"));
 
-		vehicleType= QualityArmoryVehicles.getVehicle((String) data.get("type"));
 		health = (double) data.get("health");
 
 		boundingBox = new BoundingBox(loc, vehicleType.getWidthRadius(), vehicleType.getHeight());
 
 		List<String> whitelist = (List<String>) data.get("whitelist");
-		for(String string : whitelist){
+		for (String string : whitelist) {
 			this.whitelist.add(UUID.fromString(string));
 		}
 
-		Main.vehicles.add(this);
-
+		rotation = (double) data.get("angle");
 	}
 
 	@Override
-	public @NotNull Map<String, Object> serialize() {
+	public Map<String, Object> serialize() {
 		HashMap<String, Object> data = new HashMap<>();
 		data.put("uuid", vehicleUUID.toString());
+		if(driverseat!=null)
 		data.put("loc", getDriverSeat().getLocation());
 		data.put("fuel", fuel);
-		data.put("fuels", fuels.getContents());
-		data.put("inventory", getTrunk().getContents());
-		data.put("type",vehicleType.getName());
-		data.put("owner",owner.toString());
-		data.put("health",health);
+		if (fuels != null)
+			data.put("fuels", fuels.getContents());
+		if (getTrunk() != null)
+			data.put("inventory", getTrunk().getContents());
+		if(vehicleType!=null)
+		data.put("type", vehicleType.getName());
+		if (owner != null)
+			data.put("owner", owner.toString());
+		data.put("health", health);
+		data.put("angle", getAngleRotation());
 
 		List<String> whitelist = new ArrayList<>();
-		for(UUID uuid : getWhiteList()){
-		whitelist.add(uuid.toString());
+		for (UUID uuid : getWhiteList()) {
+			whitelist.add(uuid.toString());
 		}
-		data.put("whitelist",whitelist);
+		data.put("whitelist", whitelist);
 
 		return data;
 	}
@@ -127,7 +137,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 			model.setSmall(true);
 		}
 
-		model.setCustomName(Main.VEHICLEPREFIX);
+		model.setCustomName(Main.VEHICLEPREFIX+vehicleUUID.toString());
 
 		driverseat = model;
 	}
@@ -227,7 +237,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 	public void setDirectionYHeight(double i) {
 		yheight = i;
 	}
-	public double getDirectionYheight(){
+
+	public double getDirectionYheight() {
 		return yheight;
 	}
 
@@ -239,25 +250,33 @@ public class VehicleEntity implements ConfigurationSerializable {
 		return owner;
 	}
 
-	public void deconstruct(Player player, String message) {
-		giveOrDrop(player,QualityArmoryVehicles.getVehicleItemStack(getType()));
-	}
-
-	public void giveOrDrop(Player player, ItemStack[] is){
-		for(ItemStack is2 : is){
-			giveOrDrop(player,is);
-		}
-	}
-	public void giveOrDrop(Player player, ItemStack is){
-		if(player.getInventory().firstEmpty()!=-1){
-			player.getInventory().addItem(is);
-		}else{
-			player.getWorld().dropItem(player.getLocation(),is);
-		}
-	}
-
 	public void setOwner(UUID o) {
 		this.owner = o;
+	}
+
+	public void deconstruct(Player player, String message) {
+		if (player != null)
+			giveOrDrop(player, QualityArmoryVehicles.getVehicleItemStack(getType()));
+
+		driverseat.remove();
+		for (ArmorStand stand : getModelEntities()) {
+			stand.remove();
+		}
+		Main.vehicles.remove(this);
+	}
+
+	public void giveOrDrop(Player player, ItemStack[] is) {
+		for (ItemStack is2 : is) {
+			giveOrDrop(player, is);
+		}
+	}
+
+	public void giveOrDrop(Player player, ItemStack is) {
+		if (player.getInventory().firstEmpty() != -1) {
+			player.getInventory().addItem(is);
+		} else {
+			player.getWorld().dropItem(player.getLocation(), is);
+		}
 	}
 
 	public List<UUID> getWhiteList() {
@@ -293,8 +312,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public void updateSeats() {
-		for(Map.Entry<Integer, Entity> e : new ArrayList<>(passagers.entrySet())){
-			if(e.getValue().getPassenger()==null){
+		for (Map.Entry<Integer, Entity> e : new ArrayList<>(passagers.entrySet())) {
+			if (e.getValue().getPassenger() == null) {
 				passagers.remove(e.getKey());
 				e.getValue().remove();
 			}
@@ -304,7 +323,6 @@ public class VehicleEntity implements ConfigurationSerializable {
 	public void addPassager(int seatID, Entity seat) {
 		passagers.put(seatID, seat);
 	}
-
 
 
 	public Entity spawnSeat(Location spawn, int seatID) {
@@ -351,16 +369,22 @@ public class VehicleEntity implements ConfigurationSerializable {
 			((ArmorStand) used).setVisible(false);
 			((ArmorStand) used).setCollidable(false);
 		}
-		if(used!=null)
-		used.setCustomName(Main.VEHICLEPREFIX+vehicleUUID.toString());
+		if (used != null)
+			used.setCustomName(Main.VEHICLEPREFIX + vehicleUUID.toString());
 		return used;
 	}
 
 	public boolean isOnGround() {
-		Location movingTo4 = getCenter().clone().subtract(0,1,0);
+		Location movingTo4 = getCenter().clone().subtract(0, 1, 0);
 		if (BlockCollisionUtil.isSolidAt(movingTo4)) {
 			return true;
 		}
+		return false;
+	}
+
+	public boolean isSubmerged() {
+		if (driverseat.getLocation().add(0, 1.6, 0).getBlock().getType() == Material.WATER)
+			return true;
 		return false;
 	}
 }

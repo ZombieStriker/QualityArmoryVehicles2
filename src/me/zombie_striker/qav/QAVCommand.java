@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,6 +78,22 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 			sender.sendMessage(Main.prefix+ " Gave "+ChatColor.GOLD+reciever.getName()+" "+ve.getName()+".");
 			return true;
 		}
+		if(args[0].equalsIgnoreCase(subcommand_removeNearbyVehicles)){
+			int radius = 6;
+			if(args.length > 1){
+				radius = Integer.parseInt(args[1]);
+			}
+			if(sender instanceof Player){
+				Player player = (Player) sender;
+				for(VehicleEntity ve : new ArrayList<>(Main.vehicles)){
+					if(ve.getDriverSeat().getLocation().distanceSquared(player.getLocation()) < radius*radius){
+						ve.deconstruct(null,"removeNearbyCommand");
+					}
+				}
+			}
+		}
+
+
 		if(args[0].equalsIgnoreCase("getresourcepack")){
 
 		}

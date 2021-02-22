@@ -313,7 +313,7 @@ public abstract class AbstractVehicle {
 		} else if (gravity) {
 			//Add Gravity
 			if (!BlockCollisionUtil.isSolid(vehicleEntity.getDriverSeat().getLocation().subtract(0, 1, 0))) {
-				velocity.setY(velocity.getY() - 0.2);
+				velocity.setY(Math.max(-1,vehicleEntity.getDriverSeat().getVelocity().getY() - 0.02));
 			}
 		} else {
 			velocity.setY(vehicleEntity.getDirectionYheight());
