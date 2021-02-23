@@ -3,6 +3,7 @@ package me.zombie_striker.qav.util;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -22,11 +23,11 @@ public class HeadPoseUtil {
 	}
 
 	public static void setHeadPoseUsingReflection(final VehicleEntity ve, final ArmorStand a) {
-		if (!ve.getType().enableBodyFix() || ve.getDriverSeat()!=ve.getModelEntity()) {
+		if (!ve.getType().enableBodyFix() || ve.getDriverSeat()!=ve.getModelEntity() || true) {
 			updateArmorstandPart(ve,a,a.getHeadPose().getX(), ve.getAngleRotation(), a.getHeadPose().getZ());
 			return;
 		}
-
+		//TODO: Fix BodyFix
 		if (chaningPos.containsKey(ve)) {
 			if (Math.abs(ve.getAngleRotation() - chaningPos.get(ve)) < Math.PI / 2) {
 				updateArmorstandPart(ve,a,a.getHeadPose().getX(), ve.getAngleRotation() - chaningPos.get(ve),

@@ -61,8 +61,8 @@ public class MenuHandler implements Listener {
 
 		if (Main.enableTrunks) {
 			List<ItemStack> quickTrunk = Arrays.asList(ve.getTrunk().getContents());
-			if (quickTrunk.contains(null))
-				quickTrunk.remove(null);
+		//	if (quickTrunk.contains(null))
+		//		quickTrunk.remove(null);
 			int limit = 7;
 			boolean isMore = quickTrunk.size() > limit;
 			String[] trunklore = new String[1 + (isMore ? limit : quickTrunk.size())];

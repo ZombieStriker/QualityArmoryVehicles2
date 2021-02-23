@@ -202,7 +202,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public Inventory getTrunk() {
-		if (this.inventory != null) {
+		if (this.inventory == null) {
 			this.inventory = Bukkit.createInventory(null, getType().getTrunkSize());
 		}
 		return inventory;

@@ -16,6 +16,7 @@ import me.zombie_striker.qav.debugmanager.DebugManager;
 import me.zombie_striker.qav.easygui.EasyGUI;
 import me.zombie_striker.qav.finput.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
+import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
