@@ -132,6 +132,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 		modelParts.add(model);
 
 		model.setHelmet(getType().getModel());
+		model.setVisible(false);
 
 		if (getType().getModelType() == ModelSize.BABY_ARMORSTAND_HEAD) {
 			model.setSmall(true);
