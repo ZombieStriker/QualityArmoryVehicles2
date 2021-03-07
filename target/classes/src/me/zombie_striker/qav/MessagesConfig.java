@@ -75,7 +75,7 @@ public class MessagesConfig {
 	private static FileConfiguration messagesyml;
 	private static boolean forceUpdate = false;
 
-	public static String COMMANDMESSAGES_NO_PERM = "&4You do not have permission to use this command.";
+	public static String COMMANDMESSAGES_NO_PERM = colorize("&4You do not have permission to use this command.");
 	public static String COMMANDMESSAGES_ONLY_PLAYERs = "&4Only players can use this command.";
 	public static String COMMANDMESSAGES_ADD_VEHICLE_GARAGE = " The vehicle \"%car%\" has been added to %name%'s garage.";
 	public static String COMMANDMESSAGES_VALID_NAME = "&4 The name provided is not of a player that is on the server.";
@@ -204,6 +204,10 @@ public class MessagesConfig {
 
 
 		b();
+	}
+
+	private static String colorize(String string) {
+		return ChatColor.translateAlternateColorCodes('&', string);
 	}
 
 	public static String translatePublic(VehicleEntity ve) {
