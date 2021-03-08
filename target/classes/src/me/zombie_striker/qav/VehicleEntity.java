@@ -140,6 +140,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 		model.setCustomName(Main.VEHICLEPREFIX+vehicleUUID.toString());
 
+		model.setInvulnerable(true);
+		model.setVisible(false);
 		driverseat = model;
 	}
 
@@ -368,6 +370,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 				((ArmorStand) used).setSmall(true);
 			}
 			((ArmorStand) used).setVisible(false);
+			((ArmorStand) used).setInvulnerable(false);
 			((ArmorStand) used).setCollidable(false);
 		}
 		if (used != null)

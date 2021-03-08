@@ -78,7 +78,6 @@ public class CustomVehicleItem extends AbstractItem {
 					.setLore("&7Press [Space] to break", "&7Press [LMB] to honk").save();
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "jeep", 4).setDisplayname("Jeep")
 					.setCenter(new Vector(-0.8, 0, 0.5)).setFrontVectorOffset(3.1).setBackVectorOffset(1.1).setMaterial(Material.RABBIT_HIDE)
-					.setMaxForwardSpeed(2).setBaseAcceleration(0.064)
 					.setPassagerLocations(new Vector(0, 1, 1), new Vector(-1, 1, 0), new Vector(-1, 1, 1))
 					.setStaticTurning(false).setRequireFuel(true).setTrunkSize(18).setWidth(0.74).setHeight(1.6)
 					.setMaxHealth(100).setCost(2000).setKeyInputManagerLMB(FInputManager.CAR_HONK)
@@ -107,21 +106,21 @@ public class CustomVehicleItem extends AbstractItem {
 					.setCost(6000).setLore("&7Press [Space] to start flying").save();
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "cadillac62", 9).setDisplayname("Cadillac-Series62")
 					.setCenter(new Vector(-0.8, 0, 0.5)).setFrontVectorOffset(3.25).setBackVectorOffset(2.45).setMaterial(Material.RABBIT_HIDE)
-					.setMaxForwardSpeed(2).setBaseAcceleration(0.060)
+
 					.setPassagerLocations(new Vector(0, 1, 1), new Vector(-1, 1, 0), new Vector(-1, 1, 1))
 					.setStaticTurning(false).setRequireFuel(true).enablePlayerBodyFix(true).setWidth(0.74).setHeight(2)
 					.setMaxHealth(100).setCost(2000).setKeyInputManagerLMB(FInputManager.CAR_HONK)
 					.setLore("&7Press [Space] to break", "&7Press [LMB] to honk").save();
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "motorcycle", 10).setDisplayname("Motorcycle")
 					.setActivationRadius(1).setCenter(new Vector(0, 0, 0)).setFrontVectorOffset(2.4)
-					.setBackVectorOffset(1).setMaxForwardSpeed(2).setBaseAcceleration(0.065).setMaterial(Material.RABBIT_HIDE)
+					.setBackVectorOffset(1).setMaterial(Material.RABBIT_HIDE)
 					.setPassagerLocations(new Vector(-1, 1, 0)).setStaticTurning(false).setRequireFuel(true)
 					.enablePlayerBodyFix(true).setWidth(0.45).setHeight(1).setMaxHealth(50).setCost(1000)
 					.setKeyInputManagerLMB(FInputManager.CAR_HONK)
 					.setLore("&7Press [Space] to break", "&7Press [LMB] to honk").save();
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "semitrailertruck", 11)
 					.setDisplayname("Semi-Trailer Truck").setCenter(new Vector(-1.5, 0, 0.8)).setFrontVectorOffset(4.2)
-					.setBackVectorOffset(4).setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD).setMaxForwardSpeed(2).setBaseAcceleration(0.045).setMaterial(Material.RABBIT_HIDE)
+					.setBackVectorOffset(4).setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD).setMaterial(Material.RABBIT_HIDE)
 					.setActivationRadius(3)
 					.setPassagerLocations(new Vector(0, 2, 1), new Vector(-2, 2, 0.3), new Vector(-2, 2, 1),
 							new Vector(-3, 2, 0.3), new Vector(-3, 2, 1), new Vector(-4, 2, 0.3), new Vector(-4, 2, 1))
@@ -200,7 +199,7 @@ public class CustomVehicleItem extends AbstractItem {
 					.save();
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "sw_speederbike", 19).setDisplayname("Speeder Bike")
 					.setActivationRadius(1).setCenter(new Vector(0, 0, 0)).setFrontVectorOffset(3)
-					.setBackVectorOffset(1).setMaxForwardSpeed(2).setBaseAcceleration(0.065)
+					.setBackVectorOffset(1)
 					.setPassagerLocations(new Vector(-1, 1, 0)).setStaticTurning(false).setRequireFuel(true)
 					.enablePlayerBodyFix(true).setWidth(0.45).setHeight(1).setMaxHealth(50).setCost(1000).setMaterial(Material.RABBIT_HIDE)
 					.setKeyInputManagerLMB(FInputManager.CAR_HONK)
@@ -349,9 +348,9 @@ public class CustomVehicleItem extends AbstractItem {
 					.setLore("&7Press [Space] to start flying", "&7 Press [F] to toggle the accent/decent speed")
 					.save();
 
-			VehicleYML.registerVehicle(VehicleTypes.CAR, "schoolbus", 36).setDisplayname("SChool Bus").setMaterial(Material.RABBIT_HIDE)
+			VehicleYML.registerVehicle(VehicleTypes.CAR, "schoolbus", 36).setDisplayname("School Bus").setMaterial(Material.RABBIT_HIDE)
 					.setCenter(new Vector(-2, 0, 1)).setFrontVectorOffset(4.8).setBackVectorOffset(3.5)
-					.setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD).setMaxForwardSpeed(2).setBaseAcceleration(0.045)
+					.setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD)
 					.setActivationRadius(4.6)
 					.setPassagerLocations(new Vector(-0.5, 2, 2), new Vector(-1.5, 2, 0),
 							new Vector(-1.5, 2, 2), new Vector(-2.5, 2, 0),

@@ -1,15 +1,16 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,67 +40,97 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 	private Main main;
 
 	public QAVCommand(Main main) {
-	this.main = main;
+		this.main = main;
 	}
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-		if(args.length==0){
+		if (args.length == 0) {
 			sendHelper(sender);
 			return true;
 		}
-		if(args[0].equalsIgnoreCase(subcommand_GiveVehicle)) {
+		if (args[0].equalsIgnoreCase(subcommand_GiveVehicle)) {
 			if (!sender.hasPermission(PermissionHandler.PERM_GIVE)) {
-				sender.sendMessage(Main.prefix+ MessagesConfig.COMMANDMESSAGES_NO_PERM);
+				sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
 				return true;
 			}
-			if(args.length < 2){
-				sender.sendMessage("Usage /qav "+subcommand_GiveVehicle+" <vehicle>");
+			if (args.length < 2) {
+				sender.sendMessage("Usage /qav " + subcommand_GiveVehicle + " <vehicle>");
 				return true;
 			}
 			String name = args[1];
 			AbstractVehicle ve = QualityArmoryVehicles.getVehicle(name);
-			if(ve==null){
+			if (ve == null) {
 				sender.sendMessage("Vehicle does not exist.");
 				return true;
 			}
 			Player reciever = null;
-			if(sender instanceof Player){
+			if (sender instanceof Player) {
 				reciever = (Player) sender;
 			}
-			if(args.length > 2){
+			if (args.length > 2) {
 				reciever = Bukkit.getPlayer(args[2]);
 			}
-			if(reciever==null){
-				sender.sendMessage("Player \""+args[2]+"\"is not on the server.");
+			if (reciever == null) {
+				sender.sendMessage("Player \"" + args[2] + "\"is not on the server.");
 				return true;
 			}
 			reciever.getInventory().addItem(ItemFact.getCarItem(ve));
-			sender.sendMessage(Main.prefix+ " Gave "+ChatColor.GOLD+reciever.getName()+" "+ve.getName()+".");
+			sender.sendMessage(Main.prefix + " Gave " + ChatColor.GOLD + reciever.getName() + " " + ve.getName() + ".");
 			return true;
 		}
-		if(args[0].equalsIgnoreCase(subcommand_removeNearbyVehicles)){
+		if (args[0].equalsIgnoreCase(subcommand_removeNearbyVehicles)) {
 			int radius = 6;
-			if(args.length > 1){
+			if (args.length > 1) {
 				radius = Integer.parseInt(args[1]);
 			}
-			if(sender instanceof Player){
+			if (sender instanceof Player) {
 				Player player = (Player) sender;
-				for(VehicleEntity ve : new ArrayList<>(Main.vehicles)){
-					if(ve.getDriverSeat().getLocation().distanceSquared(player.getLocation()) < radius*radius){
-						ve.deconstruct(null,"removeNearbyCommand");
+				for (VehicleEntity ve : new ArrayList<>(Main.vehicles)) {
+					if (ve.getDriverSeat().getLocation().distanceSquared(player.getLocation()) < radius * radius) {
+						ve.deconstruct(null, "removeNearbyCommand");
 					}
 				}
 			}
 		}
 
 
-		if(args[0].equalsIgnoreCase("getresourcepack")){
+		if (args[0].equalsIgnoreCase("getresourcepack")) {
 
 		}
 
-		if(args[0].equalsIgnoreCase(subcommand_Shop)){
-
+		if (args[0].equalsIgnoreCase(subcommand_Shop)) {
+			MenuHandler.openShop((Player) sender, AbstractVehicle.class);
+			return true;
+		}
+		if (args[0].equalsIgnoreCase(subcommand_garage)) {
+			MenuHandler.openGarage((Player) sender);
+		}
+		if (args[0].equalsIgnoreCase(subcommand_callbackAll)) {
+			for (VehicleEntity ve : new ArrayList<>(Main.vehicles)) {
+				ve.deconstruct(null, "CallbackAll");
+			}
+			sender.sendMessage("Called back all vehicles on the server.");
+			return true;
+		}
+		if (args[0].equalsIgnoreCase(subcommand_callback)) {
+			Location loc = null;
+			if (sender instanceof Player) {
+				loc = ((Player) sender).getLocation();
+			} else {
+				sender.sendMessage("Only players can use this command");
+				return true;
+			}
+			int radius = 6;
+			if (args.length >= 2) {
+				radius = Integer.parseInt(args[1]);
+			}
+			for (VehicleEntity ve : new ArrayList<>(Main.vehicles)) {
+				if (ve.getDriverSeat().getLocation().distanceSquared(loc) < radius * radius)
+					ve.deconstruct(null, "Callback");
+			}
+			sender.sendMessage("Called back all vehicles within a "+radius+" radius of the player.");
+			return true;
 		}
 		return false;
 	}
@@ -154,10 +185,12 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 		}
 		return null;
 	}
+
 	public void a(List<String> a, String b, String arg) {
 		if (b.toLowerCase().startsWith(arg.toLowerCase()))
 			a.add(b);
 	}
+
 	public Object a(String path, Object o) {
 		if (main.getConfig().contains(path))
 			return main.getConfig().get(path);
@@ -165,7 +198,6 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 		main.saveConfig();
 		return o;
 	}
-
 
 
 	public void sendHelper(CommandSender sender) {

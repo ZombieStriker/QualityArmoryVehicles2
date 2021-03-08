@@ -168,6 +168,7 @@ public class Main extends JavaPlugin {
 		FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
 
 
+		if(dataconfig.contains("data"))
 		for(VehicleEntity ve : ((List<VehicleEntity>)dataconfig.get("data"))){
 			if(ve!=null && ve.getDriverSeat()!=null)
 				vehicles.add(ve);

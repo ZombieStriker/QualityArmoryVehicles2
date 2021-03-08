@@ -27,7 +27,7 @@ public abstract class AbstractVehicle {
 	private String internalName;
 	private boolean bodyFix = false;
 	private double rotationDelta = 0.1;
-	private double maxSpeed = 1.2;
+	private double maxSpeed = 0.9;
 	private double maxBackupSpeed = 0.8;
 	private boolean destructable = true;
 	private boolean disableMeleeDamage = true;
