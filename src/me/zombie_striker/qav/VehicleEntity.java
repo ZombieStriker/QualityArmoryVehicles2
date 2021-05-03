@@ -258,9 +258,6 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public void deconstruct(Player player, String message) {
-		if (player != null)
-			giveOrDrop(player, QualityArmoryVehicles.getVehicleItemStack(getType()));
-
 		driverseat.remove();
 		for (ArmorStand stand : getModelEntities()) {
 			stand.remove();
@@ -271,14 +268,6 @@ public class VehicleEntity implements ConfigurationSerializable {
 	public void giveOrDrop(Player player, ItemStack[] is) {
 		for (ItemStack is2 : is) {
 			giveOrDrop(player, is);
-		}
-	}
-
-	public void giveOrDrop(Player player, ItemStack is) {
-		if (player.getInventory().firstEmpty() != -1) {
-			player.getInventory().addItem(is);
-		} else {
-			player.getWorld().dropItem(player.getLocation(), is);
 		}
 	}
 

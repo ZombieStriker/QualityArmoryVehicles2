@@ -206,7 +206,7 @@ public class MenuHandler implements Listener {
 						}
 						data.getClicker().closeInventory();
 						if(!Main.enableGarage)
-						data.getClicker().getInventory().addItem(ItemFact.getCarItem(ve.getType()));
+							giveOrDrop(data.getClicker(),ItemFact.getCarItem(ve.getType()));
 
 						ve.deconstruct(data.getClicker(), "pickup_menu");
 						ve.getTrunk().clear();
@@ -239,6 +239,14 @@ public class MenuHandler implements Listener {
 		}
 		//player.openInventory(overview);
 		return gui;
+	}
+
+	public static void giveOrDrop(Player player, ItemStack is) {
+		if (player.getInventory().firstEmpty() != -1) {
+			player.getInventory().addItem(is);
+		} else {
+			player.getWorld().dropItem(player.getLocation(), is);
+		}
 	}
 
 	public static void openShop(Player player, Class<?> class1) {
