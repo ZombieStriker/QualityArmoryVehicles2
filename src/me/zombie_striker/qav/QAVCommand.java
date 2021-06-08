@@ -1,11 +1,9 @@
 package me.zombie_striker.qav;
 
-import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
-import me.zombie_striker.qg.QAMain;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QAVCommand implements CommandExecutor, TabCompleter {
-
+	public static String subcommand_reload = "reload";
 	public static String subcommand_SpawnVehicle = "spawnVehicle";
 	public static String subcommand_GiveVehicle = "give";
 	public static String subcommand_setAsPass = "setAsPassager";
@@ -39,7 +37,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 	public static String subcommand_sittingInWhatVehicle = "sittingInWhatVehicle";
 	public static String subcommand_addvehicle = "addVehicle";
 	public static String subcommand_removebugged = "removeBugged";
-	private Main main;
+	private final Main main;
 
 	public QAVCommand(Main main) {
 		this.main = main;
@@ -77,7 +75,11 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				sender.sendMessage("Player \"" + args[2] + "\"is not on the server.");
 				return true;
 			}
-			reciever.getInventory().addItem(ItemFact.getCarItem(ve));
+			if (Main.enableGarage) {
+				QualityArmoryVehicles.addUnlockedVehicle(reciever,ve);
+			} else {
+				reciever.getInventory().addItem(ItemFact.getCarItem(ve));
+			}
 			sender.sendMessage(Main.prefix + " Gave " + ChatColor.GOLD + reciever.getName() + " " + ve.getName() + ".");
 			return true;
 		}
@@ -99,6 +101,18 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 
 		if (args[0].equalsIgnoreCase("getresourcepack")) {
 
+		}
+
+		if (args[0].equalsIgnoreCase("reload")) {
+			if (!sender.hasPermission("qualityarmoryvehicles.reload")) {
+				sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+				return true;
+			}
+			long time = System.currentTimeMillis();
+			main.initVals();
+			Main.loadVehicles(true);
+			sender.sendMessage(Main.prefix + " Reloaded config and vehicle files in " + (System.currentTimeMillis() - time) + "ms");
+			return true;
 		}
 
 		if (args[0].equalsIgnoreCase(subcommand_Shop)) {
@@ -142,6 +156,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 
 		if (args.length == 1) {
 			ArrayList<String> a = new ArrayList<String>();
+			a(a, subcommand_reload, args[0]);
 			a(a, subcommand_SpawnVehicle, args[0]);
 			a(a, subcommand_GiveVehicle, args[0]);
 			a(a, subcommand_setAsPass, args[0]);
@@ -149,7 +164,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 			a(a, subcommand_removeNearbyVehicles, args[0]);
 			a(a, subcommand_callback, args[0]);
 			a(a, subcommand_callbackAll, args[0]);
-			if (main.enableGarage)
+			if (Main.enableGarage)
 				a(a, subcommand_garage, args[0]);
 			a(a, subcommand_removeFromWhitelist, args[0]);
 			a(a, subcommand_addToWhitelist, args[0]);

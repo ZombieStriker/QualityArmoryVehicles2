@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -207,6 +208,8 @@ public class MenuHandler implements Listener {
 						data.getClicker().closeInventory();
 						if(!Main.enableGarage)
 							giveOrDrop(data.getClicker(),ItemFact.getCarItem(ve.getType()));
+						else
+							QualityArmoryVehicles.addUnlockedVehicle(data.getClicker(),ve.getType());
 
 						ve.deconstruct(data.getClicker(), "pickup_menu");
 						ve.getTrunk().clear();
@@ -282,9 +285,8 @@ public class MenuHandler implements Listener {
 			player.openInventory(gui.getPageByID(0));
 	}
 
-	public static void openGarage(final Player player) {
-
-		final List<AbstractVehicle> list = QualityArmoryVehicles.unlockedVehicles(player);
+	public static void openGarageToOther(final Player player, final Player target) {
+		final List<AbstractVehicle> list = QualityArmoryVehicles.unlockedVehicles(target);
 
 		EasyGUICallable call = new EasyGUICallable() {
 			@Override
@@ -302,8 +304,8 @@ public class MenuHandler implements Listener {
 
 				AbstractVehicle ab = QualityArmoryVehicles.getVehicleByItem(data.getClickedItem());
 				if (Main.enableVehicleLimiter
-						&& QualityArmoryVehicles.getOwnedVehicles(data.getClicker().getUniqueId())
-						.size() >= PermissionHandler.getMaxOwnVehicles(data.getClicker())) {
+						&& QualityArmoryVehicles.getOwnedVehicles(target.getUniqueId())
+						.size() >= PermissionHandler.getMaxOwnVehicles(target)) {
 					data.getClicker().sendMessage(MessagesConfig.MESSAGE_TOO_MANY_VEHICLES);
 					data.getClicker().closeInventory();
 				} else {
@@ -318,11 +320,11 @@ public class MenuHandler implements Listener {
 
 
 					int inUse = 0;
-					for (VehicleEntity ve : QualityArmoryVehicles.getOwnedVehicles(player.getUniqueId())) {
+					for (VehicleEntity ve : QualityArmoryVehicles.getOwnedVehicles(target.getUniqueId())) {
 						if (ve != null)
 							if(ve.getDriverSeat()!=null && ve.getModelEntity()!=null)
-							if (ve.getType() == ab)
-								inUse++;
+								if (ve.getType() == ab)
+									inUse++;
 					}
 					int amountHas = 0;
 					for (AbstractVehicle alllist : list)
@@ -335,6 +337,7 @@ public class MenuHandler implements Listener {
 						return;
 					}
 					VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(ab, data.getClicker());
+					QualityArmoryVehicles.removeUnlockedVehicle(target,ab);
 					if (Main.garageFuel)
 						ve.setFuel(500 * 64);
 					ve.getDriverSeat().setPassenger(data.getClicker());
@@ -347,8 +350,8 @@ public class MenuHandler implements Listener {
 
 
 		int size = Math.max(9, list.size());
-		String title = player.getUniqueId().toString() + MessagesConfig.MENU_GARAGE_TITLE;
-		EasyGUI gui = EasyGUI.generateGUIIfNoneExist(new ItemStack[size], title, MessagesConfig.MENU_GARAGE_TITLE, true, true);
+		String title = player.getUniqueId() == target.getUniqueId() ? MessagesConfig.MENU_GARAGE_TITLE : String.format(MessagesConfig.MENU_OTHER_GARAGE_TITLE, target.getName());
+		EasyGUI gui = EasyGUI.generateGUIIfNoneExist(new ItemStack[size], player.getUniqueId() + MessagesConfig.MENU_GARAGE_TITLE, title, true, true);
 		storedLookAt.remove(player.getUniqueId());
 		int i = 0;
 		for (AbstractVehicle ab : list) {
@@ -356,6 +359,10 @@ public class MenuHandler implements Listener {
 			i++;
 		}
 		player.openInventory(gui.getPageByID(0));
+	}
+
+	public static void openGarage(final Player player) {
+		openGarageToOther(player,player);
 	}
 
 	public static void openAddWhitelist(Player player, VehicleEntity ve) {

@@ -22,6 +22,7 @@ public class MessagesConfig {
 	public static String MENU_FUELTANK_TITLE = "&6%cartype%:&f Check Fuel";
 	public static String MENU_SHOP_TITLE = "&6Vehicle shop";
 	public static String MENU_GARAGE_TITLE = "&6Your vehicles";
+	public static String MENU_OTHER_GARAGE_TITLE = "&6%s's vehicles";
 	public static String ICON_ADD_WHITELIST = "&9Add player to whitelist";
 	public static String ICON_REMOVE_WHITELIST = "&9Remove player from whitelist";
 	public static String ICON_CHECK_FUEL = "&9Check Fueltank";

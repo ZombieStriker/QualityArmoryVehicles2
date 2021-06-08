@@ -8,6 +8,8 @@ commands:
   QualityArmoryVehicles:
     description: Create images using blocks
     aliases: [qav]
+  garage:
+    description: Open the garage
 permissions:
   qualityarmoryvehicles.*:
     default: op
@@ -33,6 +35,7 @@ permissions:
       qualityarmoryvehicles.addvehicle: true
       qualityarmoryvehicles.removevehicle: true
       qualityarmoryvehicles.removebugged: true
+      qualityarmoryvehicles.garage.other: true
 
   qualityarmoryvehicles.default:
     default: true

@@ -6,6 +6,7 @@ import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
@@ -155,6 +156,7 @@ public class QualityArmoryVehicles {
 
 	public static VehicleEntity spawnVehicle(AbstractVehicle ab, Player player) {
 		VehicleEntity vehicleEntity = new VehicleEntity(ab,player.getLocation(),player.getUniqueId());
+		vehicleEntity.spawn();
 		return vehicleEntity;
 	}
 	public static VehicleEntity spawnVehicle(AbstractVehicle ab, Location location, Player player) {
@@ -184,7 +186,7 @@ public class QualityArmoryVehicles {
 		return passagerSeat;
 	}
 
-	public static List<AbstractVehicle> unlockedVehicles(Player player) {
+	public static List<AbstractVehicle> unlockedVehicles(OfflinePlayer player) {
 		File playersFile = new File(Main.playerUnlock, player.getUniqueId().toString() + ".yml");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
 		List<AbstractVehicle> list = new ArrayList<AbstractVehicle>();
