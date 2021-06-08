@@ -1,3 +1,6 @@
+2.0.2
+    Lorenzo0111: Fixed duplication bug
+
 2.0.1
     --This build is still experimental, so please do not use it on production servers,
     - Added /qav shop
