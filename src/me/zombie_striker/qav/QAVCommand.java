@@ -1,9 +1,11 @@
 package me.zombie_striker.qav;
 
+import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
+import me.zombie_striker.qg.QAMain;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

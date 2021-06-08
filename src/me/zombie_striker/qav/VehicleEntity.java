@@ -78,10 +78,16 @@ public class VehicleEntity implements ConfigurationSerializable {
 			owner = UUID.fromString((String) data.get("owner"));
 
 		fuel = (int) data.get("fuel");
-		if(data.containsKey("fuels"))
-		getFuels().setContents((ItemStack[]) data.get("fuels"));
-		if(data.containsKey("inventory"))
-		getTrunk().setContents((ItemStack[]) data.get("inventory"));
+		if(data.containsKey("fuels")) {
+			ArrayList<ItemStack> items = (ArrayList<ItemStack>) data.get("fuels");
+
+			getFuels().setContents(items.toArray(new ItemStack[0]));
+		}
+		if(data.containsKey("inventory")) {
+			ArrayList<ItemStack> items = (ArrayList<ItemStack>) data.get("inventory");
+
+			getTrunk().setContents(items.toArray(new ItemStack[0]));
+		}
 
 		health = (double) data.get("health");
 
