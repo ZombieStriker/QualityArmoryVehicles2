@@ -26,7 +26,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -161,6 +160,8 @@ public class Main extends JavaPlugin {
 		QAVCommand command = new QAVCommand(this);
 		getCommand("QualityArmoryVehicles").setExecutor(command);
 		getCommand("QualityArmoryVehicles").setTabCompleter(command);
+		if (enableGarage)
+			getCommand("garage").setExecutor(new GarageCommand());
 
 		Bukkit.getPluginManager().registerEvents(new QAVListener(this), this);
 		EasyGUI.INIT(this);
@@ -300,6 +301,8 @@ public class Main extends JavaPlugin {
 		} else {
 			FuelItemStack.loadFuels(fuelYML);
 		}
+		playerUnlock = new File(this.getDataFolder(),"playerdata");
+		playerUnlock.mkdirs();
 		USE_MANUAL_13 = (boolean) a("USE_1_13_MODEL_SYSTEM", USE_MANUAL_13);
 		enableVehicleLimiter = (boolean) a("enable_VehicleLimiter", enableVehicleLimiter);
 		allowVehiclePickup = (boolean) a("enable_PickupVehicles", allowVehiclePickup);
