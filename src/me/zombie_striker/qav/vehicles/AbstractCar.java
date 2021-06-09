@@ -2,14 +2,10 @@ package me.zombie_striker.qav.vehicles;
 
 import com.comphenix.protocol.events.PacketEvent;
 import me.zombie_striker.qav.VehicleEntity;
-import me.zombie_striker.qav.api.events.*;
-import me.zombie_striker.qav.util.BlockCollisionUtil;
+import me.zombie_striker.qav.api.events.VehicleChangeSpeedEvent;
+import me.zombie_striker.qav.api.events.VehicleTurnEvent;
 import me.zombie_striker.qav.util.HeadPoseUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.util.Vector;
-import org.bukkit.Location;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -50,6 +46,9 @@ public class AbstractCar extends AbstractVehicle {
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
 			return;
+		if (!this.handleFuel(ve,event)) {
+			return;
+		}
 		ve.setSpeed(Math.min(ve.getSpeed() + 0.1, ve.getType().getMaxSpeed()));
 			if (!lastSoundDrive.containsKey(event.getPlayer().getUniqueId())
 					|| System.currentTimeMillis() - lastSoundDrive.get(event.getPlayer().getUniqueId()) > 900) {
@@ -64,6 +63,9 @@ public class AbstractCar extends AbstractVehicle {
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
 			return;
+		if (!this.handleFuel(ve,event)) {
+			return;
+		}
 		ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxSpeed()));
 
 	}

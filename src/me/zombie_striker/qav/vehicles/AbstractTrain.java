@@ -4,7 +4,6 @@ import com.comphenix.protocol.events.PacketEvent;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.events.VehicleTurnEvent;
 import me.zombie_striker.qav.util.HeadPoseUtil;
-import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 
 public class AbstractTrain extends AbstractVehicle {
@@ -34,11 +33,17 @@ public class AbstractTrain extends AbstractVehicle {
 
 	@Override
 	public void handleSpeedIncrease(VehicleEntity ve, PacketEvent event) {
+		if (!this.handleFuel(ve,event)) {
+			return;
+		}
 		ve.setSpeed(Math.min(ve.getSpeed() + 0.1, ve.getType().getMaxSpeed()));
 	}
 
 	@Override
 	public void handleSpeedDecrease(VehicleEntity ve, PacketEvent event) {
+		if (!this.handleFuel(ve,event)) {
+			return;
+		}
 		ve.setSpeed(Math.max(ve.getSpeed() + 0.1, -ve.getType().getMaxSpeed()));
 
 	}

@@ -199,6 +199,8 @@ public class VehicleLoader {
 			vehicle.setMaxBackupSpeed(c.getDouble("maxReverseAcceleration"));
 		if (c.contains("displayname"))
 			vehicle.setDisplayname(c.getString("displayname"));
+		if (c.contains("RequiresFuel"))
+			vehicle.setEnableFuel(c.getBoolean("RequiresFuel"));
 		if (c.contains("passagers")) {
 			@SuppressWarnings("unchecked")
 			List<Vector> list = (List<Vector>) c.getList("passagers");

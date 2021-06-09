@@ -35,7 +35,9 @@ public class AbstractPlane extends AbstractVehicle {
 	@Override
 	public void handleSpeedIncrease(VehicleEntity ve, PacketEvent event) {
 		ve.setDirectionYHeight(ve.getDirectionYheight() + 0.1);
-
+		if (!this.handleFuel(ve,event)) {
+			return;
+		}
 
 		double pitch = ve.getModelEntity().getHeadPose().getX();
 		pitch -= AbstractVehicle.pitchIncrement;
@@ -52,7 +54,9 @@ public class AbstractPlane extends AbstractVehicle {
 
 	@Override
 	public void handleSpeedDecrease(VehicleEntity ve, PacketEvent event) {
-
+		if (!this.handleFuel(ve,event)) {
+			return;
+		}
 		double pitch = ve.getModelEntity().getHeadPose().getX();
 		pitch += AbstractVehicle.pitchIncrement;
 		if (pitch > AbstractVehicle.maxAngle) {

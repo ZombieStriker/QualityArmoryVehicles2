@@ -1,11 +1,11 @@
 package me.zombie_striker.qav.vehicles;
 
 import com.comphenix.protocol.events.PacketEvent;
-import me.zombie_striker.qav.ItemFact;
-import me.zombie_striker.qav.ModelSize;
-import me.zombie_striker.qav.VehicleEntity;
+import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
+import me.zombie_striker.qav.util.HotbarMessager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -43,7 +43,6 @@ public abstract class AbstractVehicle {
 	private List<String> lore;
 	private double acceleration = 0.1;
 	private ModelSize size = ModelSize.BABY_ARMORSTAND_HEAD;
-	private boolean requiresfuel = false;
 	private boolean canJump = true;
 	private double maxhealth;
 	private int price;
@@ -58,6 +57,34 @@ public abstract class AbstractVehicle {
 	public AbstractVehicle(String name, int id) {
 		this.internalName = name;
 		this.id = id;
+	}
+
+	public boolean handleFuel(VehicleEntity ve, PacketEvent event) {
+		boolean shouldReturn = true;
+
+		if (this.enableFuel()) {
+			FuelItemStack.updateFuel(ve);
+			if (ve.getFuel() <= 0) {
+				event.setCancelled(true);
+				shouldReturn = false;
+				try {
+					if (event.getPlayer() != null)
+						if (!Main.useChatForMessage) {
+							try {
+								HotbarMessager.sendHotBarMessage(event.getPlayer(), MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
+							} catch (Error | Exception ignored) {
+							}
+						} else {
+							event.getPlayer().sendMessage(MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
+						}
+				} catch (Error | Exception ignored) {
+				}
+			} else {
+				ve.setFuel(ve.getFuel() - 1);
+			}
+		}
+
+		return shouldReturn;
 	}
 
 
@@ -197,7 +224,7 @@ public abstract class AbstractVehicle {
 	}
 
 	public void setEnableFuel(boolean requiresFuel) {
-		this.requiresfuel = requiresFuel;
+		this.enableFuels = requiresFuel;
 	}
 
 	public void setCanJump(boolean canJumpOnBlocks) {

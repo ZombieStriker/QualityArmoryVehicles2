@@ -30,7 +30,7 @@ public class EconHandler {
 			}
 		}
 		QAMini.DEBUG("Check has enough: " + player.getName() + " isnull=" + (econ == null));
-		return (econ.getBalance(player) >= cost);
+		return !isVault() || (econ.getBalance(player) >= cost);
 	}
 
 	public static void pay(int cost, Player player) {
@@ -40,7 +40,8 @@ public class EconHandler {
 			return;
 		} catch (Error | Exception e4) {
 		}
-		econ.withdrawPlayer(player, cost);
+		if (isVault())
+			econ.withdrawPlayer(player, cost);
 	}
 
 	public static void deposit(int cost, Player player) {
@@ -50,6 +51,11 @@ public class EconHandler {
 			return;
 		} catch (Error | Exception e4) {
 		}
-		econ.depositPlayer(player, cost);
+		if (isVault())
+			econ.depositPlayer(player, cost);
+	}
+
+	public static boolean isVault() {
+		return econ != null;
 	}
 }
