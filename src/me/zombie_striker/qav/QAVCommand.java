@@ -1,6 +1,7 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.debugmanager.DebugManager;
 import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
@@ -12,6 +13,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,6 +105,17 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 
 		}
 
+		if (args[0].equalsIgnoreCase(subcommand_debug)) {
+			if (!sender.hasPermission(PermissionHandler.PERM_DEBUG)) {
+				sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+				return true;
+			}
+
+			String toggle = DebugManager.toggleReciever(sender) ? Main.prefix + " Debugging enabled" : Main.prefix + " Debugging disabled";
+			sender.sendMessage(toggle);
+			return true;
+		}
+
 		if (args[0].equalsIgnoreCase("reload")) {
 			if (!sender.hasPermission("qualityarmoryvehicles.reload")) {
 				sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
@@ -123,13 +136,24 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 			MenuHandler.openGarage((Player) sender);
 		}
 		if (args[0].equalsIgnoreCase(subcommand_callbackAll)) {
+			if (!sender.hasPermission(PermissionHandler.PERM_CALLBACK_ALL)) {
+				sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+				return true;
+			}
+
 			for (VehicleEntity ve : new ArrayList<>(Main.vehicles)) {
-				ve.deconstruct(null, "CallbackAll");
+				if (Bukkit.getPlayer(ve.getOwner()) != null)
+					this.callback(ve, Bukkit.getPlayer(ve.getOwner()));
 			}
 			sender.sendMessage("Called back all vehicles on the server.");
 			return true;
 		}
 		if (args[0].equalsIgnoreCase(subcommand_callback)) {
+			if (!sender.hasPermission(PermissionHandler.PERM_CALLBACK)) {
+				sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+				return true;
+			}
+
 			Location loc = null;
 			if (sender instanceof Player) {
 				loc = ((Player) sender).getLocation();
@@ -143,12 +167,37 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 			}
 			for (VehicleEntity ve : new ArrayList<>(Main.vehicles)) {
 				if (ve.getDriverSeat().getLocation().distanceSquared(loc) < radius * radius)
-					ve.deconstruct(null, "Callback");
+					callback(ve, (Player) sender);
 			}
 			sender.sendMessage("Called back all vehicles within a "+radius+" radius of the player.");
 			return true;
 		}
 		return false;
+	}
+
+	public static void callback(VehicleEntity ve, Player player) {
+		callback(ve,player,"Callback");
+	}
+
+	public static void callback(VehicleEntity ve, Player player, String message) {
+		for (ItemStack item : ve.getTrunk()) {
+			if (item != null)
+				MenuHandler.giveOrDrop(player,item);
+		}
+
+		for (ItemStack item : ve.getFuels().getContents()) {
+			if (item != null)
+				MenuHandler.giveOrDrop(player,item);
+		}
+
+		ve.getFuels().clear();
+		ve.getTrunk().clear();
+
+		ve.deconstruct(player, message);
+		if(!Main.enableGarage)
+			MenuHandler.giveOrDrop(player,ItemFact.getCarItem(ve.getType()));
+		else
+			QualityArmoryVehicles.addUnlockedVehicle(player,ve.getType());
 	}
 
 	@Override

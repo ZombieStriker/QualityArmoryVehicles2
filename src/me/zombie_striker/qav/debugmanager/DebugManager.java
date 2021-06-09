@@ -28,10 +28,7 @@ public class DebugManager {
 				p.sendMessage(debugPrefix + message);
 			}
 			if (cleanEmpty) {
-				for (Player player : new ArrayList<>(playerRecievers)) {
-					if (!player.isOnline())
-						playerRecievers.remove(player);
-				}
+				playerRecievers.removeIf(player -> !player.isOnline());
 			}
 		}
 	}
@@ -45,14 +42,18 @@ public class DebugManager {
 		playerRecievers.remove(player);
 	}
 
-	public static void toggleReciever(CommandSender player) {
+	public static boolean toggleReciever(CommandSender player) {
 		if (player instanceof Player) {
 			if (playerRecievers.contains(player)) {
 				playerRecievers.remove(player);
+				return false;
 			} else {
 				playerRecievers.add((Player) player);
+				return true;
 			}
 		}
+
+		return false;
 	}
 
 	public static boolean isDebugging() {

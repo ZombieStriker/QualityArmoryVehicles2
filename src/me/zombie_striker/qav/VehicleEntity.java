@@ -269,6 +269,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 			stand.remove();
 		}
 		Main.vehicles.remove(this);
+		Main.DEBUG(this.getVehicleUUID() + " removed: " + message);
 	}
 
 	public void giveOrDrop(Player player, ItemStack[] is) {

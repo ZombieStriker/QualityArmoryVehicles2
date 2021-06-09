@@ -55,7 +55,7 @@ public class MessagesConfig {
 	public static String MESSAGE_BOUGHT_CAR = "&fYou have bought %car% for $%price%";
 	public static String MESSAGE_NOT_ENOUGH_MONEY = "&aYou do not have enough money!";
 	public static String MESSAGE_TOO_MANY_VEHICLES = "&fYou have too many vehicles spawned! Pick up some of your vehicles to use this one.";
-	public static String MESSAGE_TOO_MANY_VEHICLES_Type = "&fThis vehicle has already been spawned!";
+	public static String MESSAGE_TOO_MANY_VEHICLES_Type = "&fYou have spawned too many vehicles!";
 	public static String MESSAGE_NO_PERM_DRIVE = "&fyou do not have permission to drive this vehicle.";
 	public static String MESSAGE_NO_OWNER_NOW = "&fThis vehicle is now public. Anyone can drive it or pick it up.";
 	public static String MESSAGE_CannotPickupWhileInVehicle = "&fYou cannot pickup vehicles that are being driven.";

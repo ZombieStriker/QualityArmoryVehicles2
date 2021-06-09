@@ -1,9 +1,6 @@
 package me.zombie_striker.qav.menu;
 
-import me.zombie_striker.qav.ItemFact;
-import me.zombie_striker.qav.Main;
-import me.zombie_striker.qav.MessagesConfig;
-import me.zombie_striker.qav.VehicleEntity;
+import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.easygui.ClickData;
 import me.zombie_striker.qav.easygui.EasyGUI;
@@ -177,6 +174,7 @@ public class MenuHandler implements Listener {
 					MessagesConfig.ICONLORE_PICKUP_OWNER, MessagesConfig.ICONLORE_PICKUP_TRUNK), new EasyGUICallable() {
 				@Override
 				public void call(ClickData data) {
+					data.cancelPickup(true);
 					if (data.getClicker() == null)
 						return;
 					if(!data.getClicker().hasPermission(PermissionHandler.PERM_PICKUP)) {
@@ -201,20 +199,12 @@ public class MenuHandler implements Listener {
 							data.getClicker().sendMessage(MessagesConfig.MESSAGE_CannotPickupWhileInVehicle);
 							return;
 						}
-						if (data.getClicker().getInventory().firstEmpty() == -1) {
-							data.getClicker().sendMessage(MessagesConfig.MESSAGE_PICKUP_FULL);
-							return;
-						}
 						data.getClicker().closeInventory();
-						if(!Main.enableGarage)
-							giveOrDrop(data.getClicker(),ItemFact.getCarItem(ve.getType()));
-						else
-							QualityArmoryVehicles.addUnlockedVehicle(data.getClicker(),ve.getType());
 
-						ve.deconstruct(data.getClicker(), "pickup_menu");
-						ve.getTrunk().clear();
 						if (data.getClicker().getInventory().firstEmpty() == -1)
 							data.getClicker().sendMessage(MessagesConfig.MESSAGE_PICKUP_DROPPED);
+
+						QAVCommand.callback(ve,data.getClicker(),"pickup_menu");
 					}
 				}
 			});

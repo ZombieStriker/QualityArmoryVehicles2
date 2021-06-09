@@ -106,7 +106,7 @@ public class Main extends JavaPlugin {
 
 	public static void DEBUG(String message) {
 		if (debug)
-			Bukkit.broadcastMessage(message);
+			DebugManager.sendDebugMessages(message);
 	}
 	public static boolean isVersionHigherThan(int first, int second) {
 		return QAMini.isVersionHigherThan(first, second);
@@ -322,6 +322,7 @@ public class Main extends JavaPlugin {
 		enableCarPushing = (boolean) a("enable_PushCarsOnCrash", enableCarPushing);
 		enableEntityPushing = (boolean) a("enable_PushEntityOnCollide", enableEntityPushing);
 		useHeads = (boolean) a("enable_UseHeadsForGUI", useHeads);
+		debug = (boolean) a("ENABLE_DEBUG", debug);
 
 		enable_RequirePermToBuyVehicle = (boolean) a("enable_RequirePermToBuyVehicle", enable_RequirePermToBuyVehicle);
 
