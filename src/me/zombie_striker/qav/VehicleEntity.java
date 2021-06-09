@@ -294,6 +294,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 		return health;
 	}
 
+	public void setHealth(double health) { this.health = health; }
+
 	public void addToWhitelist(UUID uniqueId) {
 		this.whitelist.add(uniqueId);
 	}

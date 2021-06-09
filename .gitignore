@@ -123,3 +123,6 @@ server/
 # Other things
 libs/
 .idea
+
+# Legacy version
+legacy/
