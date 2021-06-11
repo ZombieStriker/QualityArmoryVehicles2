@@ -1,9 +1,12 @@
 package me.zombie_striker.qav.menu.easyguicallables;
 
+import me.zombie_striker.qav.ItemFact;
+import me.zombie_striker.qav.Main;
+import me.zombie_striker.qav.MessagesConfig;
+import me.zombie_striker.qav.UnlockedVehicle;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.easygui.ClickData;
 import me.zombie_striker.qav.easygui.EasyGUICallable;
-import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.qamini.EconHandler;
@@ -57,7 +60,7 @@ public class ShopCallable extends EasyGUICallable {
 				data.getClicker().sendMessage(MessagesConfig.MESSAGE_BOUGHT_CAR
 						.replace("%car%", ab.getDisplayname()).replace("%price%", ab.getCost() + ""));
 				if (Main.enableGarage) {
-					QualityArmoryVehicles.addUnlockedVehicle(data.getClicker(), ab);
+					QualityArmoryVehicles.addUnlockedVehicle(data.getClicker(), new UnlockedVehicle(ab,ab.getMaxHealth()));
 				} else {
 					data.getClicker().getInventory().addItem(item);
 				}

@@ -78,7 +78,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				return true;
 			}
 			if (Main.enableGarage) {
-				QualityArmoryVehicles.addUnlockedVehicle(reciever,ve);
+				QualityArmoryVehicles.addUnlockedVehicle(reciever,new UnlockedVehicle(ve,ve.getMaxHealth()));
 			} else {
 				reciever.getInventory().addItem(ItemFact.getCarItem(ve));
 			}
@@ -197,7 +197,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 		if(!Main.enableGarage)
 			MenuHandler.giveOrDrop(player,ItemFact.getCarItem(ve.getType()));
 		else
-			QualityArmoryVehicles.addUnlockedVehicle(player,ve.getType());
+			QualityArmoryVehicles.addUnlockedVehicle(player,new UnlockedVehicle(ve.getType(),ve.getHealth()));
 	}
 
 	@Override

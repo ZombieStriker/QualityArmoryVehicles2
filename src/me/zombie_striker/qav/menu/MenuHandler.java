@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -178,7 +177,6 @@ public class MenuHandler implements Listener {
 					if (data.getClicker() == null)
 						return;
 					if(!data.getClicker().hasPermission(PermissionHandler.PERM_PICKUP)) {
-						data.cancelPickup(true);
 						return;
 					}
 					VehicleEntity ve = getStoredVehicle(data.getClicker().getUniqueId());
@@ -276,7 +274,7 @@ public class MenuHandler implements Listener {
 	}
 
 	public static void openGarageToOther(final Player player, final Player target) {
-		final List<AbstractVehicle> list = QualityArmoryVehicles.unlockedVehicles(target);
+		final List<UnlockedVehicle> list = QualityArmoryVehicles.unlockedVehicles(target);
 
 		EasyGUICallable call = new EasyGUICallable() {
 			@Override
@@ -317,8 +315,8 @@ public class MenuHandler implements Listener {
 									inUse++;
 					}
 					int amountHas = 0;
-					for (AbstractVehicle alllist : list)
-						if (alllist == ab)
+					for (UnlockedVehicle alllist : list)
+						if (alllist.getVehicleType() == ab)
 							amountHas++;
 					if (inUse >= amountHas) {
 						data.getClicker().sendMessage(MessagesConfig.MESSAGE_TOO_MANY_VEHICLES_Type);
@@ -326,8 +324,9 @@ public class MenuHandler implements Listener {
 						Main.DEBUG("Player has too many vehicles.");
 						return;
 					}
-					VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(ab, data.getClicker());
-					QualityArmoryVehicles.removeUnlockedVehicle(target,ab);
+					UnlockedVehicle unlockedVehicle = QualityArmoryVehicles.findUnlockedVehicle(player, ab);
+					VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(unlockedVehicle, data.getClicker());
+					QualityArmoryVehicles.removeUnlockedVehicle(target,unlockedVehicle);
 					if (Main.garageFuel)
 						ve.setFuel(500 * 64);
 					ve.getDriverSeat().setPassenger(data.getClicker());
@@ -344,8 +343,8 @@ public class MenuHandler implements Listener {
 		EasyGUI gui = EasyGUI.generateGUIIfNoneExist(new ItemStack[size], player.getUniqueId() + MessagesConfig.MENU_GARAGE_TITLE, title, true, true);
 		storedLookAt.remove(player.getUniqueId());
 		int i = 0;
-		for (AbstractVehicle ab : list) {
-			gui.updateButton(i, ItemFact.getCarItem(ab), call);
+		for (UnlockedVehicle ab : list) {
+			gui.updateButton(i, ItemFact.getCarItem(ab.getVehicleType()), call);
 			i++;
 		}
 		player.openInventory(gui.getPageByID(0));

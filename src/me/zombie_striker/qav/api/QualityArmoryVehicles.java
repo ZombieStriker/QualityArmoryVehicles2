@@ -3,6 +3,7 @@ package me.zombie_striker.qav.api;
 import me.zombie_striker.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.ItemFact;
 import me.zombie_striker.qav.Main;
+import me.zombie_striker.qav.UnlockedVehicle;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Location;
@@ -19,8 +20,8 @@ import org.bukkit.util.Vector;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class QualityArmoryVehicles {
@@ -154,6 +155,12 @@ public class QualityArmoryVehicles {
 		return false;
 	}
 
+	public static VehicleEntity spawnVehicle(UnlockedVehicle ab, Player player) {
+		VehicleEntity vehicleEntity = new VehicleEntity(ab.getVehicleType(),player.getLocation(),player.getUniqueId());
+		vehicleEntity.setHealth(ab.getHealth());
+		vehicleEntity.spawn();
+		return vehicleEntity;
+	}
 	public static VehicleEntity spawnVehicle(AbstractVehicle ab, Player player) {
 		VehicleEntity vehicleEntity = new VehicleEntity(ab,player.getLocation(),player.getUniqueId());
 		vehicleEntity.spawn();
@@ -186,23 +193,19 @@ public class QualityArmoryVehicles {
 		return passagerSeat;
 	}
 
-	public static List<AbstractVehicle> unlockedVehicles(OfflinePlayer player) {
-		File playersFile = new File(Main.playerUnlock, player.getUniqueId().toString() + ".yml");
+	public static List<UnlockedVehicle> unlockedVehicles(OfflinePlayer player) {
+		File playersFile = new File(Main.playerUnlock, player.getUniqueId() + ".yml");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
-		List<AbstractVehicle> list = new ArrayList<AbstractVehicle>();
-		for (String s : c.getStringList("unlockedVehicles")) {
-			list.add(QualityArmoryVehicles.getVehicle(s));
-		}
-		return list;
+		return (List<UnlockedVehicle>) c.getList("unlockedVehicles");
 	}
 
-	public static void addUnlockedVehicle(Player player, AbstractVehicle ve) {
+	public static void addUnlockedVehicle(Player player, UnlockedVehicle ve) {
 		File playersFile = new File(Main.playerUnlock, player.getUniqueId().toString() + ".yml");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
-		List<String> list = c.getStringList("unlockedVehicles");
+		List<UnlockedVehicle> list = (List<UnlockedVehicle>) c.getList("unlockedVehicles", new ArrayList<>());
 		if (list == null)
-			list = new ArrayList<String>();
-		list.add(ve.getName());
+			list = new ArrayList<>();
+		list.add(ve);
 		c.set("unlockedVehicles", list);
 		try {
 			c.save(playersFile);
@@ -212,16 +215,46 @@ public class QualityArmoryVehicles {
 		}
 	}
 
-	public static void removeUnlockedVehicle(Player player, AbstractVehicle ve) {
-		File playersFile = new File(Main.playerUnlock, player.getUniqueId().toString() + ".yml");
-		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
-		List<String> list = c.getStringList("unlockedVehicles");
+	public static File getUnlockedVehiclesFile(Player player) {
+		return new File(Main.playerUnlock, player.getUniqueId() + ".yml");
+	}
+
+	public static UnlockedVehicle findUnlockedVehicle(Player player, AbstractVehicle ve) {
+		File file = getUnlockedVehiclesFile(player);
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		List<UnlockedVehicle> list = (List<UnlockedVehicle>) c.getList("unlockedVehicles", new ArrayList<>());
 		if (list == null)
-			list = new ArrayList<String>();
-		list.remove(ve.getName());
+			list = new ArrayList<>();
+		Optional<UnlockedVehicle> first = list.stream()
+				.filter(i -> i.getVehicleType().getName().equals(ve.getName()))
+				.findFirst();
+		return first.orElse(null);
+	}
+
+	public static void removeUnlockedVehicle(Player player, AbstractVehicle ve) {
+		File playersFile = getUnlockedVehiclesFile(player);
+		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
+		List<UnlockedVehicle> list = new ArrayList<>((List<UnlockedVehicle>) c.getList("unlockedVehicles"));
+		UnlockedVehicle unlockedVehicle = findUnlockedVehicle(player, ve);
+		list.remove(unlockedVehicle);
 		c.set("unlockedVehicles", list);
 		try {
 			c.save(playersFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void removeUnlockedVehicle(Player player, UnlockedVehicle ve) {
+		File file = getUnlockedVehiclesFile(player);
+		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+		List<UnlockedVehicle> list = (List<UnlockedVehicle>) c.getList("unlockedVehicles", new ArrayList<>());
+		if (list == null)
+			list = new ArrayList<>();
+		list.remove(ve);
+		c.set("unlockedVehicles", list);
+		try {
+			c.save(file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
