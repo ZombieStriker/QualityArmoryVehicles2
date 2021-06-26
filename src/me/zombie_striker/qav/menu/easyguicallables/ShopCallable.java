@@ -60,7 +60,7 @@ public class ShopCallable extends EasyGUICallable {
 				data.getClicker().sendMessage(MessagesConfig.MESSAGE_BOUGHT_CAR
 						.replace("%car%", ab.getDisplayname()).replace("%price%", ab.getCost() + ""));
 				if (Main.enableGarage) {
-					QualityArmoryVehicles.addUnlockedVehicle(data.getClicker(), new UnlockedVehicle(ab,ab.getMaxHealth()));
+					QualityArmoryVehicles.addUnlockedVehicle(data.getClicker(), new UnlockedVehicle(ab,ab.getMaxHealth(),true));
 				} else {
 					data.getClicker().getInventory().addItem(item);
 				}

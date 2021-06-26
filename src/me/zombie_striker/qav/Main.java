@@ -52,6 +52,7 @@ public class Main extends JavaPlugin {
 
 	public static String PASSAGER_PREFIX = "QA-Passager=";
 	public static boolean enableGarage=false;
+	public static boolean enableGarageCallback=false;
 	public static boolean useChatForMessage=false;
 	public static String VEHICLEPREFIX = "(QAV)";
 	public ProtocolManager protocolManager;
@@ -307,6 +308,7 @@ public class Main extends JavaPlugin {
 		enableVehicleLimiter = (boolean) a("enable_VehicleLimiter", enableVehicleLimiter);
 		allowVehiclePickup = (boolean) a("enable_PickupVehicles", allowVehiclePickup);
 		enableGarage = (boolean) a("enable_UnlockableVehicles", enableGarage);
+		enableGarageCallback = (boolean) a("enable_GarageCallback", enableGarageCallback);
 		requirePermissionToDrive = (boolean) a("enable_RequirePermsToDriveType", requirePermissionToDrive);
 		setOwnerOnPlacement = (boolean) a("enable_SetOwnerOnVehicleSpawn", setOwnerOnPlacement);
 		enableVehicleDamage = (boolean) a("enable_VehicleDamage", enableVehicleDamage);

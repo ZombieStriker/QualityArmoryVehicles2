@@ -318,15 +318,36 @@ public class MenuHandler implements Listener {
 					for (UnlockedVehicle alllist : list)
 						if (alllist.getVehicleType() == ab)
 							amountHas++;
+
+					UnlockedVehicle unlockedVehicle = QualityArmoryVehicles.findUnlockedVehicle(player, ab);
+					if (!unlockedVehicle.isInGarage()) {
+						data.getClicker().closeInventory();
+						QualityArmoryVehicles.removeUnlockedVehicle(target,unlockedVehicle);
+						Main.vehicles
+								.stream()
+								.filter((entity) -> entity.getOwner().equals(target.getUniqueId()))
+								.filter((entity) -> entity.getType().getName().equals(unlockedVehicle.getVehicleType().getName()))
+								.findFirst()
+								.ifPresent((ve) -> QAVCommand.callback(ve,target,"Garage callback"));
+						return;
+					}
+
 					if (inUse >= amountHas) {
 						data.getClicker().sendMessage(MessagesConfig.MESSAGE_TOO_MANY_VEHICLES_Type);
 						data.cancelPickup(true);
 						Main.DEBUG("Player has too many vehicles.");
 						return;
 					}
-					UnlockedVehicle unlockedVehicle = QualityArmoryVehicles.findUnlockedVehicle(player, ab);
+
 					VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(unlockedVehicle, data.getClicker());
-					QualityArmoryVehicles.removeUnlockedVehicle(target,unlockedVehicle);
+					if (!Main.enableGarageCallback)
+						QualityArmoryVehicles.removeUnlockedVehicle(target,unlockedVehicle);
+					else {
+						QualityArmoryVehicles.removeUnlockedVehicle(target,unlockedVehicle);
+						unlockedVehicle.setInGarage(false);
+						QualityArmoryVehicles.addUnlockedVehicle(target,unlockedVehicle);
+					}
+
 					if (Main.garageFuel)
 						ve.setFuel(500 * 64);
 					ve.getDriverSeat().setPassenger(data.getClicker());

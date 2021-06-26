@@ -78,11 +78,20 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				return true;
 			}
 			if (Main.enableGarage) {
-				QualityArmoryVehicles.addUnlockedVehicle(reciever,new UnlockedVehicle(ve,ve.getMaxHealth()));
+				QualityArmoryVehicles.addUnlockedVehicle(reciever,new UnlockedVehicle(ve,ve.getMaxHealth(), true));
 			} else {
 				reciever.getInventory().addItem(ItemFact.getCarItem(ve));
 			}
 			sender.sendMessage(Main.prefix + " Gave " + ChatColor.GOLD + reciever.getName() + " " + ve.getName() + ".");
+			return true;
+		}
+		if (args[0].equalsIgnoreCase("list")) {
+			StringBuilder builder = new StringBuilder();
+			for (AbstractVehicle vehicleType : Main.vehicleTypes) {
+				builder.append(vehicleType.getName()).append(", ");
+			}
+
+			sender.sendMessage(Main.prefix + " Loaded vehicles: " + builder.substring(0, builder.length()-2));
 			return true;
 		}
 		if (args[0].equalsIgnoreCase(subcommand_removeNearbyVehicles)) {
@@ -197,7 +206,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 		if(!Main.enableGarage)
 			MenuHandler.giveOrDrop(player,ItemFact.getCarItem(ve.getType()));
 		else
-			QualityArmoryVehicles.addUnlockedVehicle(player,new UnlockedVehicle(ve.getType(),ve.getHealth()));
+			QualityArmoryVehicles.addUnlockedVehicle(player,new UnlockedVehicle(ve.getType(),ve.getHealth(), true));
 	}
 
 	@Override
@@ -225,6 +234,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 			a(a, subcommand_addvehicle, args[0]);
 			a(a, subcommand_removevehicle, args[0]);
 			a(a, subcommand_removebugged, args[0]);
+			a(a, "list", args[0]);
 			return a;
 		}
 		if (args.length == 2) {
@@ -274,6 +284,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 		sender.sendMessage("/QAV " + subcommand_setAsPass + ChatColor.GRAY + MessagesConfig.subcommand_setAsPass);
 
 		sender.sendMessage("/QAV " + subcommand_Shop + ChatColor.GRAY + MessagesConfig.subcommand_Shop);
+		sender.sendMessage("/QAV " + "list" + ChatColor.GRAY + " : Get loaded vehicles list");
 		if (Main.enableGarage)
 			sender.sendMessage("/QAV " + subcommand_garage + ChatColor.GRAY + MessagesConfig.subcommand_garage);
 		sender.sendMessage(
