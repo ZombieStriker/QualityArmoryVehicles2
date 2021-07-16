@@ -114,6 +114,12 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 
 		}
 
+		if (args[0].equalsIgnoreCase("license")) {
+			sender.sendMessage(Main.prefix + " This plugin has been licensed to " + ChatColor.YELLOW + " https://www.spigotmc.org/members/" + Main.license);
+
+			return true;
+		}
+
 		if (args[0].equalsIgnoreCase(subcommand_debug)) {
 			if (!sender.hasPermission(PermissionHandler.PERM_DEBUG)) {
 				sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
@@ -235,6 +241,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 			a(a, subcommand_removevehicle, args[0]);
 			a(a, subcommand_removebugged, args[0]);
 			a(a, "list", args[0]);
+			a(a, "license", args[0]);
 			return a;
 		}
 		if (args.length == 2) {
