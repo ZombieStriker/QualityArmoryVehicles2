@@ -61,8 +61,9 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				return true;
 			}
 			String name = args[1];
+
 			AbstractVehicle ve = QualityArmoryVehicles.getVehicle(name);
-			if (ve == null) {
+			if (ve == null && !name.equalsIgnoreCase("repair")) {
 				sender.sendMessage("Vehicle does not exist.");
 				return true;
 			}
@@ -77,6 +78,12 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				sender.sendMessage("Player \"" + args[2] + "\"is not on the server.");
 				return true;
 			}
+
+			if (name.equalsIgnoreCase("repair")) {
+				reciever.getInventory().addItem(Main.repairItem.asItem());
+				return true;
+			}
+
 			if (Main.enableGarage) {
 				QualityArmoryVehicles.addUnlockedVehicle(reciever,new UnlockedVehicle(ve,ve.getMaxHealth(), true));
 			} else {
@@ -115,8 +122,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 		}
 
 		if (args[0].equalsIgnoreCase("license")) {
-			sender.sendMessage(Main.prefix + " This plugin has been licensed to " + ChatColor.YELLOW + " https://www.spigotmc.org/members/" + Main.license);
-
+			sender.sendMessage(String.format("%s Running %s v%s. Licensed to %s", Main.prefix, main.getName(), main.getDescription().getVersion(), ChatColor.YELLOW + " https://www.spigotmc.org/members/" + Main.license));
 			return true;
 		}
 
@@ -250,6 +256,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				for (AbstractVehicle s : Main.vehicleTypes) {
 					a(a, s.getName(), args[1]);
 				}
+				a(a, "repair", args[1]);
 				return a;
 			} else if (args[0].equalsIgnoreCase(subcommand_addvehicle) || args[0].equalsIgnoreCase(subcommand_removevehicle)) {
 				ArrayList<String> a = new ArrayList<String>();

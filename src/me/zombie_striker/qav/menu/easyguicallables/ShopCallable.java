@@ -8,6 +8,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.easygui.ClickData;
 import me.zombie_striker.qav.easygui.EasyGUICallable;
 import me.zombie_striker.qav.fuel.FuelItemStack;
+import me.zombie_striker.qav.fuel.RepairItemStack;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
@@ -22,6 +23,23 @@ public class ShopCallable extends EasyGUICallable {
 		data.cancelPickup(true);
 			AbstractVehicle ab = QualityArmoryVehicles.getVehicleByItem(data.getClickedItem());
 			if(ab==null){
+				if (Main.repairItem.isItem(data.getClickedItem())) {
+					RepairItemStack repairItem = Main.repairItem;
+
+					if (!EconHandler.hasEnough(repairItem.getCost(), data.getClicker())) {
+						data.getClicker().sendMessage(MessagesConfig.MESSAGE_NOT_ENOUGH_MONEY);
+						return;
+					}
+
+					if (data.getClicker().getInventory().firstEmpty() == -1) {
+						data.getClicker().sendMessage("Your inventory is full.");
+						Main.DEBUG("inventory was full");
+						return;
+					}
+
+					EconHandler.pay(repairItem.getCost(), data.getClicker());
+					data.getClicker().getInventory().addItem(repairItem.asItem());
+				}
 				if(FuelItemStack.getFuelForItem(data.getClickedItem()) > 0){
 					FuelItemStack fuelItemStack = FuelItemStack.getFuelItemInstance(data.getClickedItem());
 					if (EconHandler.hasEnough(fuelItemStack.getCost(), data.getClicker())) {

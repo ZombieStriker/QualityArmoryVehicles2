@@ -46,7 +46,6 @@ public class FuelItemStack {
 		this.cost = cost;
 	}
 
-	@SuppressWarnings("deprecation")
 	public boolean isFuel(ItemStack check) {
 		if (check.getType() != material)
 			return false;

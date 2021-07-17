@@ -3,6 +3,7 @@ package me.zombie_striker.qav;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
+import me.zombie_striker.qav.api.events.VehicleRepairEvent;
 import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.vehicles.AbstractCar;
@@ -34,21 +35,45 @@ public class QAVListener implements Listener {
 		this.main = main;
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onClickVehicle(PlayerInteractEvent e) {
-		if (e.getPlayer().getVehicle() == null) {
-			if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				VehicleEntity ve = QualityArmoryVehicles.getVehiclePlayerLookingAt(e.getPlayer());
-				if (ve != null) {
-					if (e.getPlayer().isSneaking()) {
-						MenuHandler.openOverview(e.getPlayer(), ve);
-					} else {
-						ve.getDriverSeat().setPassenger(e.getPlayer());
-						return;
-					}
-				}
-			}
+		if (e.getPlayer().getVehicle() != null) {
+			return;
 		}
+
+		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			VehicleEntity ve = QualityArmoryVehicles.getVehiclePlayerLookingAt(e.getPlayer());
+			if (ve == null) {
+				return;
+			}
+
+			e.setCancelled(true);
+
+			ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
+
+			if (e.getPlayer().hasPermission("qualityarmoryvehicles.repair") && Main.repairItem.isItem(item)) {
+
+				if (ve.getHealth() >= ve.getType().getMaxHealth()) {
+					return;
+				}
+
+				VehicleRepairEvent event = new VehicleRepairEvent(e.getPlayer(), item, ve);
+				Bukkit.getPluginManager().callEvent(event);
+				if (event.isCancelled()) return;
+
+				ve.setHealth(ve.getType().getMaxHealth());
+				e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.MESSAGE_REPAIR));
+				return;
+			}
+
+			if (e.getPlayer().isSneaking()) {
+				MenuHandler.openOverview(e.getPlayer(), ve);
+			}
+
+			ve.getDriverSeat().setPassenger(e.getPlayer());
+		}
+
 	}
 
 	@EventHandler

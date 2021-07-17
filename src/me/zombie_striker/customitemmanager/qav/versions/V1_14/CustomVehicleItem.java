@@ -7,7 +7,6 @@ import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.ModelSize;
 import me.zombie_striker.qav.VehicleTypes;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import me.zombie_striker.qav.config.ComplexAttatchmentsYML;
 import me.zombie_striker.qav.config.VehicleYML;
 import me.zombie_striker.qav.finput.FInputManager;
 import org.bukkit.Material;

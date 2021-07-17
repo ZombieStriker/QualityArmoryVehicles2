@@ -36,6 +36,7 @@ permissions:
       qualityarmoryvehicles.removevehicle: true
       qualityarmoryvehicles.removebugged: true
       qualityarmoryvehicles.garage.other: true
+      qualityarmoryvehicles.repair: true
 
   qualityarmoryvehicles.default:
     default: true

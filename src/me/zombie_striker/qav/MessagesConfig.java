@@ -11,8 +11,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.File;
 import java.io.IOException;
 
-//import me.zombie_striker.pluginconstructor.HotbarMessager;
-
 public class MessagesConfig {
 
 	public static String MENU_OVERVIEW_TITLE = "&6%cartype%:&f Overview";
@@ -60,6 +58,7 @@ public class MessagesConfig {
 	public static String MESSAGE_NO_OWNER_NOW = "&fThis vehicle is now public. Anyone can drive it or pick it up.";
 	public static String MESSAGE_CannotPickupWhileInVehicle = "&fYou cannot pickup vehicles that are being driven.";
 	public static String MESSAGE_HOTBAR_OUTOFFUEL = "&fYour vehicle is out of fuel. Find coal and Shift-click the car";
+	public static String MESSAGE_REPAIR = "&fYour vehicle has been repaired successfully.";
 	public static String subcommand_GiveVehicle = " <car> <?:player>: Gives you or another player a car";
 	public static String subcommand_SpawnVehicle = " <car> : Spawns a car at your location";
 	public static String subcommand_removeNearbyVehicles = " <distance> : Removes all cars nearby";
@@ -202,7 +201,8 @@ public class MessagesConfig {
 		MESSAGE_SIGN_GARAGE = (
 				a("Messages.sign.QAVGarage", MESSAGE_SIGN_GARAGE));
 
-
+		MESSAGE_REPAIR = (
+				a("Messages.repair", MESSAGE_REPAIR));
 
 		b();
 	}

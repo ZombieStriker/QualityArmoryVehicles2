@@ -1,6 +1,5 @@
 package me.zombie_striker.qav.finput;
 
-import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.qamini.ExplosionHandler;

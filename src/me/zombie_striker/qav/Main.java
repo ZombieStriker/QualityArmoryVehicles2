@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.google.common.io.Files;
 import me.zombie_striker.customitemmanager.AbstractItem;
 import me.zombie_striker.customitemmanager.CustomItemManager;
 import me.zombie_striker.customitemmanager.qav.versions.V1_13.CustomVehicleItem;
@@ -16,6 +17,7 @@ import me.zombie_striker.qav.debugmanager.DebugManager;
 import me.zombie_striker.qav.easygui.EasyGUI;
 import me.zombie_striker.qav.finput.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
+import me.zombie_striker.qav.fuel.RepairItemStack;
 import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
@@ -71,7 +73,10 @@ public class Main extends JavaPlugin {
 
 	public static HashMap<Material, Double> customSpeedModifier = new HashMap<>();
 	public static File playerUnlock;
+	public static File items;
 	public static File fuelYML;
+	public static File repairYML;
+	public static RepairItemStack repairItem;
 	public static int maxYheightForVehicles = 256;
 	public static boolean enableVehicleLimiter = false;
 	public static boolean allowVehiclePickup = true;
@@ -275,13 +280,45 @@ public class Main extends JavaPlugin {
 			QAMini.verboseLogging = qa.getConfig().getBoolean("verboseItemLogging");
 		}
 
-		fuelYML = new File(QualityArmoryVehicles.getPlugin().getDataFolder(), "fuels.yml");
+		items = new File(this.getDataFolder(), "items");
+
+		if (!items.exists())
+			items.mkdirs();
+
+		fuelYML = new File(items, "fuels.yml");
+
+		File oldFuel = new File(this.getDataFolder(), "fuels.yml");
+		if (oldFuel.exists()) {
+			try {
+				Files.move(oldFuel, fuelYML);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 		if (!fuelYML.exists())
 			try {
 				fuelYML.createNewFile();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+
+		repairYML = new File(items, "repair.yml");
+		if (!repairYML.exists())
+			try {
+				repairYML.createNewFile();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+
+		try {
+			if (repairItem == null)
+				repairItem = RepairItemStack.loadFromFile();
+
+			repairItem.reload();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		/*
 		 * a("fuel_ratios.COAL", 500); a("fuel_ratios.COAL_BLOCK", 500 * 9);

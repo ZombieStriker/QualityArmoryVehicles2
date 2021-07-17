@@ -1,9 +1,7 @@
 package me.zombie_striker.qav.util;
 
-import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;

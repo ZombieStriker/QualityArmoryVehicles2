@@ -1,6 +1,5 @@
 package me.zombie_striker.customitemmanager;
 
-import me.zombie_striker.customitemmanager.MaterialStorage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

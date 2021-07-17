@@ -245,6 +245,11 @@ public class MenuHandler implements Listener {
 		List<ItemStack> buttons = new ArrayList<ItemStack>();
 		ShopCallable button = new ShopCallable();
 		int i = 0;
+		if (Main.repairItem.shouldBeInShop()) {
+			buttons.add(ItemFact.a(Main.repairItem.getMaterial(), Main.repairItem.getData(), true, Main.repairItem.getName(),
+					ChatColor.GOLD + "Cost: " + Main.repairItem.getCost()));
+			callables.add(button);
+		}
 		for (FuelItemStack fuel : FuelItemStack.getFuels()) {
 			if (fuel.isAllowedInShop()) {
 				buttons.add(ItemFact.a(fuel.getMaterial(), fuel.getData(), true, fuel.getDisplayname(),
