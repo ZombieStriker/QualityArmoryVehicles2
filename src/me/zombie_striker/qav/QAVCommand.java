@@ -8,6 +8,7 @@ import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -114,6 +115,30 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 					}
 				}
 			}
+		}
+
+		if (args[0].equalsIgnoreCase(subcommand_SpawnVehicle)) {
+			if (!sender.hasPermission(PermissionHandler.PERM_SPAWN)) {
+				sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
+				return true;
+			}
+			if (args.length < 2) {
+				sender.sendMessage("Usage /qav " + subcommand_SpawnVehicle + " <vehicle>");
+				return true;
+			}
+			if (!(sender instanceof Player)) return true;
+
+			String name = args[1];
+
+			AbstractVehicle ab = QualityArmoryVehicles.getVehicle(name);
+			if (ab == null) {
+				sender.sendMessage("Vehicle does not exist.");
+				return true;
+			}
+
+			VehicleEntity ve = new VehicleEntity(ab, ((Player)sender).getLocation().getBlock().getRelative(BlockFace.UP).getLocation(), ((Player) sender).getUniqueId());
+			ve.spawn();
+			return true;
 		}
 
 
