@@ -269,9 +269,9 @@ public class MenuHandler implements Listener {
 					}
 			}
 		}
-		EasyGUI gui = EasyGUI.generateGUIIfNoneExist(buttons.toArray(new ItemStack[buttons.size()]),
+		EasyGUI gui = EasyGUI.generateGUIIfNoneExist(buttons.toArray(new ItemStack[0]),
 				MessagesConfig.MENU_SHOP_TITLE, false);
-		gui.updateAllCallables(callables.toArray(new EasyGUICallable[callables.size()]));
+		gui.updateAllCallables(callables.toArray(new EasyGUICallable[0]));
 
 		storedLookAt.remove(player.getUniqueId());
 		if (gui.getPageByID(0) != null)

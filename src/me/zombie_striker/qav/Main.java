@@ -46,7 +46,6 @@ public class Main extends JavaPlugin {
 	public static boolean verboseLogging = false;
 
 	public static String prefix = ChatColor.GOLD + "[QA-Vehicles]" + ChatColor.WHITE;
-	public static String license = "%%__USER__%%";
 
 	public static QAMini minihandler = null;// = new QAMini();
 

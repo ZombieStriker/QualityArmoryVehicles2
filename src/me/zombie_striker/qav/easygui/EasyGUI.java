@@ -13,7 +13,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class EasyGUI {
 
@@ -67,7 +69,6 @@ public class EasyGUI {
 
 		this.title = title;
 		this.displayname = displayname;
-		lists.put(title, this);
 
 		loadedInventories = new Inventory[(((items.length / (9 * 5)) + 1))];
 		for (int page = 0; page < (items.length / (45)) + 1; page++) {
@@ -108,16 +109,21 @@ public class EasyGUI {
 	}
 
 	public static EasyGUI generateGUIIfNoneExist(ItemStack[] items, String title, String displayname, boolean removeEmptySlots) {
-		if (lists.containsKey(title))
+		EasyGUI gui = new EasyGUI(items, title, displayname, !removeEmptySlots);
+
+		if (lists.containsKey(title) && lists.get(title).equals(gui))
 			return lists.get(title);
-		return new EasyGUI(items, title, displayname, !removeEmptySlots);
+		lists.put(title,gui);
+		return gui;
 	}
 
 	public static EasyGUI generateGUIIfNoneExist(ItemStack[] items, String title, String displayname, boolean removeEmptySlots, boolean k) {
 		if (!k)
 			if (lists.containsKey(title))
 				return lists.get(title);
-		return new EasyGUI(items, title, displayname, !removeEmptySlots);
+		EasyGUI gui = new EasyGUI(items, title, displayname, !removeEmptySlots);
+		lists.put(title,gui);
+		return gui;
 	}
 
 	public static EasyGUI generateGUIIfNoneExist(int maxAmountAllowedItems, String title, boolean removeEmptySlots) {
@@ -136,7 +142,10 @@ public class EasyGUI {
 			maxAmountAllowedItems = (((maxAmountAllowedItems / 9) + 1) * 9);
 		if (maxAmountAllowedItems == 0)
 			maxAmountAllowedItems = 9;
-		return new EasyGUI(new ItemStack[maxAmountAllowedItems], title, displayname, !removeEmptySlots);
+
+		EasyGUI gui = new EasyGUI(new ItemStack[maxAmountAllowedItems], title, displayname, !removeEmptySlots);
+		lists.put(title, gui);
+		return gui;
 	}
 
 	public static EasyGUI getEasyGUIByName(String title) {
@@ -195,11 +204,7 @@ public class EasyGUI {
 	}
 
 	public void updateAllCallables(EasyGUICallable... callables) {
-		int i = 0;
-		for (EasyGUICallable c : callables) {
-			buttons[i] = c;
-			i++;
-		}
+		buttons = callables;
 	}
 
 	public int getPageIDFromInventory(Inventory inventory) {
@@ -256,5 +261,21 @@ public class EasyGUI {
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		EasyGUI easyGUI = (EasyGUI) o;
+		return Arrays.equals(items, easyGUI.items) && Objects.equals(title, easyGUI.title) && Objects.equals(displayname, easyGUI.displayname) && Arrays.equals(loadedInventories, easyGUI.loadedInventories);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(title, displayname);
+		result = 31 * result + Arrays.hashCode(items);
+		result = 31 * result + Arrays.hashCode(loadedInventories);
+		return result;
 	}
 }

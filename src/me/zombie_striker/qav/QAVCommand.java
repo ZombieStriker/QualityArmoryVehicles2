@@ -4,6 +4,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.debugmanager.DebugManager;
 import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.perms.PermissionHandler;
+import me.zombie_striker.qav.premium.PremiumHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -147,7 +148,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 		}
 
 		if (args[0].equalsIgnoreCase("license")) {
-			sender.sendMessage(String.format("%s Running %s v%s. Licensed to %s", Main.prefix, main.getName(), main.getDescription().getVersion(), ChatColor.YELLOW + " https://www.spigotmc.org/members/" + Main.license));
+			PremiumHandler.sendMessage(sender);
 			return true;
 		}
 

@@ -51,7 +51,6 @@ public abstract class AbstractVehicle {
 	private boolean playSoundsDriving;
 	private float soundVolume = 1;
 	private int trunksize;
-	private boolean isAllowedInShop = true;
 	private boolean enableFuels = false;
 
 	public AbstractVehicle(String name, int id) {
@@ -409,7 +408,7 @@ public abstract class AbstractVehicle {
 	}
 
 	public boolean isAllowedInShop() {
-		return isAllowedInShop;
+		return inShop;
 	}
 
 	public int getCost() {
@@ -436,4 +435,38 @@ public abstract class AbstractVehicle {
 		this.passagerOffset = sizes;
 	}
 
+	@Override
+	public String toString() {
+		return "AbstractVehicle{" +
+				"widthRadius=" + widthRadius +
+				", height=" + height +
+				", internalName='" + internalName + '\'' +
+				", bodyFix=" + bodyFix +
+				", rotationDelta=" + rotationDelta +
+				", maxSpeed=" + maxSpeed +
+				", maxBackupSpeed=" + maxBackupSpeed +
+				", destructable=" + destructable +
+				", disableMeleeDamage=" + disableMeleeDamage +
+				", disableProjectileDamage=" + disableProjectileDamage +
+				", jumphiehgt=" + jumphiehgt +
+				", passagerOffset=" + passagerOffset +
+				", id=" + id +
+				", material=" + material +
+				", vehicleModel=" + vehicleModel +
+				", center=" + center +
+				", displayname='" + displayname + '\'' +
+				", lore=" + lore +
+				", acceleration=" + acceleration +
+				", size=" + size +
+				", canJump=" + canJump +
+				", maxhealth=" + maxhealth +
+				", price=" + price +
+				", inShop=" + inShop +
+				", sound='" + sound + '\'' +
+				", playSoundsDriving=" + playSoundsDriving +
+				", soundVolume=" + soundVolume +
+				", trunksize=" + trunksize +
+				", enableFuels=" + enableFuels +
+				'}';
+	}
 }

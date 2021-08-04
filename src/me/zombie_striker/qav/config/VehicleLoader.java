@@ -5,6 +5,7 @@ import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.ModelSize;
 import me.zombie_striker.qav.VehicleTypes;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.exceptions.InvalidVehicleException;
 import me.zombie_striker.qav.qamini.QAMini;
 import me.zombie_striker.qav.vehicles.*;
 import org.bukkit.ChatColor;
@@ -103,6 +104,8 @@ public class VehicleLoader {
 			case TRAIN:
 				vehicle = new AbstractTrain(name,id);
 				break;
+			default:
+				throw new InvalidVehicleException("Vehicle type does not exist.");
 		}
 		if (c.contains("canDeconstructByEnvironment")) {
 			vehicle.setDeconstructable(c.getBoolean("canDeconstructByEnvironment"));
