@@ -282,6 +282,12 @@ public class VehicleEntity implements ConfigurationSerializable {
 		return whitelist;
 	}
 
+	public boolean allowUserPassager(UUID uuid) {
+		if (allowsPassagers)
+			return true;
+		return whitelist == null || whitelist.contains(uuid);
+	}
+
 	public boolean allowsPassagers() {
 		return allowsPassagers;
 	}
@@ -312,6 +318,10 @@ public class VehicleEntity implements ConfigurationSerializable {
 		return passagers.get(i);
 	}
 
+	public HashMap<Integer, Entity> getPassagers() {
+		return passagers;
+	}
+
 	public void updateSeats() {
 		for (Map.Entry<Integer, Entity> e : new ArrayList<>(passagers.entrySet())) {
 			if (e.getValue().getPassenger() == null) {
@@ -319,6 +329,15 @@ public class VehicleEntity implements ConfigurationSerializable {
 				e.getValue().remove();
 			}
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public int getFirstSeat() {
+		for (Map.Entry<Integer,Entity> entry : passagers.entrySet()) {
+			if (entry.getValue().getPassenger() == null)
+				return entry.getKey();
+		}
+		return -1;
 	}
 
 	public void addPassager(int seatID, Entity seat) {

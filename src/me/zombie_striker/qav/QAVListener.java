@@ -5,6 +5,7 @@ import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
 import me.zombie_striker.qav.api.events.VehicleRepairEvent;
 import me.zombie_striker.qav.menu.MenuHandler;
+import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.vehicles.AbstractCar;
 import me.zombie_striker.qav.vehicles.AbstractHelicopter;
@@ -111,16 +112,48 @@ public class QAVListener implements Listener {
 
 	@EventHandler
 	public void onManipulate(PlayerArmorStandManipulateEvent e) {
-		if (e.getPlayer().getVehicle() == null) {
-			VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(e.getRightClicked());
-			if (ve != null) {
-				e.setCancelled(true);
-				if (e.getPlayer().isSneaking()) {
+		VehicleEntity ve = null;
+		if (QualityArmoryVehicles.isPassager(e.getRightClicked())) {
+
+			for (VehicleEntity ve2 : Main.vehicles) {
+				if (ve2.getPassagers().containsValue(e.getRightClicked())) {
+					ve = ve2;
+					break;
+				}
+			}
+
+		} else if (QualityArmoryVehicles.isVehicle(e.getRightClicked())) {
+			ve = QualityArmoryVehicles.getVehicleEntityByEntity(e.getRightClicked());
+		}
+
+		if (ve == null) {
+			return;
+		}
+
+		e.setCancelled(true);
+		if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+			if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
+				if (e.getPlayer().hasPermission(PermissionHandler.PERM_OPEN_VEHICLE_GUI)) {
 					MenuHandler.openOverview(e.getPlayer(), ve);
 				} else {
-					ve.getDriverSeat().setPassenger(e.getPlayer());
-					return;
+					e.getPlayer()
+							.sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
 				}
+			} else {
+				if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
+					QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(),
+							ve.allowUserDriver(e.getPlayer().getUniqueId()));
+				} else {
+					e.getPlayer()
+							.sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
+				}
+			}
+		} else if (e.getPlayer().hasPermission(PermissionHandler.PERM_OVERRIDE_WHITELIST)) {
+			if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
+				if (ve.getDriverSeat().getPassenger() == null)
+					ve.getDriverSeat().setPassenger(e.getPlayer());
+			} else {
+				e.getPlayer().sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
 			}
 		}
 	}

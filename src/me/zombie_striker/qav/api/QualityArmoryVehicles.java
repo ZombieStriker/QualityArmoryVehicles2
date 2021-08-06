@@ -1,13 +1,15 @@
 package me.zombie_striker.qav.api;
 
 import me.zombie_striker.customitemmanager.MaterialStorage;
-import me.zombie_striker.qav.ItemFact;
-import me.zombie_striker.qav.Main;
-import me.zombie_striker.qav.UnlockedVehicle;
-import me.zombie_striker.qav.VehicleEntity;
+import me.zombie_striker.qav.*;
+import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
+import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
@@ -156,7 +158,7 @@ public class QualityArmoryVehicles {
 	}
 
 	public static VehicleEntity spawnVehicle(UnlockedVehicle ab, Player player) {
-		VehicleEntity vehicleEntity = new VehicleEntity(ab.getVehicleType(),player.getLocation(),player.getUniqueId());
+		VehicleEntity vehicleEntity = new VehicleEntity(ab.getVehicleType(),player.getLocation().getBlock().getRelative(BlockFace.UP).getLocation(),player.getUniqueId());
 		vehicleEntity.setHealth(ab.getHealth());
 		vehicleEntity.spawn();
 		return vehicleEntity;
@@ -172,8 +174,43 @@ public class QualityArmoryVehicles {
 	}
 
 	public static void setAddPassager(VehicleEntity vehicleEntity, Player clicker, int i) {
-		Vector offset = QualityArmoryVehicles.rotateRelToCar(vehicleEntity.getModelEntity(),vehicleEntity.getType().getPassagerSpots().get(i),false);
-	}	@Deprecated
+		spawnPassager(vehicleEntity,i).setPassenger(clicker);
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void addPlayerToCar(VehicleEntity ve, Player player, boolean allowDriverSeat) {
+		PlayerEnterQAVehicleEvent event = new PlayerEnterQAVehicleEvent(ve, player);
+		Bukkit.getPluginManager().callEvent(event);
+		if (event.isCanceled()) {
+			return;
+		}
+		if(ve==null)
+			return;
+		if(ve.getDriverSeat()==null){
+			return;
+		}
+		if ((ve.getDriverSeat().getPassenger() == null && allowDriverSeat)
+				&& (!Main.requirePermissionToDrive || PermissionHandler.canDrive(player, ve.getType()))) {
+			if (ve.getOwner() == null && Main.setOwnerIfNoneExist) {
+				ve.setOwner(player.getUniqueId());
+				if (MessagesConfig.MESSAGE_NOW_OWN_CAR.length() > 1) {
+					player.sendMessage(MessagesConfig.MESSAGE_NOW_OWN_CAR.replace("%car%",
+							ChatColor.stripColor(ve.getType().getDisplayname())));
+				}
+			}
+			ve.getDriverSeat().setPassenger(player);
+		} else {
+			if (ve.getPassagers().size() < ve.getType().getPassagerSpots().size()) {
+				int seatId = ve.getFirstSeat();
+				if (seatId < 0)
+					return;
+
+				setAddPassager(ve, player, seatId);
+			}
+		}
+	}
+
+	@Deprecated
 	public static Location getPassagerOffsetLocation(ArmorStand base, AbstractVehicle cartype, int seatID) {
 		Vector seatid = cartype.getPassagerSpots().get(seatID);
 		return base.getLocation().clone().add(rotateRelToCar(base, seatid, false));
@@ -183,7 +220,7 @@ public class QualityArmoryVehicles {
 		Vector seatid = cartype.getPassagerSpots().get(seatID);
 		return base.getLocation().clone().add(rotateRelToCar(base, seatid, false));
 	}
-	public static Entity spawnPassager(VehicleEntity vehicleEntity, Location loc, int seatID) {
+	public static Entity spawnPassager(VehicleEntity vehicleEntity, int seatID) {
 		Location offset = getPassagerOffsetLocation(vehicleEntity.getModelEntity(), vehicleEntity.getType(), seatID);
 		double yOffset = vehicleEntity.getType().getPassagerSpots().get(seatID).getY();
 		VehicleEntity ve = vehicleEntity;
@@ -196,7 +233,7 @@ public class QualityArmoryVehicles {
 	public static List<UnlockedVehicle> unlockedVehicles(OfflinePlayer player) {
 		File playersFile = new File(Main.playerUnlock, player.getUniqueId() + ".yml");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
-		return (List<UnlockedVehicle>) c.getList("unlockedVehicles");
+		return (List<UnlockedVehicle>) c.getList("unlockedVehicles", new ArrayList<>());
 	}
 
 	public static void addUnlockedVehicle(Player player, UnlockedVehicle ve) {
