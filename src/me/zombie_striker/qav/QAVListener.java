@@ -1,12 +1,14 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.api.events.AntiFlyKickEvent;
 import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
 import me.zombie_striker.qav.api.events.VehicleRepairEvent;
 import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
+import me.zombie_striker.qav.util.ForksUtil;
 import me.zombie_striker.qav.vehicles.AbstractCar;
 import me.zombie_striker.qav.vehicles.AbstractHelicopter;
 import me.zombie_striker.qav.vehicles.AbstractPlane;
@@ -21,10 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -91,6 +90,27 @@ public class QAVListener implements Listener {
 					e.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 				}
 			}
+		}
+	}
+
+	@EventHandler
+	public void onKick(PlayerKickEvent event) {
+		if (!ForksUtil.isFlyKick(event)) return;
+		if (event.getPlayer().getVehicle() == null) return;
+		if (!QualityArmoryVehicles.isVehicle(event.getPlayer().getVehicle())) return;
+
+		VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(event.getPlayer().getVehicle());
+		if (vehicle == null) return;
+
+		if (!(vehicle.getType() instanceof AbstractPlane)) {
+			return;
+		}
+
+		AntiFlyKickEvent e = new AntiFlyKickEvent(event.getPlayer());
+		Bukkit.getPluginManager().callEvent(e);
+		if (e.blockKick()) {
+			event.setCancelled(true);
+			Main.DEBUG("Cancelled kick event for flying because player is on plane.");
 		}
 	}
 

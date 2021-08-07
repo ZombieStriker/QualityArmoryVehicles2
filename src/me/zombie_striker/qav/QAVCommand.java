@@ -128,20 +128,35 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				return true;
 			}
 			if (args.length < 2) {
-				sender.sendMessage("Usage /qav " + subcommand_SpawnVehicle + " <vehicle>");
+				sender.sendMessage("Usage /qav " + subcommand_SpawnVehicle + " <vehicle> <player>");
 				return true;
 			}
-			if (!(sender instanceof Player)) return true;
+
+			Player target = null;
+
+			if (!(sender instanceof Player) && args.length != 3) {
+				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs));
+				return true;
+			}
+
+			if (args.length == 3) {
+				target = Bukkit.getPlayer(args[2]);
+			}
 
 			String name = args[1];
 
 			AbstractVehicle ab = QualityArmoryVehicles.getVehicle(name);
 			if (ab == null) {
-				sender.sendMessage("Vehicle does not exist.");
+				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_VALID_VEHICLE));
 				return true;
 			}
 
-			VehicleEntity ve = new VehicleEntity(ab, ((Player)sender).getLocation().getBlock().getRelative(BlockFace.UP).getLocation(), ((Player) sender).getUniqueId());
+			if (target == null) {
+				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_VALID_NAME));
+				return true;
+			}
+
+			VehicleEntity ve = new VehicleEntity(ab, target.getLocation().getBlock().getRelative(BlockFace.UP).getLocation(), target.getUniqueId());
 			ve.spawn();
 			return true;
 		}

@@ -311,7 +311,8 @@ public abstract class AbstractVehicle {
 		if (planeFlying) {
 			double velDir = velocity.length();
 			velocity.setY(vehicleEntity.getDirectionYheight());
-			velocity.normalize().multiply(velDir);
+			if (velocity.length() != 0.0) velocity.normalize();
+			velocity.multiply(velDir);
 
 			double pitch = vehicleEntity.getModelEntity().getHeadPose().getX();
 			if (vehicleEntity.getSpeed() <= 0.01 && !vehicleEntity.isOnGround()) {
@@ -357,6 +358,8 @@ public abstract class AbstractVehicle {
 				} else {
 					velocity.setY(0);
 				}
+			} else {
+				return;
 			}
 		}
 

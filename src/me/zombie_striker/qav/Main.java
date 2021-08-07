@@ -21,6 +21,7 @@ import me.zombie_striker.qav.fuel.RepairItemStack;
 import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
+import me.zombie_striker.qav.util.ForksUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,6 +43,7 @@ import java.util.List;
 
 public class Main extends JavaPlugin {
 
+	public static boolean debugWithCommand = false;
 	public static boolean debug = false;
 	public static boolean verboseLogging = false;
 
@@ -93,6 +95,7 @@ public class Main extends JavaPlugin {
 	public static boolean requirePermissionToDrive = false;
 	public static boolean setOwnerIfNoneExist = false;
 	public static boolean enableTrunks = true;
+	public static boolean antiCheatHook = false;
 	public static boolean disableing = false;
 	public static boolean enable_RequirePermToBuyVehicle = false;
 	public static Object BOUNDINGBOX;
@@ -110,8 +113,7 @@ public class Main extends JavaPlugin {
 	public static List<VehicleEntity> vehicles = new ArrayList<>();
 
 	public static void DEBUG(String message) {
-		if (debug)
-			DebugManager.sendDebugMessages(message);
+		DebugManager.sendDebugMessages(message);
 	}
 	public static boolean isVersionHigherThan(int first, int second) {
 		return QAMini.isVersionHigherThan(first, second);
@@ -362,6 +364,8 @@ public class Main extends JavaPlugin {
 		enableEntityPushing = (boolean) a("enable_PushEntityOnCollide", enableEntityPushing);
 		useHeads = (boolean) a("enable_UseHeadsForGUI", useHeads);
 		debug = (boolean) a("ENABLE_DEBUG", debug);
+		debugWithCommand = (boolean) a("override_debug_withCommand", debugWithCommand);
+		antiCheatHook = (boolean) a("enable_AntiCheatHook", antiCheatHook);
 
 		enable_RequirePermToBuyVehicle = (boolean) a("enable_RequirePermToBuyVehicle", enable_RequirePermToBuyVehicle);
 
@@ -391,6 +395,7 @@ public class Main extends JavaPlugin {
 		MessagesConfig.init();
 		ItemFact.init();
 
+		ForksUtil.init();
 	}
 
 

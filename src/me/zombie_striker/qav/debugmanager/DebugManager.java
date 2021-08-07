@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.debugmanager;
 
+import me.zombie_striker.qav.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -16,8 +17,13 @@ public class DebugManager {
 	private static final String debugPrefix = ChatColor.GREEN + "[DEBUG]" + ChatColor.WHITE + " ";
 
 	public static void sendDebugMessages(String message) {
-		if (displayInConsole)
+		if (Main.debug && displayInConsole)
 			Bukkit.getConsoleSender().sendMessage(debugPrefix + message);
+
+		if (!Main.debug && !Main.debugWithCommand) {
+			return;
+		}
+
 		if (playerRecievers.size() > 0) {
 			boolean cleanEmpty = false;
 			for (Player p : playerRecievers) {
