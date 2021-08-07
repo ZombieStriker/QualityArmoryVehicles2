@@ -50,5 +50,6 @@ permissions:
       qualityarmoryvehicles.use: true
       qualityarmoryvehicles.usevehiclegui: true
       qualityarmoryvehicles.pickupvehicle: true
-author:
-  Zombie_Striker
+authors:
+  - Zombie_Striker
+  - Lorenzo0111

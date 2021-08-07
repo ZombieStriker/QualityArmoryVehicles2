@@ -1,3 +1,13 @@
+2.0.5
+  Changelog:
+    - Fixed planes
+    - Fixed passengers
+    - Fixed some commands
+    - Fixed shop
+    - Added a player param for the spawnVehicle command
+  Contributors:
+    - Lorenzo0111
+
 2.0.4
   Lorenzo0111:
   - 1.17 support
