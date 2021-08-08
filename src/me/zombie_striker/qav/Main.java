@@ -214,6 +214,8 @@ public class Main extends JavaPlugin {
 					VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
 					if (ve == null)
 						return;
+					
+					if (!ve.getDriverSeat().equals(player.getVehicle())) return;
 
 					new BukkitRunnable() {
 						public void run() {
