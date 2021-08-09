@@ -1,7 +1,7 @@
 package me.zombie_striker.qav;
 
 public enum VehicleTypes {
-	CAR("Car"),PLANE("Plane"),BOAT("Boat"),HELI("Helicopter"),TRAIN("Train");
+	CAR("Car"),PLANE("Plane"),BOAT("Boat"),HELI("Helicopter"),TRAIN("Train"),SUBMARINE("Submarine");
 	private String name;
 	private VehicleTypes(String name) {
 		this.name= name;

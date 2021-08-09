@@ -87,6 +87,10 @@ public class VehicleLoader {
 		int id = c.getInt("id");
 		VehicleTypes v = VehicleTypes.getTypeByName(c.getString("vehicle_type"));
 
+		if (v == null) {
+			throw new InvalidVehicleException("Vehicle type does not exist.");
+		}
+
 		AbstractVehicle vehicle = null;
 		switch (v) {
 			case BOAT:
@@ -103,6 +107,9 @@ public class VehicleLoader {
 				break;
 			case TRAIN:
 				vehicle = new AbstractTrain(name,id);
+				break;
+			case SUBMARINE:
+				vehicle = new AbstractSubmarine(name,id);
 				break;
 			default:
 				throw new InvalidVehicleException("Vehicle type does not exist.");
