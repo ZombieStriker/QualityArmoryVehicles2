@@ -1,4 +1,11 @@
-2.0.5
+2.0.4.2
+  Changelog:
+    - Fix multiworld support
+    - Fix passengers can drive
+  Contributors:
+    - Lorenzo0111
+
+2.0.4.1
   Changelog:
     - Fixed planes
     - Fixed passengers
