@@ -20,7 +20,9 @@ public class ForksUtil {
     @SuppressWarnings("deprecation")
     public static boolean isFlyKick(PlayerKickEvent event) {
         if(paper){
-            return event.getCause().name().equals("FLYING_PLAYER");
+            try {
+                return event.getCause().name().equals("FLYING_PLAYER");
+            } catch (NoSuchMethodError ignored) {}
         }
 
         return event.getReason().equals("Flying is not enabled on this server");

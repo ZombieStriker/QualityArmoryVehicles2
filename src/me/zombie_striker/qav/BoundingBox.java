@@ -39,7 +39,7 @@ public class BoundingBox {
 	}
 
 	public boolean intersects(Location start, Vector direction, int reach) {
-		if (location.getWorld() != null && location.getWorld().equals(start.getWorld()))
+		if (location.getWorld() != null && !location.getWorld().equals(start.getWorld()))
 			return false;
 
 		Location loc = location.clone().add(centerOffset);

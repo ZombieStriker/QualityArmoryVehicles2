@@ -137,6 +137,8 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 			if (!(sender instanceof Player) && args.length != 3) {
 				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs));
 				return true;
+			} else {
+				target = (Player) sender;
 			}
 
 			if (args.length == 3) {
