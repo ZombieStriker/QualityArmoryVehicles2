@@ -128,24 +128,25 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				return true;
 			}
 			if (args.length < 2) {
-				sender.sendMessage("Usage /qav " + subcommand_SpawnVehicle + " <vehicle> <player>");
+				sender.sendMessage("Usage /qav " + subcommand_SpawnVehicle + " <vehicle> [x] [y] [z]");
 				return true;
 			}
 
-			Player target = null;
-
-			if (!(sender instanceof Player) && args.length != 3) {
+			if (!(sender instanceof Player)) {
 				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs));
 				return true;
-			} else {
-				target = (Player) sender;
 			}
 
-			if (args.length == 3) {
-				target = Bukkit.getPlayer(args[2]);
-			}
+			Player target = (Player) sender;
 
 			String name = args[1];
+			Location location = target.getLocation();
+
+			if (args.length == 5) {
+				try {
+					location = new Location(target.getWorld(), Double.parseDouble(args[2]),Double.parseDouble(args[3]),Double.parseDouble(args[4]));
+				} catch (NumberFormatException ignored) {}
+			}
 
 			AbstractVehicle ab = QualityArmoryVehicles.getVehicle(name);
 			if (ab == null) {
@@ -153,12 +154,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				return true;
 			}
 
-			if (target == null) {
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_VALID_NAME));
-				return true;
-			}
-
-			VehicleEntity ve = new VehicleEntity(ab, target.getLocation().getBlock().getRelative(BlockFace.UP).getLocation(), target.getUniqueId());
+			VehicleEntity ve = new VehicleEntity(ab, location, target.getUniqueId());
 			ve.spawn();
 			return true;
 		}
