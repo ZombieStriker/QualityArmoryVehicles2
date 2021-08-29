@@ -1,4 +1,4 @@
-package me.zombie_striker.customitemmanager;
+package me.zombie_striker.qav.customitemmanager;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -8,7 +8,7 @@ import java.util.List;
 public class CustomBaseObject {
 
 	private String name;
-	private MaterialStorage base;
+	private me.zombie_striker.qav.customitemmanager.MaterialStorage base;
 	private List<String> lore;
 	private String displayname;
 	private boolean customAnimations;
@@ -21,7 +21,7 @@ public class CustomBaseObject {
 	Object[] ing = null;
 	int craftingReturn = 1;
 
-	public CustomBaseObject(String name, MaterialStorage storage, String displayname, List<String> lore, boolean hasAimAnimations) {
+	public CustomBaseObject(String name, me.zombie_striker.qav.customitemmanager.MaterialStorage storage, String displayname, List<String> lore, boolean hasAimAnimations) {
 		this.name = name;
 		this.base = storage;
 		this.displayname = displayname;

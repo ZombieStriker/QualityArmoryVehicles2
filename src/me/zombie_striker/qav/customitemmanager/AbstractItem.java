@@ -1,4 +1,4 @@
-package me.zombie_striker.customitemmanager;
+package me.zombie_striker.qav.customitemmanager;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

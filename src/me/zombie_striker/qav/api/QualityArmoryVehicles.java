@@ -1,6 +1,6 @@
 package me.zombie_striker.qav.api;
 
-import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.perms.PermissionHandler;
@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
@@ -158,7 +157,7 @@ public class QualityArmoryVehicles {
 	}
 
 	public static VehicleEntity spawnVehicle(UnlockedVehicle ab, Player player) {
-		VehicleEntity vehicleEntity = new VehicleEntity(ab.getVehicleType(),player.getLocation().getBlock().getRelative(BlockFace.UP).getLocation(),player.getUniqueId());
+		VehicleEntity vehicleEntity = new VehicleEntity(ab.getVehicleType(),player.getLocation(),player.getUniqueId());
 		vehicleEntity.setHealth(ab.getHealth());
 		vehicleEntity.spawn();
 		return vehicleEntity;
@@ -222,11 +221,9 @@ public class QualityArmoryVehicles {
 	}
 	public static Entity spawnPassager(VehicleEntity vehicleEntity, int seatID) {
 		Location offset = getPassagerOffsetLocation(vehicleEntity.getModelEntity(), vehicleEntity.getType(), seatID);
-		double yOffset = vehicleEntity.getType().getPassagerSpots().get(seatID).getY();
-		VehicleEntity ve = vehicleEntity;
-		Entity passagerSeat = ve.spawnSeat(offset, yOffset, seatID);
+        Entity passagerSeat = vehicleEntity.spawnSeat(offset.clone().subtract(0,1,0), seatID);
 		passagerSeat.setCustomName(Main.PASSAGER_PREFIX + seatID);
-		ve.addPassager(seatID, passagerSeat);
+		vehicleEntity.addPassager(seatID, passagerSeat);
 		return passagerSeat;
 	}
 

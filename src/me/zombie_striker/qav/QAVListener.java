@@ -1,7 +1,6 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import me.zombie_striker.qav.api.events.AntiFlyKickEvent;
 import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
 import me.zombie_striker.qav.api.events.VehicleRepairEvent;
@@ -106,12 +105,8 @@ public class QAVListener implements Listener {
 			return;
 		}
 
-		AntiFlyKickEvent e = new AntiFlyKickEvent(event.getPlayer());
-		Bukkit.getPluginManager().callEvent(e);
-		if (e.blockKick()) {
-			event.setCancelled(true);
-			Main.DEBUG("Cancelled kick event for flying because player is on plane.");
-		}
+		event.setCancelled(true);
+		Main.DEBUG("Cancelled kick event for flying because player is on plane.");
 	}
 
 	@EventHandler

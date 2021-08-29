@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>QualityArmoryVehicles</artifactId>
-    <version>2.0.4.2</version>
+    <version>2.0.5</version>
 
     <repositories>
         <repository>
             <id>codemc-repo</id>
-            <url>https://repo.codemc.org/repository/maven-public/</url>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
 
         <repository>
@@ -19,11 +19,6 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
-        </repository>
-
-        <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
 
         <repository>
@@ -97,15 +92,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Sentinel API -->
-        <dependency>
-            <groupId>org.mcmonkey</groupId>
-            <artifactId>sentinel</artifactId>
-            <version>1.8.5</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- ProtocolLib -->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
@@ -123,23 +109,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Parties -->
-        <dependency>
-            <groupId>com.github.AlessioDP.Parties</groupId>
-            <artifactId>parties-api</artifactId>
-            <version>2.5.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- LightAPI -->
-        <dependency>
-            <groupId>ru.beykerykt</groupId>
-            <artifactId>LightAPI</artifactId>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/LightAPI.jar</systemPath>
-            <version>3.2.7</version>
-        </dependency>
-
         <!-- XSeries for ReflectionUtils -->
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
@@ -148,6 +117,7 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- QualityArmory -->
         <dependency>
             <groupId>me.zombie_striker</groupId>
             <artifactId>QualityArmory</artifactId>
@@ -208,6 +178,14 @@
                             <shadedPattern>me.zombie_striker.qav.util.xseries</shadedPattern>
                         </relocation>
                     </relocations>
+                    <filters>
+                        <filter>
+                            <artifact>com.github.cryptomorin:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.MF</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>

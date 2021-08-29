@@ -1,3 +1,11 @@
+2.0.5
+  Changelog:
+    - Removed AntiFlyKickEvent
+    - Fixed passenger seats
+    - Moved CustomItemManager to the main package to prevent conflicts
+  Contributors:
+    - Lorenzo0111
+
 2.0.4.2
   Changelog:
     - Fix multiworld support

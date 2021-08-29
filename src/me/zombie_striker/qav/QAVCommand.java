@@ -1,6 +1,6 @@
 package me.zombie_striker.qav;
 
-import me.zombie_striker.customitemmanager.CustomItemManager;
+import me.zombie_striker.qav.customitemmanager.CustomItemManager;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.debugmanager.DebugManager;
 import me.zombie_striker.qav.menu.MenuHandler;
@@ -13,7 +13,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

@@ -1,8 +1,8 @@
 package me.zombie_striker.qav.qamini;
 
-import me.zombie_striker.customitemmanager.AbstractItem;
-import me.zombie_striker.customitemmanager.CustomItemManager;
-import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qav.customitemmanager.AbstractItem;
+import me.zombie_striker.qav.customitemmanager.CustomItemManager;
+import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import org.bukkit.Bukkit;

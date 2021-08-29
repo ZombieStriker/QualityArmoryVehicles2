@@ -1,4 +1,4 @@
-package me.zombie_striker.customitemmanager;
+package me.zombie_striker.qav.customitemmanager;
 
 
 import me.zombie_striker.qg.QAMain;
@@ -13,9 +13,9 @@ import java.util.List;
 
 public class MaterialStorage {
 
-	private static final me.zombie_striker.customitemmanager.MaterialStorage EMPTY = new me.zombie_striker.customitemmanager.MaterialStorage(null, 0, 0);
+	private static final MaterialStorage EMPTY = new MaterialStorage(null, 0, 0);
 
-	private static List<me.zombie_striker.customitemmanager.MaterialStorage> store = new ArrayList<me.zombie_striker.customitemmanager.MaterialStorage>();
+	private static List<MaterialStorage> store = new ArrayList<MaterialStorage>();
 	private int d;
 	private Material m;
 	private int variant = 0;
@@ -43,33 +43,33 @@ public class MaterialStorage {
 		this.specialValues2 = ed2;
 	}
 
-	public static me.zombie_striker.customitemmanager.MaterialStorage getMS(Material m, int d, int var) {
+	public static MaterialStorage getMS(Material m, int d, int var) {
 		return getMS(m, d, var, null);
 	}
 
-	public static me.zombie_striker.customitemmanager.MaterialStorage getMS(Material m, int d, int var, String extraValue) {
+	public static MaterialStorage getMS(Material m, int d, int var, String extraValue) {
 		return getMS(m, d, var, extraValue, null);
 	}
 
-	public static me.zombie_striker.customitemmanager.MaterialStorage getMS(Material m, int d, int var, String extraValue, String ev2) {
-		for (me.zombie_striker.customitemmanager.MaterialStorage k : store) {
+	public static MaterialStorage getMS(Material m, int d, int var, String extraValue, String ev2) {
+		for (MaterialStorage k : store) {
 			if (matchesMaterials(k, m, d)) if (matchVariants(k, var)) if (matchHeads(k, extraValue, ev2))
 				return k;
 		}
-		me.zombie_striker.customitemmanager.MaterialStorage mm = new me.zombie_striker.customitemmanager.MaterialStorage(m, d, var, extraValue, ev2);
+		MaterialStorage mm = new MaterialStorage(m, d, var, extraValue, ev2);
 		store.add(mm);
 		return mm;
 	}
 
-	private static boolean matchesMaterials(me.zombie_striker.customitemmanager.MaterialStorage k, Material m, int d) {
+	private static boolean matchesMaterials(MaterialStorage k, Material m, int d) {
 		return (k.m == m && (k.d == d || k.d == -1));
 	}
 
-	public static boolean matchVariants(me.zombie_striker.customitemmanager.MaterialStorage k, int var) {
+	public static boolean matchVariants(MaterialStorage k, int var) {
 		return (!k.hasVariant() && var == 0) || (k.variant == var);
 	}
 
-	public static boolean matchHeads(me.zombie_striker.customitemmanager.MaterialStorage k, String ex1, String ex2) {
+	public static boolean matchHeads(MaterialStorage k, String ex1, String ex2) {
 		boolean exb1 = (!k.hasSpecialValue() || k.hasSpecialValue2()
 				|| (ex1 != null && (ex1.equals("-1") || k.getSpecialValue().equals(ex1))));
 		boolean exb2 = (!k.hasSpecialValue2()
@@ -77,11 +77,11 @@ public class MaterialStorage {
 		return exb1 && exb2;
 	}
 
-	public static me.zombie_striker.customitemmanager.MaterialStorage getMS(ItemStack is) {
+	public static MaterialStorage getMS(ItemStack is) {
 		return getMS(is, getVariant(is));
 	}
 
-	public static me.zombie_striker.customitemmanager.MaterialStorage getMS(ItemStack is, int variant) {
+	public static MaterialStorage getMS(ItemStack is, int variant) {
 
 		if (is == null) {
 			return EMPTY;

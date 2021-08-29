@@ -344,12 +344,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 		passagers.put(seatID, seat);
 	}
 
-
 	public Entity spawnSeat(Location spawn, int seatID) {
-		return spawnSeat(spawn, 0.0, seatID);
-	}
-
-	public Entity spawnSeat(Location spawn, double seatOffset, int seatID) {
 		Entity used = null;
 		double size = 2;//seatID == -1 ? getType().getSeatHeight() : getType().getPassagerSizeById(seatID);
 		if (size < 1) {

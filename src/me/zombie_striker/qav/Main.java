@@ -7,9 +7,9 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.google.common.io.Files;
-import me.zombie_striker.customitemmanager.AbstractItem;
-import me.zombie_striker.customitemmanager.CustomItemManager;
-import me.zombie_striker.customitemmanager.qav.versions.V1_13.CustomVehicleItem;
+import me.zombie_striker.qav.customitemmanager.AbstractItem;
+import me.zombie_striker.qav.customitemmanager.CustomItemManager;
+import me.zombie_striker.qav.customitemmanager.qav.versions.V1_13.CustomVehicleItem;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.api.events.PlayerExitQAVehicleEvent;
 import me.zombie_striker.qav.config.VehicleLoader;
@@ -148,7 +148,7 @@ public class Main extends JavaPlugin {
 			if (!isVersionHigherThan(1, 14) || USE_MANUAL_13) {
 				item = new CustomVehicleItem();
 			} else {
-				item = new me.zombie_striker.customitemmanager.qav.versions.V1_14.CustomVehicleItem();
+				item = new me.zombie_striker.qav.customitemmanager.qav.versions.V1_14.CustomVehicleItem();
 			}
 			CustomItemManager.registerItemType(getDataFolder(), "vehicles", item);
 			item.initItems(getDataFolder());

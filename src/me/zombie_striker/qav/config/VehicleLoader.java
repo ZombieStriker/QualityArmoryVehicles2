@@ -1,6 +1,6 @@
 package me.zombie_striker.qav.config;
 
-import me.zombie_striker.customitemmanager.MaterialStorage;
+import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.ModelSize;
 import me.zombie_striker.qav.VehicleTypes;

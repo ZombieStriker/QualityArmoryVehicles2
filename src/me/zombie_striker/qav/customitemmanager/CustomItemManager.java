@@ -1,4 +1,4 @@
-package me.zombie_striker.customitemmanager;
+package me.zombie_striker.qav.customitemmanager;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +10,7 @@ import java.util.Set;
 public class CustomItemManager {
 
 	private static String resourcepack = null;
-	private static HashMap<String, AbstractItem> customItemTypes = new HashMap<>();
+	private static HashMap<String, me.zombie_striker.qav.customitemmanager.AbstractItem> customItemTypes = new HashMap<>();
 
 	public static String getResourcepack() {
 		return resourcepack;
@@ -21,7 +21,7 @@ public class CustomItemManager {
 
 	public static Set<String> getCustomItemTypes(){return customItemTypes.keySet();}
 
-	public static void registerItemType(File dataFolder, String key, AbstractItem item){
+	public static void registerItemType(File dataFolder, String key, me.zombie_striker.qav.customitemmanager.AbstractItem item){
 		customItemTypes.put(key,item);
 	}
 	public static AbstractItem getItemType(String key){
