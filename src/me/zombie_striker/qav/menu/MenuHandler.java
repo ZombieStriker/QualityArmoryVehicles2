@@ -345,6 +345,8 @@ public class MenuHandler implements Listener {
 					}
 
 					VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(unlockedVehicle, data.getClicker());
+					if (ve == null)
+						return;
 					if (!Main.enableGarageCallback)
 						QualityArmoryVehicles.removeUnlockedVehicle(target,unlockedVehicle);
 					else {

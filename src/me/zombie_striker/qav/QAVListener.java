@@ -82,8 +82,13 @@ public class QAVListener implements Listener {
 		if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (QualityArmoryVehicles.isVehicleByItem(e.getItem())) {
 				AbstractVehicle vehicle = QualityArmoryVehicles.getVehicleByItem(e.getItem());
-				VehicleEntity ve = new VehicleEntity(vehicle, e.getClickedBlock().getRelative(BlockFace.UP).getLocation(), e.getPlayer().getUniqueId());
-				ve.spawn();
+				VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(vehicle,e.getClickedBlock().getRelative(BlockFace.UP).getLocation(), e.getPlayer());
+
+				if (ve == null) {
+					// event cancelled
+					e.setCancelled(true);
+					return;
+				}
 
 				if(e.getPlayer().getGameMode() != GameMode.CREATIVE){
 					e.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));

@@ -1,16 +1,19 @@
 package me.zombie_striker.qav.api.events;
 
 import me.zombie_striker.qav.VehicleEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
 
-public final class VehicleSpawnEvent extends Event {
+public final class VehicleSpawnEvent extends PlayerEvent {
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean cancel = false;
 	private VehicleEntity ve;
 
-	public VehicleSpawnEvent(VehicleEntity ve) {
+	public VehicleSpawnEvent(Player player, VehicleEntity ve) {
+		super(player);
 		this.ve = ve;
 	}
 	public VehicleEntity getVehicle() {

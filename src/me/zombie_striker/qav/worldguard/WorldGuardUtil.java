@@ -9,7 +9,6 @@ import org.bukkit.Location;
 
 public class WorldGuardUtil {
 
-
 	@SuppressWarnings("unchecked")
 	public static boolean isAllowed(Location loc, Object flag){
 	    WorldGuard wGuard = WorldGuard.getInstance();
