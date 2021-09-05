@@ -56,18 +56,6 @@ public class BlockCollisionUtil {
 
 
 	public static boolean isSolid(Location loc) {
-		if(loc.getBlock().getType().name().contains("SIGN"))
-			return false;
-		if (loc.getBlock().getType().name().contains("RAIL"))
-			return false;
-		boolean solid = false;
-		try {
-			solid = me.zombie_striker.qg.guns.utils.GunUtil.isSolid(loc.getBlock(), loc);
-		} catch (Error | Exception e4) {
-			solid = loc.getBlock().getType().isSolid();
-		}
-		boolean k = loc.getBlock().getType().name().contains("LEAVES") || loc.getBlock().getType() == Material.GLASS
-				|| solid;
-		return k;
+		return loc.getBlock().getType().isSolid();
 	}
 }

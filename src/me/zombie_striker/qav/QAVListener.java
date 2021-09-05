@@ -176,39 +176,44 @@ public class QAVListener implements Listener {
 
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
-		if (Main.enableVehiclePlayerCollision)
-			for (Entity ent : e.getPlayer().getNearbyEntities(10, 10, 10)) {
-				if (QualityArmoryVehicles.isVehicle(ent)) {
-					VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(ent);
-					if (ve != null) {
-						if (QualityArmoryVehicles.isWithinVehicle(e.getTo(), ve)
-								&& !QualityArmoryVehicles.isWithinVehicle(e.getFrom(), ve)) {
-							if (e.getTo().getX() != e.getFrom().getX() || e.getTo().getZ() != e.getFrom().getZ()) {
-								if (e.getPlayer().getVelocity().getY() < -0.05) {
-									e.getPlayer().setVelocity(e.getPlayer().getVelocity().setY(0.3));
-								}
-							}
-							e.setCancelled(true);
-							break;
+		if (!Main.enableVehiclePlayerCollision) {
+			return;
+		}
 
-						} else {
-							Location to = e.getTo().clone().add(0, 1, 0);
-							Location from = e.getFrom().clone().add(0, 1, 0);
-							if (QualityArmoryVehicles.isWithinVehicle(to, ve)
-									&& !QualityArmoryVehicles.isWithinVehicle(from, ve)) {
-								if (e.getTo().getX() != e.getFrom().getX() || e.getTo().getZ() != e.getFrom().getZ()) {
-									if (e.getPlayer().getVelocity().getY() < -0.05) {
-										e.getPlayer().setVelocity(e.getPlayer().getVelocity().setY(0.3));
-									}
-								}
-								e.setCancelled(true);
-								break;
+		for (Entity ent : e.getPlayer().getNearbyEntities(5, 5, 5)) {
+			if (QualityArmoryVehicles.isVehicle(ent)) {
+				VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(ent);
+				if (ve == null) {
+					return;
+				}
 
+				if (QualityArmoryVehicles.isWithinVehicle(e.getTo(), ve)
+						&& !QualityArmoryVehicles.isWithinVehicle(e.getFrom(), ve)) {
+					if (e.getTo().getX() != e.getFrom().getX() || e.getTo().getZ() != e.getFrom().getZ()) {
+						if (e.getPlayer().getVelocity().getY() < -0.05) {
+							e.getPlayer().setVelocity(e.getPlayer().getVelocity().setY(0.3));
+						}
+					}
+					e.setCancelled(true);
+					break;
+
+				} else {
+					Location to = e.getTo().clone().add(0, 1, 0);
+					Location from = e.getFrom().clone().add(0, 1, 0);
+					if (QualityArmoryVehicles.isWithinVehicle(to, ve)
+							&& !QualityArmoryVehicles.isWithinVehicle(from, ve)) {
+						if (e.getTo().getX() != e.getFrom().getX() || e.getTo().getZ() != e.getFrom().getZ()) {
+							if (e.getPlayer().getVelocity().getY() < -0.05) {
+								e.getPlayer().setVelocity(e.getPlayer().getVelocity().setY(0.3));
 							}
 						}
+						e.setCancelled(true);
+						break;
+
 					}
 				}
 			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
