@@ -1,3 +1,12 @@
+2.0.5.1
+  Changelog:
+    - Fixed lag and tps drops
+    - Fixed legacy file creation (Now 1.12.2< works without any edit)
+  Updating:
+    If you are running 1.12.2< you can enable default file creation (Enable_Creation_Of_Default_Files) in the config
+    and delete the default vehicles files (if you don't have any custom vehicle just delete the vehicles and items' folder)
+    QualityArmoryVehicles2 will recreate them for your server version.
+
 2.0.5
   Changelog:
     - Removed AntiFlyKickEvent
