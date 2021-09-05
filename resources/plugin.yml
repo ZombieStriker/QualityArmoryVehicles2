@@ -4,6 +4,7 @@ api-version: 1.13
 name: QualityArmoryVehicles2
 softdepend: [QualityArmory, Vault]
 depend: [ProtocolLib]
+spigot-id: 59129
 commands:
   QualityArmoryVehicles:
     description: Create images using blocks
