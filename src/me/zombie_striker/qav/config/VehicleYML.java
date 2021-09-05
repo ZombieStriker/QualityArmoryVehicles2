@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.config;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.ModelSize;
 import me.zombie_striker.qav.VehicleTypes;
@@ -221,7 +222,7 @@ public class VehicleYML {
 		verify("TurnSpeedInRadians", Math.PI / 80);
 		verify("useStaticTurning", true);
 		verify("activation_radius", 2);
-		verify("vehicle_texture_material", Material.RABBIT_HIDE.name());
+		verify("vehicle_texture_material", ReflectionUtils.supports(14) ? Material.RABBIT_HIDE.name() : Material.DIAMOND_AXE.name());
 		verify("RequiresFuel", false);
 		verify("trunksize", 9);
 		verify("widthOffset", 1.5);
