@@ -9,6 +9,7 @@ import me.zombie_striker.qav.util.HotbarMessager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -414,6 +415,41 @@ public abstract class AbstractVehicle {
 		}
 		for (Entity passager : vehicleEntity.getPassagerSeats()) {
 			passager.setVelocity(velocity);
+		}
+		handleOtherStands(vehicleEntity,velocity);
+	}
+
+	@SuppressWarnings("deprecation")
+	public void handleOtherStands(VehicleEntity ve, Vector velocity) {
+		for (Entity e : ve.getPassagerSeats()) {
+			Location offset = ve.getDriverSeat().getLocation().clone()
+					.add(QualityArmoryVehicles.rotateRelToCar(ve, (ArmorStand) ve.getDriverSeat(),
+							getPassagerSpots().get(
+									Integer.parseInt(e.getCustomName().split(Main.PASSAGER_PREFIX)[1])),
+							false));
+
+			offset.add(ve.getDriverSeat().getVelocity());
+
+
+			Vector newVelo = velocity.clone();
+			double offDis = offset.distanceSquared(e.getLocation());
+			if (offDis > 1) {
+				Entity rider = e.getPassenger();
+				e.eject();
+				if (!offset.getBlock().getType().isSolid()) {
+					e.teleport(offset);
+					if (rider != null)
+						rider.teleport(offset);
+
+					if (rider != null) {
+						e.setPassenger(rider);
+					}
+				}
+				Vector distance = offset.toVector().clone().subtract(e.getLocation().toVector());
+				newVelo.add(distance);
+				e.setVelocity(newVelo);
+
+			}
 		}
 	}
 
