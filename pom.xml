@@ -109,6 +109,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- QualityArmory -->
+        <dependency>
+            <groupId>me.zombie_striker</groupId>
+            <artifactId>QualityArmory</artifactId>
+            <version>1.1.176</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- XSeries for ReflectionUtils -->
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
@@ -117,12 +125,12 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- QualityArmory -->
+        <!-- Expiring Map -->
         <dependency>
-            <groupId>me.zombie_striker</groupId>
-            <artifactId>QualityArmory</artifactId>
-            <version>1.1.176</version>
-            <scope>provided</scope>
+            <groupId>net.jodah</groupId>
+            <artifactId>expiringmap</artifactId>
+            <version>0.5.10</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -177,10 +185,15 @@
                             <pattern>com.cryptomorin.xseries</pattern>
                             <shadedPattern>me.zombie_striker.qav.util.xseries</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>net.jodah.expiringmap</pattern>
+                            <shadedPattern>me.zombie_striker.qav.util.expiringmap</shadedPattern>
+                        </relocation>
                     </relocations>
                     <filters>
                         <filter>
                             <artifact>com.github.cryptomorin:*</artifact>
+                            <artifact>net.jodah:expiringmap:*</artifact>
                             <excludes>
                                 <exclude>META-INF/*.MF</exclude>
                             </excludes>

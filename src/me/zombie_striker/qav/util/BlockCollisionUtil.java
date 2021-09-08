@@ -1,16 +1,25 @@
 package me.zombie_striker.qav.util;
 
+import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class BlockCollisionUtil {
-
+	private static final ExpiringMap<Location,Material> CACHE;
 	private static final HashMap<Material,Double> customBlockHeights = new HashMap<>();
 
 	static{
+		 CACHE = ExpiringMap.builder()
+				.expiration(5, TimeUnit.MINUTES)
+				.expirationPolicy(ExpirationPolicy.CREATED)
+				.build();
+
 		for(Material m : Material.values()){
 			if(m.name().endsWith("_WALL"))
 				customBlockHeights.put(m,1.5);
@@ -49,13 +58,25 @@ public class BlockCollisionUtil {
 		if(b.getLocation().getY()+getHeight(b)>loc.getY())
 			return true;
 		Block temp = b.getRelative(0,-1,0);
-		if(temp.getLocation().getY()+getHeight(temp)>loc.getY())
-			return true;
-		return false;
+		return temp.getLocation().getY() + getHeight(temp) > loc.getY();
 	}
 
 
+	public static @NotNull Material getMaterial(Location location) {
+		if (CACHE.containsKey(location)) {
+			return CACHE.get(location);
+		}
+
+		Material material = location.getBlock().getType();
+		CACHE.put(location,material);
+		return material;
+	}
+
 	public static boolean isSolid(Location loc) {
-		return loc.getBlock().getType().isSolid();
+		return isSolid(getMaterial(loc));
+	}
+
+	public static boolean isSolid(Material material) {
+		return material.isSolid();
 	}
 }

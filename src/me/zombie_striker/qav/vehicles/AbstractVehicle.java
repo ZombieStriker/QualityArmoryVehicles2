@@ -291,6 +291,13 @@ public abstract class AbstractVehicle {
 	}
 
 	public void basicDirections(VehicleEntity vehicleEntity, boolean jump, boolean aquatic, boolean gravity, boolean planeFlying) {
+		Location block = vehicleEntity.getDriverSeat().getLocation().subtract(0, 0.4, 0);
+		Material material = BlockCollisionUtil.getMaterial(block);
+
+		if (Main.customSpeedModifier.containsKey(material)) {
+			vehicleEntity.setSpeed(vehicleEntity.getSpeed() + Main.customSpeedModifier.getOrDefault(material,0.0));
+		}
+
 		if (vehicleEntity.getSpeed() > 0) {
 			if(planeFlying){
 				if(vehicleEntity.getDirectionYheight()<0){
@@ -339,8 +346,8 @@ public abstract class AbstractVehicle {
 
 		} else if (gravity) {
 			//Add Gravity
-			if (!BlockCollisionUtil.isSolid(vehicleEntity.getDriverSeat().getLocation().subtract(0, 1, 0))) {
-				velocity.setY(Math.max(-1,vehicleEntity.getDriverSeat().getVelocity().getY() - 0.02));
+			if (!BlockCollisionUtil.isSolid(material)) {
+				velocity.setY(Math.max(-1,vehicleEntity.getDriverSeat().getVelocity().getY() - 0.05));
 			}
 		} else {
 			velocity.setY(vehicleEntity.getDirectionYheight());
@@ -431,7 +438,7 @@ public abstract class AbstractVehicle {
 	}
 
 	public List<Vector> getPassagerSpots() {
-		return new ArrayList<Vector>(passagerOffset.keySet());
+		return new ArrayList<>(passagerOffset.keySet());
 	}
 
 	public void setPassagerSpots(HashMap<Vector, Integer> sizes) {
