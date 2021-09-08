@@ -268,6 +268,12 @@ public class VehicleEntity implements ConfigurationSerializable {
 		for (ArmorStand stand : getModelEntities()) {
 			stand.remove();
 		}
+		for (Entity entity : getPassagerSeats()) {
+			entity.remove();
+		}
+
+		passagers.clear();
+		modelParts.clear();
 		Main.vehicles.remove(this);
 		Main.DEBUG(this.getVehicleUUID() + " removed: " + message);
 	}
