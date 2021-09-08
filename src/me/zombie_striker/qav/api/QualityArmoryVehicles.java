@@ -180,7 +180,7 @@ public class QualityArmoryVehicles {
 		if (event.isCanceled()) {
 			return null;
 		}
-
+		vehicleEntity.spawn();
 		return vehicleEntity;
 	}
 
