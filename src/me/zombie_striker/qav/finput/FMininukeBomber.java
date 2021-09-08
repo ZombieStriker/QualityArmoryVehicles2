@@ -4,6 +4,7 @@ import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.qamini.ExplosionHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,7 +50,7 @@ public class FMininukeBomber implements FInput {
 					}
 				}
 			}
-		} catch (Error | Exception er5) {
+		} catch (Error | Exception ignored) {
 		}
 		if (!found) {
 
@@ -68,11 +69,13 @@ public class FMininukeBomber implements FInput {
 			}
 		}
 		if (found) {
+			@SuppressWarnings("deprecation")
 			final Location s = ve.getDriverSeat().getLocation().add(QualityArmoryVehicles
 					.rotateRelToCar(ve.getModelEntity(), ve.getType().getCenterFromControlSeat(), false))
 					.subtract(0, 1.7, 0);
 			@SuppressWarnings("deprecation")
 			final Player player = (Player) ve.getDriverSeat().getPassenger();
+			if (player == null) return;
 			final Vector dir = new Vector(0, -0.1, 0);
 			// final Vector dir
 			new BukkitRunnable() {
@@ -92,9 +95,9 @@ public class FMininukeBomber implements FInput {
 								if (e2.size() > 1 || e2.get(0) != player && (!e2.contains(ve.getDriverSeat())
 										|| e2.size() > 1 + ve.getPassagerSeats().size()))
 									entityNear = true;
-						} catch (Error e) {
+						} catch (Error ignored) {
 						}
-						boolean issolid = false;
+						boolean issolid;
 						try {
 							issolid = me.zombie_striker.qg.guns.utils.GunUtil.isSolid(s.getBlock(), s);
 						} catch (Error | Exception e4) {

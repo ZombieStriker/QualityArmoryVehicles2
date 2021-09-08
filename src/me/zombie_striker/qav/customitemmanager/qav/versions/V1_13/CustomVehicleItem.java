@@ -39,10 +39,10 @@ public class CustomVehicleItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		initItems(dataFolder, true);
+		initItems(true);
 	}
 
-	public void initItems(File dataFolder, boolean b) {
+	public void initItems(boolean b) {
 		if (CustomItemManager.getResourcepack() == null)
 			CustomItemManager.setResourcepack("https://www.dropbox.com/s/s57cq1df5ilol8h/QualityArmoryCarsOnlyV1.2.zip?dl=1");
 		if (b) {

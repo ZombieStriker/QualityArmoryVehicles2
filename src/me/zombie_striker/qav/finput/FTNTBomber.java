@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class FTNTBomber implements FInput {
 
 	public FTNTBomber() {
@@ -49,7 +50,7 @@ public class FTNTBomber implements FInput {
 					}
 				}
 			}
-		} catch (Error | Exception er5) {
+		} catch (Error | Exception ignored) {
 		}
 		if (!found) {
 
@@ -92,9 +93,9 @@ public class FTNTBomber implements FInput {
 								if (e2.size() > 1 || e2.get(0) != player && (!e2.contains(ve.getDriverSeat())
 										|| e2.size() > 1 + ve.getPassagerSeats().size()))
 									entityNear = true;
-						} catch (Error e) {
+						} catch (Error ignored) {
 						}
-						boolean issolid = false;
+						boolean issolid;
 						try {
 							issolid = me.zombie_striker.qg.guns.utils.GunUtil.isSolid(s.getBlock(), s);
 						} catch (Error | Exception e4) {

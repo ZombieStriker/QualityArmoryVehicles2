@@ -17,12 +17,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
+@SuppressWarnings({"deprecation","unused"})
 public class EasyGUI {
 
 	private static final String BACK_NAME = ChatColor.RED + "[Previous Page]";
 	private static final String FORWARD_NAME = ChatColor.GREEN + "[Next Page]";
 	private static final String BOTTOM_NAME = "";
-	private static HashMap<String, EasyGUI> lists = new HashMap<>();
+	private static final HashMap<String, EasyGUI> lists = new HashMap<>();
 	private static ItemStack BOTTOM;
 	private static ItemStack BACK;
 	private static ItemStack FORWARD;
@@ -54,8 +55,8 @@ public class EasyGUI {
 	}
 
 	private ItemStack[] items;
-	private String title;
-	private String displayname;
+	private final String title;
+	private final String displayname;
 	private EasyGUICallable[] buttons;
 	private Inventory[] loadedInventories;
 
@@ -172,9 +173,7 @@ public class EasyGUI {
 		if (page >= loadedInventories.length) {
 			Inventory[] tempItem = new Inventory[page];
 			EasyGUICallable[] buttons = new EasyGUICallable[items.length];
-			for (int l = 0; l < loadedInventories.length; l++) {
-				tempItem[l] = loadedInventories[l];
-			}
+			System.arraycopy(loadedInventories, 0, tempItem, 0, loadedInventories.length);
 			loadedInventories = tempItem;
 			this.buttons = buttons;
 		}
@@ -226,7 +225,7 @@ public class EasyGUI {
 
 		@EventHandler
 		public void onClick(InventoryClickEvent e) {
-			EasyGUI gui = null;
+			EasyGUI gui;
 			if ((gui = EasyGUI.getEasyGUIByInventory(e.getClickedInventory())) != null) {
 				e.setCancelled(true);
 				if (e.getClick().isShiftClick()) {

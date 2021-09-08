@@ -10,7 +10,11 @@ import me.zombie_striker.qg.boundingbox.AbstractBoundingBox;
 import me.zombie_striker.qg.boundingbox.BoundingBoxManager;
 import me.zombie_striker.qg.handlers.BulletWoundHandler;
 import me.zombie_striker.qg.handlers.SoundHandler;
-import org.bukkit.*;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Damageable;
@@ -23,7 +27,10 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
+@SuppressWarnings("deprecation")
 public class FShootBullet implements FInput {
 
 	public FShootBullet() {
@@ -59,15 +66,15 @@ public class FShootBullet implements FInput {
 					}
 				}
 			}
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
 		@SuppressWarnings("deprecation")
 		final Player player = (Player) ve.getDriverSeat().getPassenger();
-		if (found) {
+		if (player != null && found) {
 			Vector frontV = QualityArmoryVehicles.rotateRelToCar(ve, ve.getModelEntity(), ve.getType().getCenterFromControlSeat().clone().add(new Vector(ve.getBoundingBox().getWidth()*ve.getDirection().getX(),ve.getDirection().getY(),ve.getDirection().getZ()*ve.getBoundingBox().getWidth())), false);
 			Entity e = ve.getDriverSeat();
 			Location front = e.getLocation().add(frontV).add((frontV.clone().normalize()));
-			
+
 			final Vector dir = player.getLocation().getDirection().normalize();
 			if (dir.getY() < 0) {
 				dir.setY(0);
@@ -99,32 +106,25 @@ public class FShootBullet implements FInput {
 					(Math.random() * 2 * sway) - sway));
 			Vector step = normalizedDirection.clone().multiply(0.2);
 
-			// Simple values to make it easier on the search
-			// boolean posX = go.getX() > 0;
-			// boolean posZ = go.getZ() > 0;
+			/* Simple values to make it easier on the search
+			 posX: go.getX() > 0;
+			 posZ: go.getZ() > 0; */
 			Entity hitTarget = null;
-
-			boolean overrideocculde = false;
 
 			boolean headShot = false;
 
 			Location bulletHitLoc = null;
 
-			int maxDistance = (int) getTargetedSolidMaxDistance(step, start, range);
+			int maxDistance = (int) getTargetedSolidMaxDistance(step, start, range) / 2;
 			double dis2 = maxDistance;
-
-			// double degreeVector = Math.atan2(normalizedDirection.getX(),
-			// normalizedDirection.getZ());
-			// if (degreeVector > Math.PI)
-			// degreeVector = 2 * Math.PI - degreeVector;
 
 			List<Location> blocksThatWillPLAYBreak = new ArrayList<>();
 			List<Location> blocksThatWillBreak = new ArrayList<>();
 
-			Location centerTest = start.clone().add(normalizedDirection.clone().multiply(maxDistance / 2));
+			Location centerTest = start.clone().add(normalizedDirection.clone().multiply(maxDistance));
 
-			for (Entity e : centerTest.getWorld().getNearbyEntities(centerTest, maxDistance / 2, maxDistance / 2,
-					maxDistance / 2)) {
+			for (Entity e : centerTest.getWorld().getNearbyEntities(centerTest, maxDistance, maxDistance,
+					maxDistance)) {
 				if (e instanceof Damageable) {
 					if (QAMain.avoidTypes.contains(e.getType()))
 						continue;
@@ -133,13 +133,6 @@ public class FShootBullet implements FInput {
 						double dis = e.getLocation().distance(start);
 						if (dis > dis2)
 							continue;
-						// double degreeEntity = Math.atan2(e.getLocation().getX() - start.getX(),
-						// e.getLocation().getZ() - start.getZ());
-						// if (degreeEntity > Math.PI)
-						// degreeEntity = 2 * Math.PI - degreeEntity;
-						// if (Math.max(degreeEntity, degreeVector)
-						// - Math.min(degreeEntity, degreeVector) < (dis > 10 ? Math.PI / 7 : Math.PI /
-						// 2)) {
 
 						AbstractBoundingBox box = BoundingBoxManager.getBoundingBox(e);
 
@@ -164,7 +157,7 @@ public class FShootBullet implements FInput {
 							bulletHitLoc = test;
 							dis2 = dis;
 							hitTarget = e;
-							headShot = box.allowsHeadshots() ? box.intersectsHead(test, e) : false;
+							headShot = box.allowsHeadshots() && box.intersectsHead(test, e);
 							if (headShot) {
 								QAMain.DEBUG("Headshot!");
 								if (QAMain.headshotPling) {
@@ -173,7 +166,7 @@ public class FShootBullet implements FInput {
 										if (!QAMain.isVersionHigherThan(1, 9))
 											try {
 												p.playSound(p.getLocation(), Sound.valueOf("LAVA_POP"), 6, 1);
-											} catch (Error | Exception h4) {
+											} catch (Error | Exception ignored) {
 											}
 
 									} catch (Error | Exception h4) {
@@ -189,18 +182,14 @@ public class FShootBullet implements FInput {
 			if (hitTarget != null) {
 				if (!(hitTarget instanceof Player) || QualityArmory.allowGunsInRegion(hitTarget.getLocation())) {
 
-					boolean negateHeadshot = false;
 					boolean bulletProtection = false;
 
-					double damageMAX = damage * (bulletProtection ? 0.1 : 1)
-							* ((headShot && !negateHeadshot) ? (QAMain.HeadshotOneHit ? 50 : 2)
+					double damageMAX = damage * 1
+							* (headShot ? QAMain.HeadshotOneHit ? 50 : 2
 									: 1);
 
 					if (hitTarget instanceof Player) {
 						bulletProtection = BulletProtectionUtil.stoppedBullet(p, bulletHitLoc, normalizedDirection);
-						if (headShot) {
-							negateHeadshot = BulletProtectionUtil.negatesHeadshot(p);
-						}
 					}
 
 
@@ -216,19 +205,19 @@ public class FShootBullet implements FInput {
 											player.getInventory().getChestplate(), player.getInventory().getLeggings(),
 											player.getInventory().getBoots() }) {
 										if (is != null) {
-											if (!is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR)
+											if (is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR) != null && !Objects.requireNonNull(is.getItemMeta().getAttributeModifiers(Attribute.GENERIC_ARMOR))
 													.isEmpty())
-												for (AttributeModifier a : is.getItemMeta()
-														.getAttributeModifiers(Attribute.GENERIC_ARMOR))
+												for (AttributeModifier a : Optional.ofNullable(is.getItemMeta()
+														.getAttributeModifiers(Attribute.GENERIC_ARMOR)).orElse(new ArrayList<>()))
 													defensePoints += a.getAmount();
-											for (AttributeModifier a : is.getItemMeta()
-													.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS))
+											for (AttributeModifier a : Optional.ofNullable(is.getItemMeta()
+													.getAttributeModifiers(Attribute.GENERIC_ARMOR_TOUGHNESS)).orElse(new ArrayList<>()))
 												toughness += a.getAmount();
 										}
 									}
 									damageMAX = damageMAX * (1 - Math.min(20, Math.max(defensePoints / 5,
 											defensePoints - damageMAX / (toughness / 4 + 2))) / 25);
-								} catch (Error | Exception e5) {
+								} catch (Error | Exception ignored) {
 
 								}
 							}
@@ -296,7 +285,7 @@ public class FShootBullet implements FInput {
 						}
 					}
 				}
-				if (overrideocculde || !isSolid(start)) {
+				if (!isSolid(start)) {
 					if (QAMain.enableBulletTrails)
 						if (smokeDistance >= QAMain.smokeSpacing * i) {
 							try {
@@ -325,20 +314,6 @@ public class FShootBullet implements FInput {
 				for (@SuppressWarnings("unused")
 				Location l : blocksThatWillPLAYBreak) {
 					start.getWorld().playSound(start, SoundHandler.getSoundWhenShot(start.getBlock()), 2, 1);
-					try {/*
-							 * for (Player p2 : l.getWorld().getPlayers()) {
-							 * com.comphenix.protocol.events.PacketContainer packet = new
-							 * com.comphenix.protocol.events.PacketContainer(
-							 * com.comphenix.protocol.Packets.Server.BLOCK_BREAK_ANIMATION);
-							 * packet.getIntegers().write(0, p2.getEntityId());
-							 * packet.getBlockPositionModifier().write(1, new
-							 * com.comphenix.protocol.wrappers.BlockPosition(l.getBlockX(), l.getBlockY(),
-							 * l.getBlockZ())); packet.getBytes().write(2, (byte) 4);
-							 * com.comphenix.protocol.ProtocolLibrary.getProtocolManager().sendServerPacket(
-							 * p2, packet); }
-							 */
-					} catch (Error | Exception e4) {
-					}
 				}
 		}
 	}
@@ -357,14 +332,13 @@ public class FShootBullet implements FInput {
 	public static boolean isSolid(Location loc) {
 		if (loc.getBlock().getType().name().contains("RAIL"))
 			return false;
-		boolean solid = false;
+		boolean solid;
 		try {
 			solid = me.zombie_striker.qg.guns.utils.GunUtil.isSolid(loc.getBlock(), loc);
 		} catch (Error | Exception e4) {
 			solid = loc.getBlock().getType().isSolid();
 		}
-		boolean k = loc.getBlock().getType().name().contains("LEAVES") || loc.getBlock().getType() == Material.GLASS
+		return loc.getBlock().getType().name().contains("LEAVES") || loc.getBlock().getType() == Material.GLASS
 				|| solid;
-		return k;
 	}
 }

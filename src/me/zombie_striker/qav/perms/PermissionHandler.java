@@ -3,6 +3,7 @@ package me.zombie_striker.qav.perms;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("unused")
 public class PermissionHandler {
 
 	public static final String PERM_UNLIM = "qualityarmoryvehicles.unlimitedvehicles";

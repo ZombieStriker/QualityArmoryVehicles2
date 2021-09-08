@@ -14,10 +14,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+@SuppressWarnings("unused")
 public class VehicleYML {
 
-	private File f;
-	private FileConfiguration c;
+	private final File f;
+	private final FileConfiguration c;
 
 	//private static final String LET_USERS_EDIT = "AllowUserModifications";
 
@@ -53,12 +54,12 @@ public class VehicleYML {
 		}
 		return this;
 	}
-	public VehicleYML verify(String name, Object v) {
+
+	public void verify(String name, Object v) {
 		if (!contains(name)) {
 			c.set(name, v);
 			needsUpdate = true;
 		}
-		return this;
 	}
 
 
@@ -240,15 +241,15 @@ public class VehicleYML {
 		verify("InputManager.keys.LMB", "none");
 		verify("InputManager.keys.RMB", "none");
 		verify("canDeconstructByEnvironment", true);
-		//verifyNeededTag("useHandForModel", false);
-		if (((String) get("vehicle_type")).equals(VehicleTypes.HELI.getName())) {
+
+		if (get("vehicle_type").equals(VehicleTypes.HELI.getName())) {
 			verify("descentSpeed",-0.1);
 			try {
 				verify("sound", Sound.ENTITY_PLAYER_ATTACK_SWEEP.name().toLowerCase().replace("_", "."));
-			} catch (Error | Exception e4) {
+			} catch (Error | Exception ignored) {
 			}
-		} else if (((String) get("vehicle_type")).equals(VehicleTypes.CAR.getName())
-				|| ((String) get("vehicle_type")).equals(VehicleTypes.PLANE.getName())) {
+		} else if (get("vehicle_type").equals(VehicleTypes.CAR.getName())
+				|| get("vehicle_type").equals(VehicleTypes.PLANE.getName())) {
 			verify("sound", "driving");
 		} else {
 			verify("sound", "null");
@@ -296,9 +297,8 @@ public class VehicleYML {
 		return this;
 	}
 
-	public VehicleYML setID(int id) {
+	public void setID(int id) {
 		set("id", id);
-		return this;
 	}
 
 	public VehicleYML setPassagerLocations(Vector... locs) {
@@ -336,9 +336,8 @@ public class VehicleYML {
 		return this;
 	}
 
-	public VehicleYML putTimeStamp(){
+	public void putTimeStamp(){
 		c.set("lastModifiedByQA", System.currentTimeMillis()+5000);
 		needsUpdate = true;
-		return this;
 	}
 }

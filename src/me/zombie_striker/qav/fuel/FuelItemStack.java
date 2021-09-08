@@ -11,22 +11,20 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
+@SuppressWarnings("deprecation")
 public class FuelItemStack {
 
-	private static HashMap<FuelItemStack, Integer> fuels = new HashMap<>();
+	private static final HashMap<FuelItemStack, Integer> fuels = new HashMap<>();
 
-	private String name;
-	private Material material;
-	private int data;
-	private List<String> lore;
-	private boolean shouldBeInShop = false;
-	private int cost = 0;
+	private final String name;
+	private final Material material;
+	private final int data;
+	private final List<String> lore;
+	private final boolean shouldBeInShop;
+	private final int cost;
 
 	private static final String OLD_BAD = "%name=%";
 	private static final String newSplit = "%";
@@ -53,12 +51,9 @@ public class FuelItemStack {
 		try {
 			if ((data != 0 && !check.getItemMeta().hasCustomModelData()) || (check.getItemMeta().hasCustomModelData() && check.getItemMeta().getCustomModelData() != data))
 				return false;
-		}catch(Error|Exception e4){}
-		if (hasCustomName() && (!check.hasItemMeta()
-				|| ((!check.getItemMeta().hasDisplayName() || !check.getItemMeta().getDisplayName().equals(name)))))
-			return false;
-
-		return true;
+		}catch(Error|Exception ignored){}
+		return !hasCustomName() || (check.hasItemMeta()
+				&& ((check.getItemMeta().hasDisplayName() && check.getItemMeta().getDisplayName().equals(name))));
 	}
 	public int getCost(){
 		return cost;
@@ -107,7 +102,7 @@ public class FuelItemStack {
 		meta.setDisplayName(getDisplayname());
 		try{
 		meta.setCustomModelData(data);
-	}catch(Error|Exception e4){}
+	}catch(Error|Exception ignored){}
 		temp.setItemMeta(meta);
 		return temp;
 	}
@@ -126,7 +121,7 @@ public class FuelItemStack {
 			registerNewFuelToConfig(null, Material.BLAZE_POWDER, (short) 0, null, 500, yml);
 			registerNewFuelToConfig(null, Material.BLAZE_ROD, (short) 0, null, 1000, yml);
 			registerNewFuelToConfig(null, Material.LAVA_BUCKET, (short) 0, null, 20 * 500, yml);
-			registerNewFuelToConfig(ChatColor.GOLD+"Fuel Canister", ReflectionUtils.supports(14) ? Material.RABBIT_HIDE : Material.DIAMOND_AXE, (short) 38, Arrays.asList(ChatColor.GRAY+"Fuel for: 500 seconds"), 20 * 500, yml, true,50);
+			registerNewFuelToConfig(ChatColor.GOLD+"Fuel Canister", ReflectionUtils.supports(14) ? Material.RABBIT_HIDE : Material.DIAMOND_AXE, (short) 38, Collections.singletonList(ChatColor.GRAY + "Fuel for: 500 seconds"), 20 * 500, yml, true,50);
 		}
 
 		for (String key : config.getKeys(false)) {
@@ -140,7 +135,7 @@ public class FuelItemStack {
 			List<String> lore = config.contains(key + ".lore") ? config.getStringList(key + ".lore") : null;
 
 			int fuel = (short) (config.contains(key + ".fuelevel") ? config.getInt(key + ".fuelevel") : 100);
-			boolean shouldBeShop = (config.contains(key + ".shouldBeInShop") ? config.getBoolean(key + ".shouldBeInShop") : false);
+			boolean shouldBeShop = (config.contains(key + ".shouldBeInShop") && config.getBoolean(key + ".shouldBeInShop"));
 			int cost = (config.contains(key + ".cost") ? config.getInt(key + ".cost") : 0);
 
 			FuelItemStack f = new FuelItemStack(name, mat, data, lore,shouldBeShop,cost);

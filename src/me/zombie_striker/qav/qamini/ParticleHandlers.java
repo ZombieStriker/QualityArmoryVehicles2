@@ -17,16 +17,12 @@ public class ParticleHandlers {
 		try {
 			me.zombie_striker.qg.handlers.ParticleHandlers.spawnExplosion(loc);
 			return;
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
 
 		try {
 			loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 1);
-		} catch (Error | Exception e4) {
-		}
-		// TODO: Do lights n stuff
-		try {
-		} catch (Error | Exception e5) {
+		} catch (Error | Exception ignored) {
 		}
 	}
 
@@ -34,7 +30,7 @@ public class ParticleHandlers {
 		try {
 			me.zombie_striker.qg.handlers.ParticleHandlers.spawnMushroomCloud(loc);
 			return;
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
 		try {
 			for (double d = 0; d < 2 * Math.PI; d += Math.PI / 48) {
@@ -76,21 +72,7 @@ public class ParticleHandlers {
 				spawnParticle(1.0, 0.5, 0.0, new Location(loc.getWorld(), loc.getX() + (Math.sin(d) * radius),
 						loc.getY() + 5.5, loc.getZ() + (Math.cos(d) * radius)));
 			}
-		} catch (Error | Exception e4) {
-		}
-		// TODO: Do lights n stuff
-		try {
-			/*
-			 * if (Bukkit.getPluginManager().getPlugin("LightAPI") != null) { final Location
-			 * loc2 = loc; LightAPI.createLight(loc, 15, false); for (ChunkInfo c :
-			 * LightAPI.collectChunks(loc)) { LightAPI.updateChunk(c); } new
-			 * BukkitRunnable() {
-			 * 
-			 * @Override public void run() { LightAPI.deleteLight(loc2, false); for
-			 * (ChunkInfo c : LightAPI.collectChunks(loc2)) { LightAPI.updateChunk(c); } }
-			 * }.runTaskLater(QAMain.getInstance(), 20); }
-			 */
-		} catch (Error | Exception e5) {
+		} catch (Error | Exception ignored) {
 		}
 	}
 
@@ -98,7 +80,7 @@ public class ParticleHandlers {
 		try {
 			me.zombie_striker.qg.handlers.ParticleHandlers.spawnParticle(r, g, b, loc);
 			return;
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
 		try {
 			if (is13) {
@@ -117,7 +99,7 @@ public class ParticleHandlers {
 		try {
 			me.zombie_striker.qg.handlers.ParticleHandlers.spawnMuzzleSmoke(shooter, loc);
 			return;
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
 		try {
 			double theta = Math.atan2(shooter.getLocation().getDirection().getX(),
@@ -132,7 +114,7 @@ public class ParticleHandlers {
 
 			for (int i = 0; i < 2; i++)
 				loc.getWorld().spawnParticle(Particle.SPELL, l, 0);
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
 	}
 }

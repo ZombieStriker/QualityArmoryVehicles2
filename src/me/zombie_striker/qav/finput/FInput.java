@@ -7,11 +7,11 @@ import java.util.Map;
 
 public interface FInput {
 
-	public void onInputF(VehicleEntity ve);
-	public void onInputLMB(VehicleEntity ve);
-	public void onInputRMB(VehicleEntity ve);
+	void onInputF(VehicleEntity ve);
+	void onInputLMB(VehicleEntity ve);
+	void onInputRMB(VehicleEntity ve);
 	
-	public void serialize(Map<String,Object> map, VehicleEntity ve);
+	void serialize(Map<String, Object> map, VehicleEntity ve);
 	
-	public String getName();
+	String getName();
 }

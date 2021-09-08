@@ -4,13 +4,14 @@ import me.zombie_striker.qav.VehicleEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public final class PlayerEnterQAVehicleEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean cancel = false;
-	private VehicleEntity ve;
-	private Player player;
+	private final VehicleEntity ve;
+	private final Player player;
 
 	public PlayerEnterQAVehicleEvent(VehicleEntity ve, Player p) {
 		this.ve = ve;
@@ -31,7 +32,7 @@ public final class PlayerEnterQAVehicleEvent extends Event {
 		this.cancel = canceled;
 	}
 
-	public HandlerList getHandlers() {
+	public @NotNull HandlerList getHandlers() {
 		return handlers;
 	}
 

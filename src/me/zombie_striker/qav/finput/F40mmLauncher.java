@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class F40mmLauncher implements FInput {
 
@@ -53,7 +54,7 @@ public class F40mmLauncher implements FInput {
 					}
 				}
 			}
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
 		if (!found) {
 			for (int i = 0; i < ve.getTrunk().getSize(); i++) {
@@ -71,16 +72,10 @@ public class F40mmLauncher implements FInput {
 			}
 		}
 		if (found) {
-			/*
-			 * final Location s =
-			 * ve.getDrivingArmorstand().getLocation().add(QualityArmoryVehicles
-			 * .rotateRelToCar(ve.getDrivingArmorstand(),
-			 * ve.getType().getCenterFromControlSeat(), false)) .add(0, 1.7, 0);
-			 */
-			Location eyelocation = null;
+			Location eyelocation;
 			@SuppressWarnings("deprecation")
 			Entity e = ve.getDriverSeat().getPassenger();
-			eyelocation = ((Player) e).getEyeLocation();// ((Player)ve.getDriverSeat().getPassenger()).getEyeLocation();
+			eyelocation = ((Player) Objects.requireNonNull(e)).getEyeLocation();// ((Player)ve.getDriverSeat().getPassenger()).getEyeLocation();
 			@SuppressWarnings("deprecation")
 			final Player player = (Player) ve.getDriverSeat().getPassenger();
 			final Vector dir = player.getLocation().getDirection().normalize();
@@ -93,7 +88,7 @@ public class F40mmLauncher implements FInput {
 			final Location s = eyelocation;
 			new BukkitRunnable() {
 				int distance = 100;
-				int ticks = 3;
+				final int ticks = 3;
 
 				@Override
 				public void run() {
@@ -101,17 +96,17 @@ public class F40mmLauncher implements FInput {
 					for (int tick = 0; tick < ticks; tick++) {
 						distance--;
 						s.add(dir);
-						ParticleHandlers.spawnParticle(1, 1, 1, s);// .spawnGunParticles(g, s);
+						ParticleHandlers.spawnParticle(1, 1, 1, s);
 						boolean entityNear = false;
 						try {
 							List<Entity> e2 = new ArrayList<>(s.getWorld().getNearbyEntities(s, 1, 1, 1));
 							if (!e2.isEmpty())
 								if (e2.size() > 1 || e2.get(0) != player)
 									entityNear = true;
-						} catch (Error e) {
+						} catch (Error ignored) {
 						}
 
-						boolean issolid = false;
+						boolean issolid;
 						try {
 							issolid = me.zombie_striker.qg.guns.utils.GunUtil.isSolid(s.getBlock(), s);
 						}catch(Error|Exception e4) {

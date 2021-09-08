@@ -42,7 +42,7 @@ public class ShopCallable extends EasyGUICallable {
 				}
 				if(FuelItemStack.getFuelForItem(data.getClickedItem()) > 0){
 					FuelItemStack fuelItemStack = FuelItemStack.getFuelItemInstance(data.getClickedItem());
-					if (EconHandler.hasEnough(fuelItemStack.getCost(), data.getClicker())) {
+					if (fuelItemStack != null && EconHandler.hasEnough(fuelItemStack.getCost(), data.getClicker())) {
 						ItemStack item = fuelItemStack.getItemStack();
 						if (data.getClicker().getInventory().firstEmpty() == -1) {
 							data.getClicker().sendMessage("Your inventory is full.");

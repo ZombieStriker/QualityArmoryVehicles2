@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DebugManager {
 
-	private static List<Player> playerRecievers = new ArrayList<>();
+	private static final List<Player> playerRecievers = new ArrayList<>();
 	private static boolean displayInConsole = true;
 
 	private static final String debugPrefix = ChatColor.GREEN + "[DEBUG]" + ChatColor.WHITE + " ";
@@ -51,27 +51,15 @@ public class DebugManager {
 	public static boolean toggleReciever(CommandSender player) {
 		if (player instanceof Player) {
 			if (playerRecievers.contains(player)) {
-				playerRecievers.remove(player);
+				removeReciever(player);
 				return false;
 			} else {
-				playerRecievers.add((Player) player);
+				addReciever(player);
 				return true;
 			}
 		}
 
 		return false;
-	}
-
-	public static boolean isDebugging() {
-		return displayInConsole || playerRecievers.size() > 0;
-	}
-
-	public static List<Player> getRecievers() {
-		return playerRecievers;
-	}
-
-	public static boolean getIsDisplayedInConsole() {
-		return displayInConsole;
 	}
 
 	public static void setShouldDisplayInConsole(boolean b) {

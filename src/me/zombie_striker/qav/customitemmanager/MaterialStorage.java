@@ -10,22 +10,18 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MaterialStorage {
 
 	private static final MaterialStorage EMPTY = new MaterialStorage(null, 0, 0);
 
-	private static List<MaterialStorage> store = new ArrayList<MaterialStorage>();
-	private int d;
-	private Material m;
-	private int variant = 0;
-	private String specialValues = null;
-	private String specialValues2 = null;
-
-	private MaterialStorage(Material m, int d) {
-		this.m = m;
-		this.d = d;
-	}
+	private static final List<MaterialStorage> store = new ArrayList<>();
+	private final int d;
+	private final Material m;
+	private final int variant;
+	private final String specialValues;
+	private final String specialValues2;
 
 	private MaterialStorage(Material m, int d, int var) {
 		this(m, d, var, null);
@@ -81,6 +77,7 @@ public class MaterialStorage {
 		return getMS(is, getVariant(is));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static MaterialStorage getMS(ItemStack is, int variant) {
 
 		if (is == null) {
@@ -96,28 +93,27 @@ public class MaterialStorage {
 			return getMS(is.getType(), is.getItemMeta().hasCustomModelData() ? is.getItemMeta().getCustomModelData() : 0, variant,
 					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);
 
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
 		return getMS(is.getType(), is.getDurability(), variant,
 				is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static int getVariant(ItemStack is) {
 		if (is != null)
 			if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
-				for (String lore : is.getItemMeta().getLore()) {
+				for (String lore : Objects.requireNonNull(is.getItemMeta().getLore())) {
 					if (lore.startsWith(QAMain.S_ITEM_VARIANTS_NEW)) {
 						try {
-							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_NEW)[1].trim());
-							return id;
+							return Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_NEW)[1].trim());
 						} catch (Error | Exception e4) {
 							e4.printStackTrace();
 							return 0;
 						}
 					} else if (lore.startsWith(QAMain.S_ITEM_VARIANTS_LEGACY)) {
 						try {
-							int id = Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_LEGACY)[1].trim());
-							return id;
+							return Integer.parseInt(lore.split(QAMain.S_ITEM_VARIANTS_LEGACY)[1].trim());
 						} catch (Error | Exception e4) {
 							e4.printStackTrace();
 							return 0;
@@ -140,10 +136,6 @@ public class MaterialStorage {
 		return specialValues;
 	}
 
-	public void setSpecialValue(String s) {
-		this.specialValues = s;
-	}
-
 	public boolean hasSpecialValue2() {
 		return specialValues2 != null;
 	}
@@ -152,19 +144,11 @@ public class MaterialStorage {
 		return specialValues2;
 	}
 
-	public void setSpecialValue2(String s) {
-		this.specialValues2 = s;
-	}
-
 	public Material getMat() {
 		return m;
 	}
 
 	public boolean hasVariant() {
 		return variant > 0;
-	}
-
-	public int getVariant() {
-		return variant;
 	}
 }

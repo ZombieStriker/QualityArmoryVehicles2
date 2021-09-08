@@ -150,7 +150,7 @@ public class Main extends JavaPlugin {
 			} else {
 				item = new me.zombie_striker.qav.customitemmanager.qav.versions.V1_14.CustomVehicleItem();
 			}
-			CustomItemManager.registerItemType(getDataFolder(), "vehicles", item);
+			CustomItemManager.registerItemType("vehicles", item);
 			item.initItems(getDataFolder());
 		}
 		if (!QAMini.overrideURL) {

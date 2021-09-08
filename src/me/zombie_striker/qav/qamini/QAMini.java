@@ -23,11 +23,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+@SuppressWarnings("deprecation")
 public class QAMini implements Listener {
 
 	private static final String SERVER_VERSION;
@@ -52,16 +50,7 @@ public class QAMini implements Listener {
 		SERVER_VERSION = name;
 	}
 
-	public static boolean isCustomItem(ItemStack is) {
-		MaterialStorage ms = MaterialStorage.getMS(is);
-		if (registeredItems.contains(ms))
-			return true;
-		return false;
-	}
-
 	public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
-		//if (secondVersion >= 9 && Bukkit.getPluginManager().isPluginEnabled("ViaRewind"))
-		//	return false;
 		String firstChar = SERVER_VERSION.substring(1, 2);
 		int fInt = Integer.parseInt(firstChar);
 		if (fInt < mainVersion)
@@ -74,9 +63,7 @@ public class QAMini implements Listener {
 		}
 
 		int sInt = Integer.parseInt(secondChar.toString());
-		if (sInt < secondVersion)
-			return false;
-		return true;
+		return sInt >= secondVersion;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -88,16 +75,12 @@ public class QAMini implements Listener {
 			return true;
 		}
 		if (b.getType().name().contains("SLAB") || b.getType().name().contains("STEP")) {
-			if (((l.getY() - l.getBlockY() > 0.5 && b.getData() == 0)
-					|| (l.getY() - l.getBlockY() <= 0.5 && b.getData() == 1)))
-				return false;
-			return true;
+			return (!(l.getY() - l.getBlockY() > 0.5) || b.getData() != 0)
+					&& (!(l.getY() - l.getBlockY() <= 0.5) || b.getData() != 1);
 		}
 		if (b.getType().name().contains("BED_") || b.getType().name().contains("_BED")
 				|| b.getType().name().contains("DAYLIGHT_DETECTOR")) {
-			if ((l.getY() - l.getBlockY() > 0.5))
-				return false;
-			return true;
+			return !(l.getY() - l.getBlockY() > 0.5);
 		}
 		if (b.getType().name().contains("GLASS")) {
 			return true;
@@ -167,12 +150,12 @@ public class QAMini implements Listener {
 	}
 
 	public static int getCalculatedExtraDurib(ItemStack is) {
-		if (!is.hasItemMeta() || !is.getItemMeta().hasLore() || is.getItemMeta().getLore().isEmpty())
+		if (!is.hasItemMeta() || !is.getItemMeta().hasLore() || Objects.requireNonNull(is.getItemMeta().getLore()).isEmpty())
 			return -1;
 		List<String> lore = is.getItemMeta().getLore();
-		for (int i = 0; i < lore.size(); i++) {
-			if (lore.get(i).startsWith(CALCTEXT))
-				return Integer.parseInt(lore.get(i).split(CALCTEXT)[1]);
+		for (String s : lore) {
+			if (s.startsWith(CALCTEXT))
+				return Integer.parseInt(s.split(CALCTEXT)[1]);
 		}
 		return -1;
 	}
@@ -195,7 +178,7 @@ public class QAMini implements Listener {
 	public static ItemStack decrementCalculatedExtra(ItemStack is) {
 		ItemMeta im = is.getItemMeta();
 		List<String> lore = is.getItemMeta().getLore();
-		for (int i = 0; i < lore.size(); i++) {
+		for (int i = 0; i < (lore != null ? lore.size() : 0); i++) {
 			if (lore.get(i).startsWith(CALCTEXT)) {
 				lore.set(i, CALCTEXT + "" + (Integer.parseInt(lore.get(i).split(CALCTEXT)[1]) - 1));
 			}
@@ -209,7 +192,7 @@ public class QAMini implements Listener {
 		if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
 			ItemMeta im = is.getItemMeta();
 			List<String> lore = is.getItemMeta().getLore();
-			for (int i = 0; i < lore.size(); i++) {
+			for (int i = 0; i < (lore != null ? lore.size() : 0); i++) {
 				if (lore.get(i).startsWith(CALCTEXT)) {
 					lore.remove(i);
 				}
@@ -228,9 +211,9 @@ public class QAMini implements Listener {
 		try {
 			if (CustomItemManager.getItemType("vehicles") instanceof AbstractItem)
 				return false;
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
-		List<MaterialStorage> ms = new ArrayList<MaterialStorage>();
+		List<MaterialStorage> ms = new ArrayList<>();
 		ms.addAll(registeredItems);
 		for (MaterialStorage mat : ms) {
 			if (mat.getMat() == is.getType())
@@ -285,7 +268,7 @@ public class QAMini implements Listener {
 					}
 				}.runTaskLater(QualityArmoryVehicles.getPlugin(), 20 * (warning ? 1 : 5));
 			}
-		}.runTaskLater(QualityArmoryVehicles.getPlugin(), (long) (20 * 0));
+		}.runTaskLater(QualityArmoryVehicles.getPlugin(), 0);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -293,8 +276,8 @@ public class QAMini implements Listener {
 	public void onBlockBreak(BlockBreakEvent e) {
 		if (e.isCancelled())
 			return;
-		if (e.getPlayer().getItemInHand() != null
-				&& (QualityArmoryVehicles.isVehicleByItem(e.getPlayer().getItemInHand()))) {
+		e.getPlayer().getItemInHand();
+		if (QualityArmoryVehicles.isVehicleByItem(e.getPlayer().getItemInHand())) {
 			e.setCancelled(true);
 			return;
 		}
@@ -305,8 +288,8 @@ public class QAMini implements Listener {
 	public void onBlockBreakMonitor(final BlockBreakEvent e) {
 		if (e.isCancelled())
 			return;
-		int k = 0;
-		if (e.getPlayer().getItemInHand() != null) {
+		int k;
+		if (e.getPlayer().getItemInHand() != null && !e.getPlayer().getItemInHand().getType().equals(Material.AIR)) {
 			if (CustomItemManager.isUsingCustomData())
 				return;
 			if ((k = getCalculatedExtraDurib(e.getPlayer().getItemInHand())) != -1) {

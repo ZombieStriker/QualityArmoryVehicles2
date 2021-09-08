@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 
+@SuppressWarnings("unused")
 public abstract class AbstractItem {
 
 	public abstract ItemStack getItem(Material material, int data, int variant);

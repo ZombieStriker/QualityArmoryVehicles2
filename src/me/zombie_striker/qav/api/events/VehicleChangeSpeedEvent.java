@@ -3,13 +3,15 @@ package me.zombie_striker.qav.api.events;
 import me.zombie_striker.qav.VehicleEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class VehicleChangeSpeedEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean cancel = false;
-	private VehicleEntity ve;
-	private double forwardBefore;
+	private final VehicleEntity ve;
+	private final double forwardBefore;
 	private double forwardNow;
 
 	public VehicleChangeSpeedEvent(VehicleEntity ve, double fowardFrom, double forwardNow) {
@@ -41,7 +43,7 @@ public class VehicleChangeSpeedEvent extends Event {
 		this.cancel = canceled;
 	}
 
-	public HandlerList getHandlers() {
+	public @NotNull HandlerList getHandlers() {
 		return handlers;
 	}
 

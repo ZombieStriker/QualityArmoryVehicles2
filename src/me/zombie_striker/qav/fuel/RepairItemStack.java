@@ -23,6 +23,7 @@ public class RepairItemStack {
     private boolean shouldBeInShop;
     private int cost;
 
+    @SuppressWarnings("deprecation")
     public boolean isItem(@Nullable ItemStack item) {
         if (item == null) return false;
 
@@ -147,6 +148,7 @@ public class RepairItemStack {
         return this;
     }
 
+    @SuppressWarnings("deprecation")
     public ItemStack asItem() {
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();

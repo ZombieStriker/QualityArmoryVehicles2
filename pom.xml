@@ -190,15 +190,6 @@
                             <shadedPattern>me.zombie_striker.qav.util.expiringmap</shadedPattern>
                         </relocation>
                     </relocations>
-                    <filters>
-                        <filter>
-                            <artifact>com.github.cryptomorin:*</artifact>
-                            <artifact>net.jodah:expiringmap:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.MF</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
                 </configuration>
                 <executions>
                     <execution>

@@ -27,6 +27,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
+@SuppressWarnings({"deprecation","unused"})
 public class MenuHandler implements Listener {
 
 	public static HashMap<UUID, VehicleEntity> storedLookAt = new HashMap<>();
@@ -36,9 +37,7 @@ public class MenuHandler implements Listener {
 	}
 
 	public static boolean isVehicleWindow(InventoryView view, VehicleEntity ve) {
-		if (view.getTitle().startsWith("QAV" + ve.getVehicleUUID().toString()))
-			return true;
-		return false;
+		return view.getTitle().startsWith("QAV" + ve.getVehicleUUID().toString());
 	}
 
 	public static void openOverview(Player player, VehicleEntity ve) {
@@ -54,12 +53,9 @@ public class MenuHandler implements Listener {
 		final EasyGUI gui = EasyGUI.generateGUIIfNoneExist(18, "QAV" + ve.getVehicleUUID().toString() + "Overview",
 				MessagesConfig.MENU_OVERVIEW_TITLE.replace("%cartype%", ve.getType().getDisplayname()), true);
 
-		//storedLookAt.remove(player.getUniqueId());
-
 		if (Main.enableTrunks) {
 			List<ItemStack> quickTrunk = Arrays.asList(ve.getTrunk().getContents());
-		//	if (quickTrunk.contains(null))
-		//		quickTrunk.remove(null);
+
 			int limit = 7;
 			boolean isMore = quickTrunk.size() > limit;
 			String[] trunklore = new String[1 + (isMore ? limit : quickTrunk.size())];
@@ -91,7 +87,7 @@ public class MenuHandler implements Listener {
 			int i = 1;
 			for (UUID pass : ve.getWhiteList()) {
 				OfflinePlayer op = Bukkit.getOfflinePlayer(pass);
-				lore[i] = ChatColor.GRAY + (op != null ? op.getName() : null);
+				lore[i] = ChatColor.GRAY + op.getName();
 				i++;
 			}
 			gui.updateButton(1, ItemFact.askull(null, MessagesConfig.ICON_ADD_WHITELIST, lore), new EasyGUICallable() {
@@ -119,7 +115,7 @@ public class MenuHandler implements Listener {
 				openSetAsPassager(data.getClicker(), getStoredVehicle(data.getClicker().getUniqueId()));
 			}
 		});
-		Material sign = null;
+		Material sign;
 		try {
 			sign = Material.valueOf("OAK_SIGN");
 		} catch (Error | Exception e4) {
@@ -142,7 +138,7 @@ public class MenuHandler implements Listener {
 		if (ve.getType().enableFuel()) {
 
 
-			List<ItemStack> quickFuel = new ArrayList<ItemStack>(Arrays.asList(ve.getFuels().getContents()));
+			List<ItemStack> quickFuel = new ArrayList<>(Arrays.asList(ve.getFuels().getContents()));
 			int fuelInt = 0;
 			String[] fuelLore = new String[1];
 			for (ItemStack is : quickFuel) {
@@ -189,9 +185,8 @@ public class MenuHandler implements Listener {
 					if (ve.getOwner() == null || ve.getOwner().equals(data.getClicker().getUniqueId())) {
 						data.getClicker().closeInventory();
 						storedLookAt.remove(data.getClicker().getUniqueId());
-						Entity driver = null;
-					//	if (ve.getDriverSeat() == null)
-					//		VehicleEntity.DriverFinder.updateNearbyVehicles(ve, ve.getLastLoc());
+						Entity driver;
+
 						driver = ve.getDriverSeat().getPassenger();
 						if (driver != null) {
 							data.getClicker().sendMessage(MessagesConfig.MESSAGE_CannotPickupWhileInVehicle);
@@ -210,7 +205,7 @@ public class MenuHandler implements Listener {
 
 		if (ve.getOwner() != null) {
 			OfflinePlayer op = Bukkit.getOfflinePlayer(ve.getOwner());
-			String name = (op == null ? "Null Owner" : (op.getName() != null ? op.getName() : "Null Name"));
+			String name = op.getName() != null ? op.getName() : "Null Name";
 			gui.updateButton(17, ItemFact.a(Material.BARRIER, MessagesConfig.ICON_OWNERSHIP,
 					MessagesConfig.ICONLORE_currentowner.replaceAll("%owner%", name)), new EasyGUICallable() {
 				@Override
@@ -218,8 +213,7 @@ public class MenuHandler implements Listener {
 					VehicleEntity ve = getStoredVehicle(data.getClicker().getUniqueId());
 					if (ve == null)
 						return;
-					//if (ve.getDriverSeat() == null)
-					//	VehicleEntity.DriverFinder.updateNearbyVehicles(ve, ve.getLastLoc());
+
 					if (ve.getOwner() != null && ve.getOwner().equals(data.getClicker().getUniqueId())) {
 						ve.setOwner(null);
 						data.getClicker().sendMessage(MessagesConfig.MESSAGE_NO_OWNER_NOW);
@@ -241,8 +235,8 @@ public class MenuHandler implements Listener {
 	}
 
 	public static void openShop(Player player, Class<?> class1) {
-		List<EasyGUICallable> callables = new ArrayList<EasyGUICallable>();
-		List<ItemStack> buttons = new ArrayList<ItemStack>();
+		List<EasyGUICallable> callables = new ArrayList<>();
+		List<ItemStack> buttons = new ArrayList<>();
 		ShopCallable button = new ShopCallable();
 		int i = 0;
 		if (Main.repairItem.shouldBeInShop()) {
@@ -396,11 +390,9 @@ public class MenuHandler implements Listener {
 				VehicleEntity ve = storedLookAt.get(data.getClicker().getUniqueId());
 				if (ve == null)
 					return;
-				//if (ve.getDriverSeat() == null)
-				//	VehicleEntity.DriverFinder.updateNearbyVehicles(ve, ve.getLastLoc());
-				if (clicked != null && ve != null) {
+				if (clicked != null) {
 					data.getClicker()
-							.sendMessage(MessagesConfig.MESSAGE_ADD_PLAYER_WHITELIST.replace("%name%", clicked.getName()));
+							.sendMessage(MessagesConfig.MESSAGE_ADD_PLAYER_WHITELIST.replace("%name%", Objects.requireNonNull(clicked.getName())));
 					if (!ve.allowUserDriver(clicked.getUniqueId()))
 						ve.addToWhitelist(clicked.getUniqueId());
 					openOverview(data.getClicker(), ve);
@@ -418,8 +410,7 @@ public class MenuHandler implements Listener {
 		EasyGUI gui = EasyGUI.generateGUIIfNoneExist(Math.max(9, (players.size() / 9) * 9), "QAV" + ve.getVehicleUUID().toString() + "AddWhitelist", MessagesConfig.MENU_ADD_ALLOWED_TITLE.replace("%cartype%", ve.getType().getDisplayname()), true);
 
 
-		//Inventory overview = Bukkit.createInventory(null, ((Bukkit.getOnlinePlayers().size() % 9) + 1) * 9,
-		//		MessagesConfig.MENU_ADD_ALLOWED_TITLE.replace("%cartype%", ve.getType().getDisplayname()));
+
 		int i = 0;
 		for (Player online : players) {
 			if(Main.useHeads) {
@@ -447,7 +438,7 @@ public class MenuHandler implements Listener {
 				if (clicked != null && ve != null) {
 					if (MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST != null)
 						data.getClicker().sendMessage(
-								MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST.replace("%name%", clicked.getName()));
+								MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST.replace("%name%", Objects.requireNonNull(clicked.getName())));
 					if (ve.allowUserDriver(clicked.getUniqueId()))
 						ve.removeFromWhitelist(clicked.getUniqueId());
 					openOverview(data.getClicker(), ve);
@@ -466,8 +457,6 @@ public class MenuHandler implements Listener {
 		EasyGUI gui = EasyGUI.generateGUIIfNoneExist(Math.max(9, (players.size() / 9) * 9), "QAV" + ve.getVehicleUUID().toString() + "RemoveWhitelist", MessagesConfig.MENU_REMOVE_ALLOWED_TITLE.replace("%cartype%", ve.getType().getDisplayname()), true);
 
 
-		//Inventory overview = Bukkit.createInventory(null, ((ve.getWhiteList().size() % 9) + 1) * 9,
-		//		MessagesConfig.MENU_REMOVE_ALLOWED_TITLE.replace("%cartype%", ve.getType().getDisplayname()));
 		int i = 0;
 		for (String name : players) {
 			if(Main.useHeads) {
@@ -492,31 +481,30 @@ public class MenuHandler implements Listener {
 				VehicleEntity ve = storedLookAt.get(data.getClicker().getUniqueId());
 				if (data.getClickedItem() != null && ve != null) {
 					if (data.getClickedItem().getType() == Material.BRICK_STAIRS) {
-						Entity driver = null;
+						Entity driver;
 						driver = ve.getDriverSeat().getPassenger();
 						if (driver == null) {
 							if (!Main.requirePermissionToDrive || PermissionHandler.canDrive(player, ve.getType())) {
 								ve.getDriverSeat().setPassenger(data.getClicker());
 								Main.DEBUG("Added player to seat!");
-							}else{;
+							}else{
 								Main.DEBUG("Stopped player from being added to seat!");
 							}
 							} else {
 							Main.DEBUG("Another passager is already in driver seat : "
-									+ (driver != null ? driver.getName() : "ERROR"));
+									+ driver.getName());
 						}
 					} else {
-						Entity pass = null;
+						Entity pass;
 						if ((pass = ve.getPassager(data.getClickedItem().getAmount() - 1)) == null
 								&& data.getSlot() - 1 < ve.getType().getPassagerSpots().size()) {
 							QualityArmoryVehicles.setAddPassager(ve,
 									data.getClicker(), data.getClickedItem().getAmount() - 1);
 							Main.DEBUG("Added player to seat!");
 						} else {
-							Entity rider = pass.getPassenger();
 							Main
 									.DEBUG("Another passager is already in the " + (data.getClickedItem().getAmount() - 1)
-											+ " seat : " + (rider != null ? rider.getName() : "ERROR"));
+											+ " seat : " + (pass != null && pass.getPassenger() != null? pass.getPassenger().getName() : "ERROR"));
 						}
 					}
 					data.getClicker().closeInventory();
@@ -528,10 +516,8 @@ public class MenuHandler implements Listener {
 		EasyGUI gui = EasyGUI.generateGUIIfNoneExist(Math.max(9, ve.getType().getPassagerSpots().size() + 1), "QAV" + ve.getVehicleUUID().toString() + "PassagerSeats", MessagesConfig.MENU_PASSAGER_SEATS_TITLE.replace("%cartype%", ve.getType().getDisplayname()), true);
 
 
-		//Inventory overview = Bukkit.createInventory(null, (((ve.getType().getPassagerSpots().size() + 1) % 9) + 1) * 9,
-		//		MessagesConfig.MENU_PASSAGER_SEATS_TITLE.replace("%cartype%", ve.getType().getDisplayname()));
-		String name = null;
-		ItemStack is = null;
+		String name;
+		ItemStack is;
 		if (ve.getDriverSeat() == null)
 			return;
 		if (ve.getDriverSeat().getPassenger() != null) {
@@ -585,50 +571,43 @@ public class MenuHandler implements Listener {
 				Bukkit.getOfflinePlayer(ChatColor.stripColor(clicked.getItemMeta().getDisplayName()));
 			}
 		}catch (Error|Exception e4){
-			if (clicked != null && clicked.getType().name().equals("SKULL_ITEM")) {
+			if (clicked.getType().name().equals("SKULL_ITEM")) {
 				Bukkit.getOfflinePlayer(ChatColor.stripColor(clicked.getItemMeta().getDisplayName()));
 			}
 		}
 		try {
 			return clicked == null ? null : ((SkullMeta) clicked.getItemMeta()).getOwningPlayer();
-		} catch (Error | Exception e4) {
+		} catch (Error | Exception ignored) {
 		}
 		try {
-			return clicked == null ? null : Bukkit.getOfflinePlayer(((SkullMeta) clicked.getItemMeta()).getOwner());
+			return Bukkit.getOfflinePlayer(Objects.requireNonNull(((SkullMeta) clicked.getItemMeta()).getOwner()));
 		}catch(Error|Exception e4){
-			return clicked == null ? null : Bukkit.getOfflinePlayer((ChatColor.stripColor(clicked.getItemMeta().getDisplayName())));
+			return Bukkit.getOfflinePlayer(ChatColor.stripColor(clicked.getItemMeta().getDisplayName()));
 		}
 	}
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onClick(final InventoryClickEvent e) {
-
-		if (e.getView() == null || e.getView().getTitle() == null) {
-			Main.DEBUG("Player Clicked Inventory that was not a menu");
-			return;
-		}
-
-		if (e.getInventory() != null) {
-			if (e.getView().getTitle()
-					.endsWith(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_ADD_ALLOWED_TITLE))
-					|| e.getView().getTitle()
-					.endsWith(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_REMOVE_ALLOWED_TITLE))
-					|| e.getView().getTitle()
-					.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_FUELTANK_TITLE))
-					|| e.getView().getTitle().endsWith(MessagesConfig.MENU_GARAGE_TITLE)
-					|| e.getView().getTitle()
-					.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_PASSAGER_SEATS_TITLE))
-					|| e.getView().getTitle()
-					.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_OVERVIEW_TITLE))
-					|| e.getView().getTitle()
-					.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_SHOP_TITLE))) {
-				if (e.getClick().isShiftClick()) {
-					e.setCancelled(true);
-				}
-			} else {
-				return;
+		e.getInventory();
+		if (e.getView().getTitle()
+				.endsWith(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_ADD_ALLOWED_TITLE))
+				|| e.getView().getTitle()
+				.endsWith(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_REMOVE_ALLOWED_TITLE))
+				|| e.getView().getTitle()
+				.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_FUELTANK_TITLE))
+				|| e.getView().getTitle().endsWith(MessagesConfig.MENU_GARAGE_TITLE)
+				|| e.getView().getTitle()
+				.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_PASSAGER_SEATS_TITLE))
+				|| e.getView().getTitle()
+				.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_OVERVIEW_TITLE))
+				|| e.getView().getTitle()
+				.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_SHOP_TITLE))) {
+			if (e.getClick().isShiftClick()) {
+				e.setCancelled(true);
 			}
+		} else {
+			return;
 		}
 		if (e.getClickedInventory() == null) {
 			return;
@@ -653,13 +632,7 @@ public class MenuHandler implements Listener {
 			}
 			Main.DEBUG("Start check fuel tank");
 			final VehicleEntity ve = storedLookAt.get(e.getWhoClicked().getUniqueId());
-			/*new BukkitRunnable() {
 
-				@Override
-				public void run() {
-					ve.setFuels(e.getInventory().getContents());
-				}
-			}.runTaskLater(Main.instance, 1);*/
 		} else {
 			Main.DEBUG("Reached end, but no inventory was found.");
 		}

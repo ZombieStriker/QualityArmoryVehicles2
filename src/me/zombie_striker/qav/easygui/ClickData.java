@@ -7,12 +7,12 @@ import org.bukkit.inventory.ItemStack;
 
 public class ClickData {
 
-	private InventoryClickEvent raw;
-	private Inventory inv;
-	private Player clicker;
-	private ItemStack clickedItem;
-	private int slot;
-	private EasyGUI gui;
+	private final InventoryClickEvent raw;
+	private final Inventory inv;
+	private final Player clicker;
+	private final ItemStack clickedItem;
+	private final int slot;
+	private final EasyGUI gui;
 
 	public ClickData(InventoryClickEvent raw, EasyGUI gui){
 		this.raw = raw;

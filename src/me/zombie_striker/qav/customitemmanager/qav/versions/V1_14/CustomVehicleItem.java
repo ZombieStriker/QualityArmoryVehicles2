@@ -38,20 +38,13 @@ public class CustomVehicleItem extends AbstractItem {
 
 	@Override
 	public void initItems(File dataFolder) {
-		initItems(dataFolder, true);
+		initItems(true);
 	}
 
-	public void initItems(File dataFolder, boolean b) {
+	public void initItems(boolean b) {
 		if (CustomItemManager.getResourcepack() == null)
 			CustomItemManager.setResourcepack("https://www.dropbox.com/s/baqqgxkwsz3io23/QualityArmoryCarsOnlyV2.7.zip?dl=1");
 		if (b) {
-			/*ComplexAttatchmentsYML.registerComplexAttachment("t50tankcannon", 39)
-					.setActionDown(ComplexAdditionAction.Actions.ROTATE_DOWN)
-					.setActionLeft(ComplexAdditionAction.Actions.ROTATE_LEFT)
-					.setActionLMB(ComplexAdditionAction.Actions.FIRECANNON)
-					.setActionRight(ComplexAdditionAction.Actions.ROTATE_RIGHT)
-					.setActionUp(ComplexAdditionAction.Actions.ROTATE_UP)
-					.save();*/
 
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "t50", 1).setDisplayname("T50")
 					.setCenter(new Vector(-1.5, 0, 0)).setFrontVectorOffset(4).setBackVectorOffset(4)

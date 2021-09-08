@@ -13,24 +13,20 @@ public class FToggleSpeed implements FInput {
 
 	@Override
 	public void onInputF(VehicleEntity ve) {
-		onInput(ve);
-	}@Override
-	public void onInputLMB(VehicleEntity ve) {		
-		onInput(ve);
-	}@Override
-	public void onInputRMB(VehicleEntity ve) {		
-		onInput(ve);
+
 	}
-	
-	@SuppressWarnings("deprecation")
-	public void onInput(VehicleEntity ve) {
-		//ve.setFInputState((ve.getFInputState() + 1) % ve.getType().getFInputMax());
-		//ve.getDriverSeat().getPassenger().sendMessage(MessagesConfig.MESSAGE_HELI_CHANGESPEED.replaceAll("%speed%", ""+ve.fState));
+	@Override
+	public void onInputLMB(VehicleEntity ve) {		
+
+	}
+	@Override
+	public void onInputRMB(VehicleEntity ve) {		
+
 	}
 
 	@Override
 	public void serialize(Map<String, Object> map, VehicleEntity ve) {
-		//map.put("heli-speed", ve.fState);
+
 	}
 
 	@Override

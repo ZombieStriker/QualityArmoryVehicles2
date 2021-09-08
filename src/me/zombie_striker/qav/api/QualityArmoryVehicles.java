@@ -6,6 +6,7 @@ import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -26,29 +27,31 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@SuppressWarnings({"deprecation","unused"})
 public class QualityArmoryVehicles {
 
 	private static Main main;
 
-	public static void setPlugin(Main main1){
-		main = main1;
+	public static void setPlugin(Main main){
+		QualityArmoryVehicles.main = main;
 	}
 	public static Main getPlugin(){
 		return main;
 	}
 
 	public static VehicleEntity getVehicleEntityByEntity(Entity entity){
-		for(VehicleEntity ve : main.vehicles){
-			if(ve!=null)
-			if(ve.getDriverSeat()==entity || ve.getModelEntities().contains(entity) || ve.getPassagerSeats().contains(entity)){
-				return ve;
-			}
+		for(VehicleEntity ve : Main.vehicles){
+			if(ve!=null && entity instanceof ArmorStand)
+				if(ve.getDriverSeat()==entity || ve.getModelEntities().contains(entity) || ve.getPassagerSeats().contains(entity)){
+					return ve;
+				}
 		}
 		return null;
 	}
 
 	public static Vector rotateRelToCar(Entity e, Vector offset, boolean reverse) {
 		VehicleEntity ve = getVehicleEntityByEntity(e);
+		Validate.notNull(ve);
 		return rotateRelToCar(ve, ve.getModelEntity(), offset, reverse);
 	}
 
@@ -63,7 +66,7 @@ public class QualityArmoryVehicles {
 		EulerAngle ea = model.getHeadPose();
 		double cos = Math.cos(ve.getAngleRotation() - Main.YOFFSET);
 		double sin = Math.sin(ve.getAngleRotation() - Main.YOFFSET);
-		Vector newVal = null;
+		Vector newVal;
 		if (ea.getX() == 0) {
 			newVal = new Vector((offset.getX() * cos) - (offset.getZ() * sin), offset.getY(),
 					(offset.getZ() * cos) + (offset.getX() * sin));
@@ -84,7 +87,6 @@ public class QualityArmoryVehicles {
 		return getVehicleByItem(is) != null;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static AbstractVehicle getVehicleByItem(MaterialStorage ms) {
 		for (AbstractVehicle ve : Main.vehicleTypes) {
 			if (ve.getMaterial() == ms.getMat())
@@ -98,7 +100,7 @@ public class QualityArmoryVehicles {
 	public static AbstractVehicle getVehicleByItem(ItemStack is) {
 		if (is == null)
 			return null;
-		int data = 0;
+		int data;
 		try {
 			data = is.getItemMeta().getCustomModelData();
 		} catch (Error | Exception e4) {
@@ -152,9 +154,7 @@ public class QualityArmoryVehicles {
 	}
 
 	public static boolean isWithinVehicle(Location to, VehicleEntity ve) {
-		if(ve.getBoundingBox().intersects(to))
-			return true;
-		return false;
+		return ve.getBoundingBox().intersects(to);
 	}
 
 	public static VehicleEntity spawnVehicle(UnlockedVehicle ab, Player player) {
@@ -221,10 +221,8 @@ public class QualityArmoryVehicles {
 		}
 	}
 
-	@Deprecated
 	public static Location getPassagerOffsetLocation(ArmorStand base, AbstractVehicle cartype, int seatID) {
-		Vector seatid = cartype.getPassagerSpots().get(seatID);
-		return base.getLocation().clone().add(rotateRelToCar(base, seatid, false));
+		return getPassagerOffsetLocation((Entity) base,cartype, seatID);
 	}
 
 	public static Location getPassagerOffsetLocation(Entity base, AbstractVehicle cartype, int seatID) {
@@ -239,18 +237,18 @@ public class QualityArmoryVehicles {
 		return passagerSeat;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<UnlockedVehicle> unlockedVehicles(OfflinePlayer player) {
 		File playersFile = new File(Main.playerUnlock, player.getUniqueId() + ".yml");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
 		return (List<UnlockedVehicle>) c.getList("unlockedVehicles", new ArrayList<>());
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void addUnlockedVehicle(Player player, UnlockedVehicle ve) {
-		File playersFile = new File(Main.playerUnlock, player.getUniqueId().toString() + ".yml");
+		File playersFile = new File(Main.playerUnlock, player.getUniqueId() + ".yml");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
 		List<UnlockedVehicle> list = (List<UnlockedVehicle>) c.getList("unlockedVehicles", new ArrayList<>());
-		if (list == null)
-			list = new ArrayList<>();
 		list.add(ve);
 		c.set("unlockedVehicles", list);
 		try {
@@ -265,22 +263,22 @@ public class QualityArmoryVehicles {
 		return new File(Main.playerUnlock, player.getUniqueId() + ".yml");
 	}
 
+	@SuppressWarnings("unchecked")
 	public static UnlockedVehicle findUnlockedVehicle(Player player, AbstractVehicle ve) {
 		File file = getUnlockedVehiclesFile(player);
 		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
 		List<UnlockedVehicle> list = (List<UnlockedVehicle>) c.getList("unlockedVehicles", new ArrayList<>());
-		if (list == null)
-			list = new ArrayList<>();
 		Optional<UnlockedVehicle> first = list.stream()
 				.filter(i -> i.getVehicleType().getName().equals(ve.getName()))
 				.findFirst();
 		return first.orElse(null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void removeUnlockedVehicle(Player player, AbstractVehicle ve) {
 		File playersFile = getUnlockedVehiclesFile(player);
 		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
-		List<UnlockedVehicle> list = new ArrayList<>((List<UnlockedVehicle>) c.getList("unlockedVehicles"));
+		List<UnlockedVehicle> list = new ArrayList<>((List<UnlockedVehicle>) c.getList("unlockedVehicles", new ArrayList<>()));
 		UnlockedVehicle unlockedVehicle = findUnlockedVehicle(player, ve);
 		list.remove(unlockedVehicle);
 		c.set("unlockedVehicles", list);
@@ -291,12 +289,11 @@ public class QualityArmoryVehicles {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void removeUnlockedVehicle(Player player, UnlockedVehicle ve) {
 		File file = getUnlockedVehiclesFile(player);
 		FileConfiguration c = YamlConfiguration.loadConfiguration(file);
 		List<UnlockedVehicle> list = (List<UnlockedVehicle>) c.getList("unlockedVehicles", new ArrayList<>());
-		if (list == null)
-			list = new ArrayList<>();
 		list.remove(ve);
 		c.set("unlockedVehicles", list);
 		try {
@@ -306,12 +303,12 @@ public class QualityArmoryVehicles {
 		}
 	}
 	public static Object getPlayerData(Player player, String path){
-		File playersFile = new File(Main.playerUnlock, player.getUniqueId().toString() + ".yml");
+		File playersFile = new File(Main.playerUnlock, player.getUniqueId() + ".yml");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
 		return c.get(path);
 	}
 	public static void setPlayerData(Player player, String path, Object o){
-		File playersFile = new File(Main.playerUnlock, player.getUniqueId().toString() + ".yml");
+		File playersFile = new File(Main.playerUnlock, player.getUniqueId() + ".yml");
 		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
 		c.set(path, o);
 		try {
@@ -322,7 +319,7 @@ public class QualityArmoryVehicles {
 	}
 
 	public static List<VehicleEntity> getOwnedVehicles(UUID player) {
-		List<VehicleEntity> list = new ArrayList<VehicleEntity>();
+		List<VehicleEntity> list = new ArrayList<>();
 		for (VehicleEntity ve : Main.vehicles) {
 			if (ve.getOwner() != null && ve.getOwner().equals(player)) {
 				list.add(ve);

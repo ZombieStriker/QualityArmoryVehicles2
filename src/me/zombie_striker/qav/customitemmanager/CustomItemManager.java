@@ -10,7 +10,7 @@ import java.util.Set;
 public class CustomItemManager {
 
 	private static String resourcepack = null;
-	private static HashMap<String, me.zombie_striker.qav.customitemmanager.AbstractItem> customItemTypes = new HashMap<>();
+	private static final HashMap<String, me.zombie_striker.qav.customitemmanager.AbstractItem> customItemTypes = new HashMap<>();
 
 	public static String getResourcepack() {
 		return resourcepack;
@@ -21,7 +21,7 @@ public class CustomItemManager {
 
 	public static Set<String> getCustomItemTypes(){return customItemTypes.keySet();}
 
-	public static void registerItemType(File dataFolder, String key, me.zombie_striker.qav.customitemmanager.AbstractItem item){
+	public static void registerItemType(String key, me.zombie_striker.qav.customitemmanager.AbstractItem item){
 		customItemTypes.put(key,item);
 	}
 	public static AbstractItem getItemType(String key){
@@ -31,7 +31,7 @@ public class CustomItemManager {
 		try{
 			new ItemStack(Material.DIAMOND_BLOCK).getItemMeta().hasCustomModelData();
 			return true;
-		}catch (Error | Exception e4){
+		}catch (Error | Exception ignored){
 
 		}
 		return false;
