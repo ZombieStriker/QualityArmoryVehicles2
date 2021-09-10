@@ -26,7 +26,6 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,17 +36,7 @@ public class FShootBullet implements FInput {
 		FInputManager.add(this);
 	}
 	@Override
-	public void onInputF(VehicleEntity ve) {
-		onInput(ve);
-	}@Override
-	public void onInputLMB(VehicleEntity ve) {		
-		onInput(ve);
-	}@Override
-	public void onInputRMB(VehicleEntity ve) {		
-		onInput(ve);
-	}
-	
-	public void onInput(final VehicleEntity ve) {
+	public void onInput(VehicleEntity ve) {
 		boolean found = false;
 		try {
 			me.zombie_striker.qg.ammo.Ammo ammo = QualityArmory.getAmmoByName("556");
@@ -84,10 +73,6 @@ public class FShootBullet implements FInput {
 			player.getWorld().playSound(front, "bulletbig", 10, 1.0f);
 
 		}
-	}
-
-	@Override
-	public void serialize(Map<String, Object> map, VehicleEntity ve) {
 	}
 
 	@Override

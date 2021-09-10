@@ -225,12 +225,18 @@ public class EasyGUI {
 
 		@EventHandler
 		public void onClick(InventoryClickEvent e) {
-			EasyGUI gui;
-			if ((gui = EasyGUI.getEasyGUIByInventory(e.getClickedInventory())) != null) {
+			EasyGUI gui = EasyGUI.getEasyGUIByInventory(e.getInventory());
+
+			if (gui == null) {
+				EasyGUI.getEasyGUIByInventory(e.getClickedInventory());
+			}
+
+			if (gui != null) {
 				e.setCancelled(true);
 				if (e.getClick().isShiftClick()) {
 					e.setCancelled(true);
 				}
+
 				if (e.getCurrentItem() != null) {
 					if (e.getSlot() >= 45) {
 						e.setCancelled(true);
@@ -238,14 +244,14 @@ public class EasyGUI {
 							return;
 						if (e.getSlot() == 52) {
 							//back
-							int page = gui.getPageIDFromInventory(e.getClickedInventory());
+							int page = gui.getPageIDFromInventory(e.getInventory());
 							if (page > 0) {
 								e.getWhoClicked().closeInventory();
 								e.getWhoClicked().openInventory(gui.getPageByID(page - 1));
 							}
 						} else if (e.getSlot() == 53) {
 							//back
-							int page = gui.getPageIDFromInventory(e.getClickedInventory());
+							int page = gui.getPageIDFromInventory(e.getInventory());
 							if (page < gui.loadedInventories.length - 1) {
 								e.getWhoClicked().closeInventory();
 								e.getWhoClicked().openInventory(gui.getPageByID(page + 1));

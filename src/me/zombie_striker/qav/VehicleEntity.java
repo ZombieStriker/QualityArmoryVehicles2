@@ -4,6 +4,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -160,7 +161,6 @@ public class VehicleEntity implements ConfigurationSerializable {
 		return modelParts;
 	}
 
-	@Deprecated
 	public ArmorStand getModelEntity() {
 		return modelParts.get(0);
 	}
@@ -224,9 +224,10 @@ public class VehicleEntity implements ConfigurationSerializable {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public Inventory getFuels() {
 		if (this.fuels == null) {
-			this.fuels = Bukkit.createInventory(null, 9);
+			this.fuels = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&', MessagesConfig.MENU_FUELTANK_TITLE.replace("%cartype%", this.getType().getName())));
 		}
 		return this.fuels;
 	}

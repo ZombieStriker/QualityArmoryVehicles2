@@ -17,22 +17,7 @@ public class FSiren implements FInput {
 	}
 
 	@Override
-	public void onInputF(VehicleEntity ve) {
-		onInput(ve);
-	}
-
-	@Override
-	public void onInputLMB(VehicleEntity ve) {
-		onInput(ve);
-	}
-
-	@Override
-	public void onInputRMB(VehicleEntity ve) {
-		onInput(ve);
-	}
-
-
-	public void onInput(final VehicleEntity ve) {
+	public void onInput(VehicleEntity ve) {
 		if (storedSirens.containsKey(ve)) {
 			storedSirens.remove(ve).cancel();
 		} else {
@@ -55,10 +40,6 @@ public class FSiren implements FInput {
 				}
 			}.runTaskTimer(QualityArmoryVehicles.getPlugin(), 0, 20));
 		}
-	}
-
-	@Override
-	public void serialize(Map<String, Object> map, VehicleEntity ve) {
 	}
 
 	@Override

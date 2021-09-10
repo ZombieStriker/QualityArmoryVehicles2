@@ -12,23 +12,9 @@ public class FCarHonk implements FInput {
 	}
 
 	@Override
-	public void onInputF(VehicleEntity ve) {
-		onInput(ve);
-	}@Override
-	public void onInputLMB(VehicleEntity ve) {		
-		onInput(ve);
-	}@Override
-	public void onInputRMB(VehicleEntity ve) {		
-		onInput(ve);
-	}
-	
 	public void onInput(VehicleEntity ve) {
 		ve.getDriverSeat().getWorld().playSound(ve.getDriverSeat().getLocation(),
 				"honk", 1, (float) 1);
-	}
-
-	@Override
-	public void serialize(Map<String, Object> map,VehicleEntity ve) {
 	}
 
 	@Override

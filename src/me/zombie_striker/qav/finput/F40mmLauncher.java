@@ -24,18 +24,9 @@ public class F40mmLauncher implements FInput {
 	public F40mmLauncher() {
 		FInputManager.add(this);
 	}
+
 	@Override
-	public void onInputF(VehicleEntity ve) {
-		onInput(ve);
-	}@Override
-	public void onInputLMB(VehicleEntity ve) {		
-		onInput(ve);
-	}@Override
-	public void onInputRMB(VehicleEntity ve) {		
-		onInput(ve);
-	}
-	
-	public void onInput(final VehicleEntity ve) {
+	public void onInput(VehicleEntity ve) {
 		boolean found = false;
 		try {
 			me.zombie_striker.qg.ammo.Ammo ammo = me.zombie_striker.qg.api.QualityArmory.getAmmoByName("40mm");
@@ -130,10 +121,6 @@ public class F40mmLauncher implements FInput {
 			}.runTaskTimer(QualityArmoryVehicles.getPlugin(), 0, 1);
 
 		}
-	}
-
-	@Override
-	public void serialize(Map<String, Object> map, VehicleEntity ve) {
 	}
 
 	@Override

@@ -1,6 +1,11 @@
 package me.zombie_striker.qav.menu;
 
-import me.zombie_striker.qav.*;
+import me.zombie_striker.qav.ItemFact;
+import me.zombie_striker.qav.Main;
+import me.zombie_striker.qav.MessagesConfig;
+import me.zombie_striker.qav.QAVCommand;
+import me.zombie_striker.qav.UnlockedVehicle;
+import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.easygui.ClickData;
 import me.zombie_striker.qav.easygui.EasyGUI;
@@ -17,15 +22,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @SuppressWarnings({"deprecation","unused"})
 public class MenuHandler implements Listener {
@@ -553,7 +560,6 @@ public class MenuHandler implements Listener {
 	}
 
 	public static void openFuelTank(Player player, VehicleEntity ve) {
-		//List<ItemStack> fuels = ve.getFuels();
 		Inventory overview = ve.getFuels();
 		player.openInventory(overview);
 		storedLookAt.put(player.getUniqueId(), ve);
@@ -586,82 +592,11 @@ public class MenuHandler implements Listener {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	@EventHandler
-	public void onClick(final InventoryClickEvent e) {
-		e.getInventory();
-		if (e.getView().getTitle()
-				.endsWith(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_ADD_ALLOWED_TITLE))
-				|| e.getView().getTitle()
-				.endsWith(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_REMOVE_ALLOWED_TITLE))
-				|| e.getView().getTitle()
-				.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_FUELTANK_TITLE))
-				|| e.getView().getTitle().endsWith(MessagesConfig.MENU_GARAGE_TITLE)
-				|| e.getView().getTitle()
-				.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_PASSAGER_SEATS_TITLE))
-				|| e.getView().getTitle()
-				.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_OVERVIEW_TITLE))
-				|| e.getView().getTitle()
-				.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_SHOP_TITLE))) {
-			if (e.getClick().isShiftClick()) {
-				e.setCancelled(true);
-			}
-		} else {
-			return;
-		}
-		if (e.getClickedInventory() == null) {
-			return;
-		}
-		Main.DEBUG("Clicked a custom GUI. Title was " + e.getView().getTitle());
-		if (!storedLookAt.containsKey(e.getWhoClicked().getUniqueId())) {
-			return;
-		}
-		if (e.getView().getTitle()
-				.equals(getTitle((Player) e.getWhoClicked(), MessagesConfig.MENU_FUELTANK_TITLE))) {
-			if (e.getClick().isShiftClick()) {
-				e.setCancelled(true);
-				Main.DEBUG("Shift click");
-
-				return;
-			}
-			if (FuelItemStack.getFuelForItem(e.getCursor()) <= 0 && e.getClickedInventory() != e.getWhoClicked().getInventory()) {
-				e.setCancelled(true);
-				Main.DEBUG("Non fuel");
-
-				return;
-			}
-			Main.DEBUG("Start check fuel tank");
-			final VehicleEntity ve = storedLookAt.get(e.getWhoClicked().getUniqueId());
-
-		} else {
-			Main.DEBUG("Reached end, but no inventory was found.");
-		}
-	}
-
 	public String getTitle(Player p, String title) {
 		String newTitle = title;
 		if (title.contains("%cartype%"))
 			if (storedLookAt.containsKey(p.getUniqueId()))
 				newTitle = title.replace("%cartype%", storedLookAt.get(p.getUniqueId()).getType().getDisplayname());
 		return newTitle;
-	}
-
-	@EventHandler
-	public void onClose(final InventoryCloseEvent e) {
-		if (storedLookAt.containsKey(e.getPlayer().getUniqueId())) {
-			if (e.getView().getTitle()
-					.equals(getTitle((Player) e.getPlayer(), MessagesConfig.MENU_FUELTANK_TITLE))) {
-				Main.DEBUG("Start check fuel tank on close");
-				final VehicleEntity ve = storedLookAt.get(e.getPlayer().getUniqueId());
-				new BukkitRunnable() {
-
-					@Override
-					public void run() {
-						//ve.setFuels(e.getInventory().getContents());
-						FuelItemStack.updateFuel(ve);
-					}
-				}.runTaskLater(QualityArmoryVehicles.getPlugin(), 1);
-			}
-		}
 	}
 }

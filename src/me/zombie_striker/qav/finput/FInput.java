@@ -7,11 +7,22 @@ import java.util.Map;
 
 public interface FInput {
 
-	void onInputF(VehicleEntity ve);
-	void onInputLMB(VehicleEntity ve);
-	void onInputRMB(VehicleEntity ve);
-	
-	void serialize(Map<String, Object> map, VehicleEntity ve);
-	
+	void onInput(VehicleEntity ve);
 	String getName();
+
+	enum ClickType {
+		RIGHT("RMB"),
+		LEFT("LMB"),
+		F("F");
+
+		private final String id;
+
+		ClickType(final String id) {
+			this.id = id;
+		}
+
+		public String getId() {
+			return id;
+		}
+	}
 }

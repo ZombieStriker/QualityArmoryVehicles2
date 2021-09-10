@@ -16,7 +16,6 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class FTNTBomber implements FInput {
@@ -26,17 +25,7 @@ public class FTNTBomber implements FInput {
 	}
 
 	@Override
-	public void onInputF(VehicleEntity ve) {
-		onInput(ve);
-	}@Override
-	public void onInputLMB(VehicleEntity ve) {
-		onInput(ve);
-	}@Override
-	public void onInputRMB(VehicleEntity ve) {
-		onInput(ve);
-	}
-
-	public void onInput(final VehicleEntity ve) {
+	public void onInput(VehicleEntity ve) {
 		boolean found = false;
 		try {
 			me.zombie_striker.qg.ammo.Ammo ammo = me.zombie_striker.qg.api.QualityArmory.getAmmoByName("mininuke");
@@ -70,7 +59,7 @@ public class FTNTBomber implements FInput {
 		}
 		if (found) {
 			final Location s = ve.getDriverSeat().getLocation().add(QualityArmoryVehicles
-					.rotateRelToCar(ve.getModelEntity(), ve.getType().getCenterFromControlSeat(), false))
+							.rotateRelToCar(ve.getModelEntity(), ve.getType().getCenterFromControlSeat(), false))
 					.subtract(0, 1.7, 0);
 			@SuppressWarnings("deprecation")
 			final Player player = (Player) ve.getDriverSeat().getPassenger();
@@ -118,11 +107,6 @@ public class FTNTBomber implements FInput {
 				}
 			}.runTaskTimer(QualityArmoryVehicles.getPlugin(), 0, 1);
 		}
-
-	}
-
-	@Override
-	public void serialize(Map<String, Object> map, VehicleEntity ve) {
 	}
 
 	@Override

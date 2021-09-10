@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.cryptomorin.xseries.ReflectionUtils;
 import com.google.common.io.Files;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
 import me.zombie_striker.qav.customitemmanager.CustomItemManager;
@@ -132,12 +133,15 @@ public class Main extends JavaPlugin {
 		initVals();
 
 		ParticleHandlers.initValues();
-		new FMininukeBomber();
-		new FToggleSpeed();
-		new FCarHonk();
-		new FSiren();
-		new F40mmLauncher();
-		new FTNTBomber();
+		if (ReflectionUtils.supports(9)) {
+			FInputManager.init(this);
+			new FMininukeBomber();
+			new FCarHonk();
+			new FSiren();
+			new F40mmLauncher();
+			new FTNTBomber();
+		}
+
 		try {
 			new FShootBullet();
 		} catch (Error | Exception re325) {

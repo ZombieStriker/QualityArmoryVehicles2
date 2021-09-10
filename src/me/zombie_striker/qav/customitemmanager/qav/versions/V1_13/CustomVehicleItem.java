@@ -80,7 +80,6 @@ public class CustomVehicleItem extends AbstractItem {
 					.setPassagerLocations(new Vector(0, 0, 1), new Vector(-1, 0, 0), new Vector(-1, 0, 1))
 					.setStopMeleeDamage(true).setRequireFuel(true).setTrunkSize(18).setWidth(0.74).setHeight(3)
 					.setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD).setMaxHealth(250).setCost(4000)
-					.setKeyInputManagerF(FInputManager.TOGGLE_SPEED_HELI)
 					.setLore("&7Press [Space] to start flying", "&7 Press [F] to toggle the accent/decent speed")
 					.save();
 			VehicleYML.registerVehicle(VehicleTypes.BOAT, "smalcivilboat", 86).setDisplayname("SmalCivilBoat")
@@ -286,7 +285,6 @@ public class CustomVehicleItem extends AbstractItem {
 					.setPassagerLocations(new Vector(0, 0, 1), new Vector(-1, 0, 0), new Vector(-1, 0, 1))
 					.setStopMeleeDamage(true).setRequireFuel(true).setTrunkSize(18).setWidth(0.74).setHeight(3)
 					.setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD).setMaxHealth(250).setCost(4000)
-					.setKeyInputManagerF(FInputManager.TOGGLE_SPEED_HELI)
 					.setLore("&7Press [Space] to start flying", "&7 Press [F] to toggle the accent/decent speed")
 					.save();
 

@@ -3,6 +3,7 @@ package me.zombie_striker.qav.vehicles;
 import com.comphenix.protocol.events.PacketEvent;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.util.HotbarMessager;
@@ -11,18 +12,23 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractVehicle {
+	protected static final double STOPPED = 0.009999999999999247;
 	protected static final double pitchIncrement = Math.PI / 60;
 	protected static final double maxAngle = Math.PI / 4;
 
+	private Map<FInput.ClickType,FInput> inputs = new HashMap<>();
 	private double widthRadius = 5;
 	private double height = 4;
 	private String internalName;
@@ -296,7 +302,7 @@ public abstract class AbstractVehicle {
 		Material material = BlockCollisionUtil.getMaterial(block);
 
 		if (Main.customSpeedModifier.containsKey(material)) {
-			vehicleEntity.setSpeed(vehicleEntity.getSpeed() + Main.customSpeedModifier.getOrDefault(material,0.0));
+			vehicleEntity.setSpeed(vehicleEntity.getSpeed() * Main.customSpeedModifier.getOrDefault(material,1.0));
 		}
 
 		if (vehicleEntity.getSpeed() > 0) {
@@ -313,6 +319,11 @@ public abstract class AbstractVehicle {
 		if (vehicleEntity.getSpeed() < 0) {
 			vehicleEntity.setSpeed(vehicleEntity.getSpeed() + 0.01);
 		}
+
+		if (vehicleEntity.getSpeed() == STOPPED) {
+			vehicleEntity.setSpeed(0.0);
+		}
+
 		Vector velocity = vehicleEntity.getDirection().clone();
 		velocity.normalize().multiply(vehicleEntity.getSpeed());
 
@@ -410,12 +421,6 @@ public abstract class AbstractVehicle {
 		}
 
 		vehicleEntity.getDriverSeat().setVelocity(velocity);
-		for (Entity model : vehicleEntity.getModelEntities()) {
-			model.setVelocity(velocity);
-		}
-		for (Entity passager : vehicleEntity.getPassagerSeats()) {
-			passager.setVelocity(velocity);
-		}
 		handleOtherStands(vehicleEntity,velocity);
 	}
 
@@ -429,27 +434,28 @@ public abstract class AbstractVehicle {
 							false));
 
 			offset.add(ve.getDriverSeat().getVelocity());
-
+			offset.subtract(0,0.6,0);
 
 			Vector newVelo = velocity.clone();
 			double offDis = offset.distanceSquared(e.getLocation());
 			if (offDis > 1) {
-				Entity rider = e.getPassenger();
-				e.eject();
-				if (!offset.getBlock().getType().isSolid()) {
-					e.teleport(offset);
-					if (rider != null)
-						rider.teleport(offset);
+				final Entity rider = e.getPassenger();
 
-					if (rider != null) {
-						e.setPassenger(rider);
-					}
+				if (rider == null) {
+					e.remove();
+					continue;
 				}
-				Vector distance = offset.toVector().clone().subtract(e.getLocation().toVector());
-				newVelo.add(distance);
-				e.setVelocity(newVelo);
+
+				e.eject();
+				e.teleport(offset);
+				rider.teleport(offset);
+				e.setPassenger(rider);
 
 			}
+
+			Vector distance = offset.toVector().clone().subtract(e.getLocation().toVector());
+			newVelo.add(distance);
+			e.setVelocity(newVelo);
 		}
 	}
 
@@ -481,10 +487,19 @@ public abstract class AbstractVehicle {
 		this.passagerOffset = sizes;
 	}
 
+	public @Nullable FInput getInput(FInput.ClickType type) {
+		return inputs.get(type);
+	}
+
+	public Map<FInput.ClickType, FInput> getInputs() {
+		return inputs;
+	}
+
 	@Override
 	public String toString() {
 		return "AbstractVehicle{" +
-				"widthRadius=" + widthRadius +
+				"inputs=" + inputs +
+				", widthRadius=" + widthRadius +
 				", height=" + height +
 				", internalName='" + internalName + '\'' +
 				", bodyFix=" + bodyFix +

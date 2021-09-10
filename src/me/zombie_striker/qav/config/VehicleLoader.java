@@ -6,13 +6,17 @@ import me.zombie_striker.qav.ModelSize;
 import me.zombie_striker.qav.VehicleTypes;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.exceptions.InvalidVehicleException;
+import me.zombie_striker.qav.finput.FInput;
+import me.zombie_striker.qav.finput.FInputManager;
 import me.zombie_striker.qav.qamini.QAMini;
 import me.zombie_striker.qav.vehicles.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -146,6 +150,9 @@ public class VehicleLoader {
 			vehicle.setStopsMeleeDamage(c.getBoolean("stopMeleeDamage"));
 		if (c.contains("center"))
 			vehicle.setCenter(c.getVector("center"));
+		registerInput(vehicle, FInput.ClickType.RIGHT, c);
+		registerInput(vehicle, FInput.ClickType.F, c);
+		registerInput(vehicle, FInput.ClickType.LEFT, c);
 
 		Main.vehicleTypes.add(vehicle);
 		try {
@@ -155,5 +162,15 @@ public class VehicleLoader {
 			QAMini.registeredItems.add(MaterialStorage.getMS(vehicle.getMaterial(), vehicle.getItemData(), 0));
 		}
 		return true;
+	}
+
+	private static void registerInput(AbstractVehicle vehicle, FInput.@NotNull ClickType type, @NotNull ConfigurationSection config) {
+		if (!config.contains("InputManager.keys."+type.getId())) return;
+
+		String input = config.getString("InputManager.keys."+type.getId(), "none");
+
+		if (!input.equalsIgnoreCase("none")) {
+			vehicle.getInputs().put(type, FInputManager.getHandler(input));
+		}
 	}
 }
