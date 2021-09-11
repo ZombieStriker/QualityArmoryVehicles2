@@ -24,7 +24,6 @@ import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
 import me.zombie_striker.qav.util.ForksUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
-import me.zombie_striker.qav.worldguard.WorldGuardUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -403,7 +402,6 @@ public class Main extends JavaPlugin {
 		MessagesConfig.init();
 		ItemFact.init();
 		ForksUtil.init();
-		WorldGuardUtil.init();
 	}
 
 
