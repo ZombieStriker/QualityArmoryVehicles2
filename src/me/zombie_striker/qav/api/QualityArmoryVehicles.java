@@ -6,6 +6,7 @@ import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
+import me.zombie_striker.qav.worldguard.WorldGuardUtil;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -161,6 +162,10 @@ public class QualityArmoryVehicles {
 		VehicleEntity vehicleEntity = new VehicleEntity(ab.getVehicleType(),player.getLocation(),player.getUniqueId());
 		vehicleEntity.setHealth(ab.getHealth());
 
+		if (!WorldGuardUtil.isAllowed(player, player.getLocation(), WorldGuardUtil.SPAWNING)) {
+			return null;
+		}
+
 		VehicleSpawnEvent event =  new VehicleSpawnEvent(player, vehicleEntity);
 		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCanceled()) {
@@ -175,6 +180,9 @@ public class QualityArmoryVehicles {
 	}
 	public static VehicleEntity spawnVehicle(AbstractVehicle ab, Location location, Player player) {
 		VehicleEntity vehicleEntity = new VehicleEntity(ab,location,player.getUniqueId());
+		if (!WorldGuardUtil.isAllowed(player, player.getLocation(), WorldGuardUtil.SPAWNING)) {
+			return null;
+		}
 		VehicleSpawnEvent event =  new VehicleSpawnEvent(player, vehicleEntity);
 		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCanceled()) {
