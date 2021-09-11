@@ -48,6 +48,7 @@ public class AbstractHelicopter extends AbstractVehicle {
 		ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxSpeed()));
 
 	}
+
 	@Override
 	public void handleSpace(VehicleEntity ve, PacketEvent event) {
 		if(event.getPlayer().getLocation().getPitch() > 0) {
@@ -57,8 +58,13 @@ public class AbstractHelicopter extends AbstractVehicle {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void tick(VehicleEntity vehicleEntity) {
+		if (vehicleEntity.getDriverSeat().getPassenger() == null) {
+			vehicleEntity.setDirectionYHeight(-1);
+		}
+
 		basicDirections(vehicleEntity,false,false,false,false);
 	}
 }
