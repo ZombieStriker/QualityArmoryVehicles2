@@ -125,6 +125,7 @@ public class Main extends JavaPlugin {
 		ConfigurationSerialization.registerClass(UnlockedVehicle.class);
 		ConfigurationSerialization.registerClass(VehicleEntity.class);
 
+		new MetricsLite(this,12753);
 
 		carData = new File(getDataFolder(),"vehicles");
 		if(!carData.exists()){
