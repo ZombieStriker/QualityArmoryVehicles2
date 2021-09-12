@@ -48,7 +48,7 @@ public class Main extends JavaPlugin {
 	public static boolean debug = false;
 	public static boolean verboseLogging = false;
 
-	public static String prefix = ChatColor.GOLD + "[QA-Vehicles]" + ChatColor.WHITE;
+	public static String prefix = "&6[QA-Vehicles]&f";
 
 	public static QAMini minihandler = null;// = new QAMini();
 
@@ -63,11 +63,6 @@ public class Main extends JavaPlugin {
 	public ProtocolManager protocolManager;
 	public static File carData;
 	public static final double YOFFSET = Math.PI * 3 / 2;// Math.PI*3/2;//Math.PI * 69 / 64;
-
-
-
-
-
 
 
 	public static boolean cleanVehiclesOnEmpty = false;
@@ -350,6 +345,7 @@ public class Main extends JavaPlugin {
 		}
 		playerUnlock = new File(this.getDataFolder(),"playerdata");
 		playerUnlock.mkdirs();
+		prefix = ChatColor.translateAlternateColorCodes('&', (String) a("prefix",prefix));
 		USE_MANUAL_13 = (boolean) a("USE_1_13_MODEL_SYSTEM", USE_MANUAL_13);
 		enableVehicleLimiter = (boolean) a("enable_VehicleLimiter", enableVehicleLimiter);
 		allowVehiclePickup = (boolean) a("enable_PickupVehicles", allowVehiclePickup);
