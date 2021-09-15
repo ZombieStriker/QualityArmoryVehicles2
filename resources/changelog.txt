@@ -1,3 +1,15 @@
+2.0.6
+  Changelog:
+    - Fixed VehicleSpawnEvent
+    - Fixed spawnVehicle method
+    - Added an expiring material map to prevent lag.
+    - Various optimizations
+    - Fixed entity deconstruct
+    - Fixed passengers
+    - Added metrics from bStats
+    - Fixed "Helicopter still flying when no-one is driving."
+    - Added the ability to change the plugin prefix
+
 2.0.5.1
   Changelog:
     - Fixed lag and tps drops
