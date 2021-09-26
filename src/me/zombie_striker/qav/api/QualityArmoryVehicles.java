@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,7 +98,7 @@ public class QualityArmoryVehicles {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static AbstractVehicle getVehicleByItem(ItemStack is) {
+	public static @Nullable AbstractVehicle getVehicleByItem(ItemStack is) {
 		if (is == null)
 			return null;
 		int data;
