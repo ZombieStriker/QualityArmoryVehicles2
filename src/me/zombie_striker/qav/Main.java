@@ -92,6 +92,8 @@ public class Main extends JavaPlugin {
 	public static boolean setOwnerIfNoneExist = false;
 	public static boolean enableTrunks = true;
 	public static boolean antiCheatHook = false;
+	public static boolean freezeOnDestroy = false;
+	public static boolean bypassCoalInCreative = true;
 	public static boolean disableing = false;
 	public static boolean enable_RequirePermToBuyVehicle = false;
 	public static Object BOUNDINGBOX;
@@ -369,6 +371,8 @@ public class Main extends JavaPlugin {
 		debug = (boolean) a("ENABLE_DEBUG", debug);
 		debugWithCommand = (boolean) a("override_debug_withCommand", debugWithCommand);
 		antiCheatHook = (boolean) a("enable_AntiCheatHook", antiCheatHook);
+		freezeOnDestroy = (boolean) a("freezeOnDestroy", freezeOnDestroy);
+		bypassCoalInCreative = (boolean) a("bypassCoalInCreative", bypassCoalInCreative);
 
 		enable_RequirePermToBuyVehicle = (boolean) a("enable_RequirePermToBuyVehicle", enable_RequirePermToBuyVehicle);
 

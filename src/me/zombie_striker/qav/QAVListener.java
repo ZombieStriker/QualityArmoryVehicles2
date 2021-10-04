@@ -298,7 +298,9 @@ public class QAVListener implements Listener {
 				return;
 			}
 
-			ve.deconstruct(null,"Destroy");
+			if (!Main.freezeOnDestroy) {
+				ve.deconstruct(null,"Destroy");
+			}
 
 			try {
 				ParticleHandlers.spawnMushroomCloud(e.getEntity().getLocation());

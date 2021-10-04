@@ -86,6 +86,7 @@ public class MessagesConfig {
 	public static String COMMANDMESSAGE_REMOVE_NEARBY = " Removed %count% nearby vehicles within a %distance% radius.";
 	public static String COMMANDMESSAGE_CALLBACKALL = " All %count% vehicles have been returned to their owners.";
 	public static String COMMANDMESSAGES_REMOVE_VEHICLE_GARAGE =  "All \"%car%\" vehicle types have been removed from %name%'s garage.";
+	public static String COMMANDMESSAGES_TEXTURE = "Click here to download the resource pack";
 
 	public static void init() {
 		messagesyml = YamlConfiguration.loadConfiguration(messagesymlfile);
@@ -115,7 +116,8 @@ public class MessagesConfig {
 				a("Commands.RegisterFuels", subcommand_registerfuel));
 		subcommand_debug = (
 				a("Commands.debug", subcommand_debug));
-
+		COMMANDMESSAGES_TEXTURE = (
+				a("Commands.TexturePack", COMMANDMESSAGES_TEXTURE));
 
 		MENU_OVERVIEW_TITLE = (
 				a("Menu.Overview.Title", MENU_OVERVIEW_TITLE));
@@ -239,10 +241,10 @@ public class MessagesConfig {
 
 	private static String a(String path, String o) {
 		if (messagesyml.contains(path))
-			return ChatColor.translateAlternateColorCodes('&',messagesyml.getString(path));
+			return colorize(messagesyml.getString(path));
 		messagesyml.set(path, o);
 		forceUpdate = true;
-		return ChatColor.translateAlternateColorCodes('&',o);
+		return colorize(o);
 	}
 
 	private static void b() {

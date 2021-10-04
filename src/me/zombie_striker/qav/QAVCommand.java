@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class QAVCommand implements CommandExecutor, TabCompleter {
 	public static String subcommand_reload = "reload";
@@ -159,8 +160,30 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 
 
 		if (args[0].equalsIgnoreCase("getresourcepack")) {
-			ForksUtil.sendComponent(sender,Main.prefix + " Click here to download the resource pack.", null, CustomItemManager.getResourcepack() == null ? "" : CustomItemManager.getResourcepack());
+			ForksUtil.sendComponent(sender,Main.prefix + " " + MessagesConfig.COMMANDMESSAGES_TEXTURE, null, CustomItemManager.getResourcepack() == null ? "" : CustomItemManager.getResourcepack());
 		    return true;
+		}
+
+		if (args[0].equalsIgnoreCase(subcommand_removevehicle)) {
+			if (!sender.hasPermission(PermissionHandler.PERM_REMOVE_VEHICLE)) {
+				sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+				return true;
+			}
+
+			if (args.length != 2) {
+				sender.sendMessage(Main.prefix + "&7 Try to use &6/qav removeVehicle <type>");
+				return true;
+			}
+
+			final List<VehicleEntity> collect = Main.vehicles.stream()
+					.filter(ve -> ve.getType().getName().equalsIgnoreCase(args[1]))
+					.collect(Collectors.toList());
+
+			Main.vehicles.removeIf(ve -> ve.getType().getName().equalsIgnoreCase(args[1]));
+
+			for (VehicleEntity entity : collect) {
+				entity.deconstruct(null,"Remove command");
+			}
 		}
 
 		if (args[0].equalsIgnoreCase("license")) {

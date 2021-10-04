@@ -227,7 +227,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	@SuppressWarnings("deprecation")
 	public Inventory getFuels() {
 		if (this.fuels == null) {
-			this.fuels = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&', MessagesConfig.MENU_FUELTANK_TITLE.replace("%cartype%", this.getType().getName())));
+			this.fuels = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&', MessagesConfig.MENU_FUELTANK_TITLE.replace("%cartype%", this.getType().getDisplayname())));
 		}
 		return this.fuels;
 	}

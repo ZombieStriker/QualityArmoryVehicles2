@@ -7,6 +7,7 @@ import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.util.HotbarMessager;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractVehicle {
-	protected static final double STOPPED = 0.009999999999999247;
 	protected static final double pitchIncrement = Math.PI / 60;
 	protected static final double maxAngle = Math.PI / 4;
 
@@ -67,6 +67,13 @@ public abstract class AbstractVehicle {
 
 	public boolean handleFuel(VehicleEntity ve, PacketEvent event) {
 		boolean shouldReturn = true;
+
+		if (Main.bypassCoalInCreative) {
+			@SuppressWarnings("deprecation") Entity passenger = ve.getDriverSeat().getPassenger();
+			if (passenger instanceof Player && ((Player) passenger).getGameMode().equals(GameMode.CREATIVE)) {
+				return true;
+			}
+		}
 
 		if (this.enableFuel()) {
 			FuelItemStack.updateFuel(ve);
@@ -298,6 +305,8 @@ public abstract class AbstractVehicle {
 	}
 
 	public void basicDirections(VehicleEntity vehicleEntity, boolean jump, boolean aquatic, boolean gravity, boolean planeFlying) {
+		if (vehicleEntity.getHealth() <= 0.0 && Main.freezeOnDestroy) return;
+
 		Location block = vehicleEntity.getDriverSeat().getLocation().subtract(0, 0.4, 0);
 		Material material = BlockCollisionUtil.getMaterial(block);
 
@@ -320,7 +329,7 @@ public abstract class AbstractVehicle {
 			vehicleEntity.setSpeed(vehicleEntity.getSpeed() + 0.01);
 		}
 
-		if (vehicleEntity.getSpeed() == STOPPED) {
+		if (vehicleEntity.getSpeed() > 0.0 && vehicleEntity.getSpeed() < 0.09) {
 			vehicleEntity.setSpeed(0.0);
 		}
 

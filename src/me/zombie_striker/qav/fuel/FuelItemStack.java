@@ -11,8 +11,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 @SuppressWarnings("deprecation")
 public class FuelItemStack {
@@ -37,7 +40,7 @@ public class FuelItemStack {
 		this(name,m,data,lore,false,0);
 	}
 	public FuelItemStack(String name, Material m, int data, List<String> lore, boolean shouldBeInShop, int cost) {
-		this.name = name;
+		this.name = name != null ? ChatColor.translateAlternateColorCodes('&', name) : null;
 		this.material = m;
 		this.data = data;
 		this.lore = lore;
@@ -112,6 +115,7 @@ public class FuelItemStack {
 	}
 
 	public static void loadFuels(File yml) {
+		fuels.clear();
 		FileConfiguration config = YamlConfiguration.loadConfiguration(yml);
 		String splitChar = newSplit;
 
@@ -121,7 +125,7 @@ public class FuelItemStack {
 			registerNewFuelToConfig(null, Material.BLAZE_POWDER, (short) 0, null, 500, yml);
 			registerNewFuelToConfig(null, Material.BLAZE_ROD, (short) 0, null, 1000, yml);
 			registerNewFuelToConfig(null, Material.LAVA_BUCKET, (short) 0, null, 20 * 500, yml);
-			registerNewFuelToConfig(ChatColor.GOLD+"Fuel Canister", ReflectionUtils.supports(14) ? Material.RABBIT_HIDE : Material.DIAMOND_AXE, (short) 38, Collections.singletonList(ChatColor.GRAY + "Fuel for: 500 seconds"), 20 * 500, yml, true,50);
+			registerNewFuelToConfig("&6Fuel Canister", ReflectionUtils.supports(14) ? Material.RABBIT_HIDE : Material.DIAMOND_AXE, (short) 38, Collections.singletonList("&7Fuel for: 500 seconds"), 20 * 500, yml, true,50);
 		}
 
 		for (String key : config.getKeys(false)) {
