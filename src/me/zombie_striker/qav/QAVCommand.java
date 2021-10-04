@@ -6,10 +6,8 @@ import me.zombie_striker.qav.debugmanager.DebugManager;
 import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.premium.PremiumHandler;
+import me.zombie_striker.qav.util.ForksUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -161,9 +159,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 
 
 		if (args[0].equalsIgnoreCase("getresourcepack")) {
-            BaseComponent component = new TextComponent(Main.prefix + " Click here to download the resource pack.");
-            component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, CustomItemManager.getResourcepack()));
-            sender.spigot().sendMessage(component);
+			ForksUtil.sendComponent(sender,Main.prefix + " Click here to download the resource pack.", null, CustomItemManager.getResourcepack() == null ? "" : CustomItemManager.getResourcepack());
 		    return true;
 		}
 

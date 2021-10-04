@@ -76,6 +76,8 @@ public class VehicleLoader {
 			vehicle.setSound(c.getString("sound"));
 		}
 
+		if (vehicle instanceof AbstractHelicopter && c.contains("descentSpeed"))
+			((AbstractHelicopter) vehicle).setDescentSpeed(c.getDouble("descentSpeed"));
 		if (c.contains("allowedInShop"))
 			vehicle.setAllowInShop(c.getBoolean("allowedInShop"));
 		if (c.contains("playDrivingSounds"))

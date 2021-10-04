@@ -266,6 +266,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public void deconstruct(Player player, String message) {
 		driverseat.remove();
+		driverseat = null;
 		for (ArmorStand stand : getModelEntities()) {
 			stand.remove();
 		}

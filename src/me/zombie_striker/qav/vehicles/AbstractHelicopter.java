@@ -5,8 +5,10 @@ import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.events.VehicleTurnEvent;
 import me.zombie_striker.qav.util.HeadPoseUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.util.Vector;
 
 public class AbstractHelicopter extends AbstractVehicle {
+	private double descentSpeed = -0.1;
 
 	public AbstractHelicopter(String name, int id) {
 		super(name,id);
@@ -66,5 +68,20 @@ public class AbstractHelicopter extends AbstractVehicle {
 		}
 
 		basicDirections(vehicleEntity,false,false,false,false);
+	}
+
+	@Override
+	public void applyModifiers(VehicleEntity entity, Vector vector) {
+		super.applyModifiers(entity,vector);
+
+		// TODO: descentSpeed
+	}
+
+	public double getDescentSpeed() {
+		return descentSpeed;
+	}
+
+	public void setDescentSpeed(double descentSpeed) {
+		this.descentSpeed = descentSpeed;
 	}
 }

@@ -420,8 +420,13 @@ public abstract class AbstractVehicle {
 			}
 		}
 
+		applyModifiers(vehicleEntity, velocity);
 		vehicleEntity.getDriverSeat().setVelocity(velocity);
 		handleOtherStands(vehicleEntity,velocity);
+	}
+
+	public void applyModifiers(VehicleEntity entity, Vector vector) {
+		// TODO: Apply backup speed
 	}
 
 	@SuppressWarnings("deprecation")
