@@ -1,6 +1,13 @@
 2.0.7
   Changelog:
     - Fixed "spawnVehicle command cause wrong vehicle controls"
+    - Fixed sirens
+    - Fixed Fuel GUI
+    - Fixed speed issues
+    - Fixed shop errors
+    - Added removeVehicle command
+    - Now you can bypass fuel in creative mode
+    - Now you can make damaged vehicles stop moving
 
 2.0.6
   Changelog:
