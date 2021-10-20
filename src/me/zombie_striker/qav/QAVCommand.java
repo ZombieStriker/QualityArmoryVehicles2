@@ -210,7 +210,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 			long time = System.currentTimeMillis();
 			main.initVals();
 			Main.loadVehicles(true);
-			sender.sendMessage(Main.prefix + " Reloaded config and vehicle files in " + (System.currentTimeMillis() - time) + "ms");
+			sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_RELOAD.replace("%time%", String.valueOf(System.currentTimeMillis() - time)));
 			return true;
 		}
 

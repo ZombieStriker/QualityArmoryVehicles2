@@ -75,6 +75,7 @@ public class MessagesConfig {
 	private static FileConfiguration messagesyml;
 	private static boolean forceUpdate = false;
 
+	public static String COMMANDMESSAGES_RELOAD = " Reloaded config and vehicle files in %time%ms";
 	public static String COMMANDMESSAGES_NO_PERM = colorize("&4You do not have permission to use this command.");
 	public static String COMMANDMESSAGES_ONLY_PLAYERs = "&4Only players can use this command.";
 	public static String COMMANDMESSAGES_ADD_VEHICLE_GARAGE = " The vehicle \"%car%\" has been added to %name%'s garage.";
@@ -205,7 +206,8 @@ public class MessagesConfig {
 
 		MESSAGE_REPAIR = (
 				a("Messages.repair", MESSAGE_REPAIR));
-
+		COMMANDMESSAGES_RELOAD = colorize(
+				a("Messages.reload", COMMANDMESSAGES_RELOAD));
 		b();
 	}
 

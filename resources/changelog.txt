@@ -1,3 +1,9 @@
+2.0.8
+  Changelog:
+    - Fixed forks support
+    - Added some new translations
+    - Fixed boats
+
 2.0.7
   Changelog:
     - Fixed "spawnVehicle command cause wrong vehicle controls"
