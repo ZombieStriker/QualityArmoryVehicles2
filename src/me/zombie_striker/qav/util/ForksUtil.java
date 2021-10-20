@@ -1,10 +1,9 @@
 package me.zombie_striker.qav.util;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -45,28 +44,17 @@ public class ForksUtil {
 
         if (paper) {
             try {
-                Component component = Component.text(message);
-
-                if (hover != null) {
-                    component = component.hoverEvent(HoverEvent.showText(Component.text(hover)));
-                }
-
-                if (clickURL != null) {
-                    component = component.clickEvent(ClickEvent.openUrl(clickURL));
-                }
-
-                player.sendMessage(component);
-                return;
-            } catch (Exception | Error ignored) {}
+                PaperImpl.sendComponent(player,message,hover,clickURL);
+            } catch (Throwable ignored) {}
         }
 
         BaseComponent component = new TextComponent(message);
 
         if (hover != null) {
-            component.setHoverEvent(new net.md_5.bungee.api.chat.HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent(hover)}));
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent(hover)}));
         }
         if (clickURL != null) {
-            component.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.OPEN_URL, clickURL));
+            component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, clickURL));
         }
 
         player.spigot().sendMessage(component);
