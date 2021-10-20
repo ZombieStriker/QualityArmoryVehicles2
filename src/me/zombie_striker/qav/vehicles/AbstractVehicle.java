@@ -380,7 +380,8 @@ public abstract class AbstractVehicle {
 		}
 
 		if (aquatic) {
-			if (vehicleEntity.getDriverSeat().getLocation().getBlock().getType() == Material.WATER) {
+			Material type = BlockCollisionUtil.getMaterial(vehicleEntity.getDriverSeat().getLocation());
+			if (type == Material.WATER || type == Material.SEAGRASS || type == Material.TALL_SEAGRASS || type == Material.KELP) {
 				if (vehicleEntity.getDriverSeat().getLocation().getBlock().getRelative(BlockFace.UP).getType() == Material.WATER) {
 					velocity.setY(0.1);
 				} else {
