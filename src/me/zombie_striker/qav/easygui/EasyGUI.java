@@ -225,11 +225,7 @@ public class EasyGUI {
 
 		@EventHandler
 		public void onClick(InventoryClickEvent e) {
-			EasyGUI gui = EasyGUI.getEasyGUIByInventory(e.getInventory());
-
-			if (gui == null) {
-				EasyGUI.getEasyGUIByInventory(e.getClickedInventory());
-			}
+			EasyGUI gui = EasyGUI.getEasyGUIByInventory(e.getClickedInventory());
 
 			if (gui != null) {
 				e.setCancelled(true);

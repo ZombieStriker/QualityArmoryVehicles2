@@ -41,6 +41,11 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
 
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
@@ -92,10 +97,18 @@
 
         <!-- TownyAdvanced -->
         <dependency>
-            <groupId>com.github.oraxen</groupId>
-            <artifactId>protectionlib</artifactId>
-            <version>master-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>com.github.TownyAdvanced</groupId>
+            <artifactId>Towny</artifactId>
+            <version>0.97.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- WorldGuard -->
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+            <version>7.0.5</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- XSeries for ReflectionUtils -->
@@ -169,10 +182,6 @@
                         <relocation>
                             <pattern>net.jodah.expiringmap</pattern>
                             <shadedPattern>me.zombie_striker.qav.util.expiringmap</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io.th0rgal.protectionlib</pattern>
-                            <shadedPattern>me.zombie_striker.qav.hooks.protection</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

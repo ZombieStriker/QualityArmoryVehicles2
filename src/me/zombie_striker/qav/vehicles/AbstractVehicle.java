@@ -1,11 +1,11 @@
 package me.zombie_striker.qav.vehicles;
 
 import com.comphenix.protocol.events.PacketEvent;
-import io.th0rgal.protectionlib.ProtectionLib;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.fuel.FuelItemStack;
+import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.util.HotbarMessager;
 import org.bukkit.Bukkit;
@@ -436,7 +436,7 @@ public abstract class AbstractVehicle {
 		vehicleEntity.getDriverSeat().setVelocity(velocity);
 		handleOtherStands(vehicleEntity,velocity);
 		Entity passenger = vehicleEntity.getDriverSeat().getPassenger();
-		if (passenger instanceof Player && !ProtectionLib.canBreak((Player) passenger,vehicleEntity.getDriverSeat().getLocation())) {
+		if (passenger instanceof Player && !ProtectionHandler.canBreak((Player) passenger,vehicleEntity.getDriverSeat().getLocation())) {
 			QAVCommand.callback(vehicleEntity, Bukkit.getPlayer(vehicleEntity.getOwner()), "Not allowed");
 		}
 	}

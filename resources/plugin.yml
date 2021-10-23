@@ -7,8 +7,6 @@ softdepend:
   - Vault
   - WorldGuard
   - Towny
-  - Factions
-  - Lands
 depend: [ProtocolLib]
 spigot-id: 59129
 commands:
