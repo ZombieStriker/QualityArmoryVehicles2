@@ -2,7 +2,13 @@ main: me.zombie_striker.qav.Main
 version: ${project.version}
 api-version: 1.13
 name: QualityArmoryVehicles2
-softdepend: [QualityArmory, Vault]
+softdepend:
+  - QualityArmory
+  - Vault
+  - WorldGuard
+  - Towny
+  - Factions
+  - Lands
 depend: [ProtocolLib]
 spigot-id: 59129
 commands:

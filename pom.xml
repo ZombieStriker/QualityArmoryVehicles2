@@ -90,6 +90,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- TownyAdvanced -->
+        <dependency>
+            <groupId>com.github.oraxen</groupId>
+            <artifactId>protectionlib</artifactId>
+            <version>master-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- XSeries for ReflectionUtils -->
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
@@ -161,6 +169,10 @@
                         <relocation>
                             <pattern>net.jodah.expiringmap</pattern>
                             <shadedPattern>me.zombie_striker.qav.util.expiringmap</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>io.th0rgal.protectionlib</pattern>
+                            <shadedPattern>me.zombie_striker.qav.hooks.protection</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

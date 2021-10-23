@@ -266,24 +266,29 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 	}
 
 	public static void callback(VehicleEntity ve, Player player, String message) {
-		for (ItemStack item : ve.getTrunk()) {
-			if (item != null)
-				MenuHandler.giveOrDrop(player,item);
-		}
+		if (player != null) {
+			for (ItemStack item : ve.getTrunk()) {
+				if (item != null)
+					MenuHandler.giveOrDrop(player,item);
+			}
 
-		for (ItemStack item : ve.getFuels().getContents()) {
-			if (item != null)
-				MenuHandler.giveOrDrop(player,item);
+			for (ItemStack item : ve.getFuels().getContents()) {
+				if (item != null)
+					MenuHandler.giveOrDrop(player,item);
+			}
+
 		}
 
 		ve.getFuels().clear();
 		ve.getTrunk().clear();
 
 		ve.deconstruct(player, message);
-		if(!Main.enableGarage)
-			MenuHandler.giveOrDrop(player,ItemFact.getCarItem(ve.getType()));
-		else
-			QualityArmoryVehicles.addUnlockedVehicle(player,new UnlockedVehicle(ve.getType(),ve.getHealth(), true));
+		if (player != null) {
+			if(!Main.enableGarage)
+				MenuHandler.giveOrDrop(player,ItemFact.getCarItem(ve.getType()));
+			else
+				QualityArmoryVehicles.addUnlockedVehicle(player,new UnlockedVehicle(ve.getType(),ve.getHealth(), true));
+		}
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.cryptomorin.xseries.ReflectionUtils;
 import com.google.common.io.Files;
+import io.th0rgal.protectionlib.ProtectionLib;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
 import me.zombie_striker.qav.customitemmanager.CustomItemManager;
 import me.zombie_striker.qav.customitemmanager.qav.versions.V1_13.CustomVehicleItem;
@@ -198,6 +199,10 @@ public class Main extends JavaPlugin {
 				}
 			}
 		}.runTaskTimer(this,1,1);
+
+		if ((boolean) a("hooks.protection", true)) {
+			ProtectionLib.init(this);
+		}
 
 		protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.STEER_VEHICLE) {
 
