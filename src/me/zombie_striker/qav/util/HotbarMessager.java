@@ -11,9 +11,8 @@ public class HotbarMessager {
 	 *
 	 * @param player
 	 * @param message
-	 * @throws Exception
 	 */
-	public static void sendHotBarMessage(Player player, String message) throws Exception {
+	public static void sendHotBarMessage(Player player, String message) {
 		ActionBar.sendActionBar(player, ChatColor.translateAlternateColorCodes('&', message));
 	}
 

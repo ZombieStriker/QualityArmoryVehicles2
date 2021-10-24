@@ -59,6 +59,7 @@ public class MessagesConfig {
 	public static String MESSAGE_CannotPickupWhileInVehicle = "&fYou cannot pickup vehicles that are being driven.";
 	public static String MESSAGE_HOTBAR_OUTOFFUEL = "&fYour vehicle is out of fuel. Find coal and Shift-click the car";
 	public static String MESSAGE_REPAIR = "&fYour vehicle has been repaired successfully.";
+	public static String MESSAGE_ACTIOBAR_MOVE = "&aVehicle: &f%type% | &aFuel: &f%fuel%";
 	public static String subcommand_GiveVehicle = " <car> <?:player>: Gives you or another player a car";
 	public static String subcommand_SpawnVehicle = " <car> : Spawns a car at your location";
 	public static String subcommand_removeNearbyVehicles = " <distance> : Removes all cars nearby";
@@ -83,6 +84,7 @@ public class MessagesConfig {
 	public static String COMMANDMESSAGES_VALID_VEHICLE = "&4 The name provided is not of a registered vehicle.";
 	public static String COMMANDMESSAGES_VALID_DISTANCE = "&4 A valid distance is required.";
 	public static String COMMANDMESSAGES_ALL_REMOVE_FROM_WORLD = " All %count% vehicles have been removed from all worlds.";
+	public static String COMMANDMESSAGES_REMOVE_BUGGED = " Removed all bugged vehicles from your world.";
 	public static String COMMANDMESSAGES_SPAWN_VEHICLE = " Vehicle %car% has been spawned.";
 	public static String COMMANDMESSAGE_REMOVE_NEARBY = " Removed %count% nearby vehicles within a %distance% radius.";
 	public static String COMMANDMESSAGE_CALLBACKALL = " All %count% vehicles have been returned to their owners.";
@@ -203,15 +205,18 @@ public class MessagesConfig {
 		MESSAGE_SIGN_SHOP = ( a("Messages.sign.QAVShop", MESSAGE_SIGN_SHOP));
 		MESSAGE_SIGN_GARAGE = (
 				a("Messages.sign.QAVGarage", MESSAGE_SIGN_GARAGE));
-
+		COMMANDMESSAGES_REMOVE_BUGGED = (
+				a("Messages.removeBugged", COMMANDMESSAGES_REMOVE_BUGGED));
 		MESSAGE_REPAIR = (
 				a("Messages.repair", MESSAGE_REPAIR));
-		COMMANDMESSAGES_RELOAD = colorize(
-				a("Messages.reload", COMMANDMESSAGES_RELOAD));
+		MESSAGE_ACTIOBAR_MOVE = (
+				a("Messages.actionBar", MESSAGE_ACTIOBAR_MOVE));
+		COMMANDMESSAGES_RELOAD =
+				a("Messages.reload", COMMANDMESSAGES_RELOAD);
 		b();
 	}
 
-	private static String colorize(String string) {
+	public static String colorize(String string) {
 		return ChatColor.translateAlternateColorCodes('&', string);
 	}
 

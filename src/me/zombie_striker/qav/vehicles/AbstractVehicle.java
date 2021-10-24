@@ -435,10 +435,27 @@ public abstract class AbstractVehicle {
 		applyModifiers(vehicleEntity, velocity);
 		vehicleEntity.getDriverSeat().setVelocity(velocity);
 		handleOtherStands(vehicleEntity,velocity);
+
+
 		Entity passenger = vehicleEntity.getDriverSeat().getPassenger();
-		if (passenger instanceof Player && !ProtectionHandler.canBreak((Player) passenger,vehicleEntity.getDriverSeat().getLocation())) {
-			QAVCommand.callback(vehicleEntity, Bukkit.getPlayer(vehicleEntity.getOwner()), "Not allowed");
+		if (passenger instanceof Player) {
+			Player player = (Player) passenger;
+			// Handle protection
+			if (!ProtectionHandler.canBreak(player,vehicleEntity.getDriverSeat().getLocation())) {
+				QAVCommand.callback(vehicleEntity, Bukkit.getPlayer(vehicleEntity.getOwner()), "Not allowed");
+			}
+
+			// Send actionbar
+			if (Main.sendActionBarOnMove) {
+				if ((!player.getGameMode().equals(GameMode.CREATIVE) || !Main.bypassCoalInCreative) && vehicleEntity.getFuel() <= 0) {
+					return;
+				}
+
+				HotbarMessager.sendHotBarMessage(player,MessagesConfig.MESSAGE_ACTIOBAR_MOVE.replace("%type%", vehicleEntity.getType().getDisplayname())
+						.replace("%fuel%", String.valueOf(vehicleEntity.getFuel())));
+			}
 		}
+
 	}
 
 	public void applyModifiers(VehicleEntity entity, Vector vector) {

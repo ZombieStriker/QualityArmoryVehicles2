@@ -140,6 +140,10 @@ public class QualityArmoryVehicles {
 		return null;
 	}
 
+	public static boolean isQAVEntity(Entity e) {
+		return isVehicle(e) || isPassager(e);
+	}
+
 	public static boolean isVehicle(Entity e) {
 		if (e == null || e.getCustomName() == null)
 			return false;

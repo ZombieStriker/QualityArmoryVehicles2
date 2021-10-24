@@ -2,6 +2,7 @@ package me.zombie_striker.qav.fuel;
 
 import com.cryptomorin.xseries.ReflectionUtils;
 import me.zombie_striker.qav.Main;
+import me.zombie_striker.qav.MessagesConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RepairItemStack {
     private String name;
@@ -35,7 +37,11 @@ public class RepairItemStack {
 
         if (tryData(meta)) return true;
 
-        return name == null || !meta.hasDisplayName() || meta.getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', name));
+        if (name == null && !meta.hasDisplayName()) {
+            meta.getDisplayName();
+        }
+
+        return name != null && meta.hasDisplayName() && meta.getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', name));
     }
 
     private boolean tryData(ItemMeta meta) {
@@ -160,7 +166,7 @@ public class RepairItemStack {
         if (name != null)
             itemMeta.setDisplayName(this.getName());
         if (lore != null && !lore.isEmpty())
-            itemMeta.setLore(lore);
+            itemMeta.setLore(lore.stream().map(MessagesConfig::colorize).collect(Collectors.toList()));
 
         item.setItemMeta(itemMeta);
 

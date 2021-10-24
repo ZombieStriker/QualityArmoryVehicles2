@@ -95,6 +95,7 @@ public class Main extends JavaPlugin {
 	public static boolean antiCheatHook = false;
 	public static boolean freezeOnDestroy = false;
 	public static boolean bypassCoalInCreative = true;
+	public static boolean sendActionBarOnMove = true;
 	public static boolean disableing = false;
 	public static boolean enable_RequirePermToBuyVehicle = false;
 	public static Object BOUNDINGBOX;
@@ -177,14 +178,18 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new QAVListener(this), this);
 		EasyGUI.INIT(this);
 
-		FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
+		Bukkit.getScheduler().runTaskLater(this, () -> {
+			FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
 
+			if(dataconfig.contains("data")) {
+				for (VehicleEntity ve : ((List<VehicleEntity>) dataconfig.get("data"))) {
+					if (ve != null && ve.getDriverSeat() != null)
+						vehicles.add(ve);
+				}
 
-		if(dataconfig.contains("data"))
-		for(VehicleEntity ve : ((List<VehicleEntity>)dataconfig.get("data"))){
-			if(ve!=null && ve.getDriverSeat()!=null)
-				vehicles.add(ve);
-		}
+				this.getLogger().info("Successfully loaded " + vehicles.size() + " spawned vehicles.");
+			}
+		}, 20);
 
 
 		protocolManager = ProtocolLibrary.getProtocolManager();
@@ -376,6 +381,7 @@ public class Main extends JavaPlugin {
 		antiCheatHook = (boolean) a("enable_AntiCheatHook", antiCheatHook);
 		freezeOnDestroy = (boolean) a("freezeOnDestroy", freezeOnDestroy);
 		bypassCoalInCreative = (boolean) a("bypassCoalInCreative", bypassCoalInCreative);
+		sendActionBarOnMove = (boolean) a("sendActionBarOnMove", sendActionBarOnMove);
 
 		enable_RequirePermToBuyVehicle = (boolean) a("enable_RequirePermToBuyVehicle", enable_RequirePermToBuyVehicle);
 

@@ -16,12 +16,15 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,6 +123,27 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				}
 			}
 		}
+		if (args[0].equalsIgnoreCase(subcommand_removebugged)) {
+			if (!sender.hasPermission(PermissionHandler.PERM_REMOVEDBUGGED)) {
+				sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
+				return true;
+			}
+
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
+				return true;
+			}
+
+			Player player = (Player) sender;
+			final Collection<ArmorStand> entities = player.getWorld().getEntitiesByClass(ArmorStand.class);
+			entities.stream()
+					.filter(QualityArmoryVehicles::isVehicle)
+					.filter(entity -> QualityArmoryVehicles.getVehicleEntityByEntity(entity) == null)
+					.forEach(Entity::remove);
+
+			sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_REMOVE_BUGGED);
+			return true;
+		}
 
 		if (args[0].equalsIgnoreCase(subcommand_SpawnVehicle)) {
 			if (!sender.hasPermission(PermissionHandler.PERM_SPAWN)) {
@@ -171,7 +195,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 			}
 
 			if (args.length != 2) {
-				sender.sendMessage(Main.prefix + "&7 Try to use &6/qav removeVehicle <type>");
+				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.prefix + "&7 Try to use &6/qav removeVehicle <type>"));
 				return true;
 			}
 

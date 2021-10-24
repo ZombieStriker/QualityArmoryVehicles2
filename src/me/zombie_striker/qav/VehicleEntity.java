@@ -411,4 +411,28 @@ public class VehicleEntity implements ConfigurationSerializable {
 			return true;
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "VehicleEntity{" +
+				"vehicleType=" + vehicleType +
+				", allowsPassagers=" + allowsPassagers +
+				", rotation=" + rotation +
+				", direction=" + direction +
+				", centerOffset=" + centerOffset +
+				", boundingBox=" + boundingBox +
+				", speed=" + speed +
+				", vehicleUUID=" + vehicleUUID +
+				", owner=" + owner +
+				", modelParts=" + modelParts +
+				", driverseat=" + driverseat +
+				", passagers=" + passagers +
+				", inventory=" + inventory +
+				", fuels=" + fuels +
+				", fuel=" + fuel +
+				", yheight=" + yheight +
+				", whitelist=" + whitelist +
+				", health=" + health +
+				'}';
+	}
 }
