@@ -43,7 +43,7 @@ public class CustomVehicleItem extends AbstractItem {
 
 	public void initItems(boolean b) {
 		if (CustomItemManager.getResourcepack() == null)
-			CustomItemManager.setResourcepack("https://www.dropbox.com/s/baqqgxkwsz3io23/QualityArmoryCarsOnlyV2.7.zip?dl=1");
+			CustomItemManager.setResourcepack("https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/v2.1.9/QualityArmory.zip");
 		if (b) {
 
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "t50", 1).setDisplayname("T50")
