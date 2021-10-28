@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.qamini;
 
+import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,15 +19,14 @@ public class EconHandler {
 			return;
 		}
 		econ = rsp.getProvider();
+		QualityArmoryVehicles.getPlugin().getLogger().info("Hooked with Vault");
 	}
 
 	public static boolean hasEnough(int cost, Player player) {
-		QAMini.DEBUG("Check has enough: " + player.getName() + " isnull=" + (econ == null));
 		return !isVault() || (econ.getBalance(player) >= cost);
 	}
 
 	public static void pay(int cost, Player player) {
-		QAMini.DEBUG("Take money: " + player.getName() + " isnull=" + (econ == null));
 		try {
 			me.zombie_striker.qg.handlers.EconHandler.pay(cost, player);
 			return;
@@ -37,7 +37,6 @@ public class EconHandler {
 	}
 
 	public static void deposit(int cost, Player player) {
-		QAMini.DEBUG("Deposit money: " + player.getName() + " isnull=" + (econ == null));
 		if (isVault())
 			econ.depositPlayer(player, cost);
 	}

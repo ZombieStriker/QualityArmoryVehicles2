@@ -102,7 +102,7 @@ public class FuelItemStack {
 		ItemStack temp = new ItemStack(material);
 		ItemMeta meta = temp.getItemMeta();
 		meta.setLore(lore);
-		meta.setDisplayName(getDisplayname());
+		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', getDisplayname()));
 		try{
 		meta.setCustomModelData(data);
 	}catch(Error|Exception ignored){}
