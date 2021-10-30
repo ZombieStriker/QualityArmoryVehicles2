@@ -432,6 +432,10 @@ public abstract class AbstractVehicle {
 			}
 		}
 
+		if (vehicleEntity.getDriverSeat().getLocation().getY() >= vehicleEntity.getDriverSeat().getLocation().getWorld().getMaxHeight()) {
+			Main.DEBUG("Y limit: " + vehicleEntity.getDriverSeat().getLocation().getWorld().getMaxHeight() + " y: " + vehicleEntity.getDriverSeat().getLocation().getY());
+			velocity.setY(velocity.getY()-1);
+		}
 		applyModifiers(vehicleEntity, velocity);
 		vehicleEntity.getDriverSeat().setVelocity(velocity);
 		handleOtherStands(vehicleEntity,velocity);
