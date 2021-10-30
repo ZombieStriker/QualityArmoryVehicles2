@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
 public class FuelItemStack {
@@ -101,7 +102,7 @@ public class FuelItemStack {
 	public ItemStack getItemStack() {
 		ItemStack temp = new ItemStack(material);
 		ItemMeta meta = temp.getItemMeta();
-		meta.setLore(lore);
+		meta.setLore(lore.stream().map(e -> ChatColor.translateAlternateColorCodes('&', e)).collect(Collectors.toList()));
 		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', getDisplayname()));
 		try{
 		meta.setCustomModelData(data);

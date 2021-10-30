@@ -1,3 +1,14 @@
+2.0.9
+  Changelog:
+    - Added WorldGuard and Towny support
+    - Fixed gui bugs
+    - Fixed spawned vehicle load after restart
+    - Updated texture
+    - Updated dependencies
+    - Fixed economy support
+    - Fixed fuel lore color
+    - Now keeping vehicles away from world height limit
+
 2.0.8
   Changelog:
     - Fixed forks support
