@@ -5,8 +5,8 @@ import org.bukkit.util.Vector;
 
 public class BoundingBox {
 
-	private Location location;
-	private Vector centerOffset = new Vector(0, 1, 0);
+	private final Location location;
+	private final Vector centerOffset = new Vector(0, 1, 0);
 	private double width;
 	private double height;
 
@@ -21,9 +21,11 @@ public class BoundingBox {
 	}
 
 	public boolean intersects(Location check) {
+		return intersects(check, centerOffset);
+	}
 
-
-		Location loc = location.clone().add(centerOffset);
+	public boolean intersects(Location check, Vector vector) {
+		Location loc = location.clone().add(vector);
 
 		double xdif = check.getX() - loc.getX();
 		double ydif = check.getY() - loc.getY();
@@ -31,9 +33,7 @@ public class BoundingBox {
 
 
 		if (xdif * xdif + zdif * zdif <= width * width) {
-			if (ydif <= height && ydif >= 0) {
-				return true;
-			}
+			return ydif <= height && ydif >= 0;
 		}
 		return false;
 	}
@@ -48,19 +48,7 @@ public class BoundingBox {
 			return false;
 		Vector distanceVector = direction.clone();
 		distanceVector.normalize().multiply(distance);
-		Location check = start.clone().add(distanceVector);
-
-		double xdif = check.getX() - loc.getX();
-		double ydif = check.getY() - loc.getY();
-		double zdif = check.getZ() - loc.getZ();
-
-
-		if (xdif * xdif + zdif * zdif <= width * width) {
-			if (ydif <= height && ydif >= 0) {
-				return true;
-			}
-		}
-		return false;
+		return intersects(start,distanceVector);
 	}
 
 	public Location getLocation() {

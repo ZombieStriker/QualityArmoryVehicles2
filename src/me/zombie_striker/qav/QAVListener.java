@@ -42,10 +42,13 @@ public class QAVListener implements Listener {
 		}
 
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			Main.DEBUG("Player is interacting.");
 			VehicleEntity ve = QualityArmoryVehicles.getVehiclePlayerLookingAt(e.getPlayer());
 			if (ve == null) {
 				return;
 			}
+
+			Main.DEBUG("Detected hitbox interaction.");
 
 			e.setCancelled(true);
 

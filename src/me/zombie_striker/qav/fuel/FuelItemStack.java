@@ -120,7 +120,9 @@ public class FuelItemStack {
 		FileConfiguration config = YamlConfiguration.loadConfiguration(yml);
 		String splitChar = newSplit;
 
-		if (config.getKeys(false).size() < 2) {
+		if (!config.getBoolean("generated", false)) {
+			config.set("generated", true);
+
 			registerNewFuelToConfig(null, Material.COAL, (short) 0, null, 500, yml);
 			registerNewFuelToConfig(null, Material.COAL_BLOCK, (short) 0, null, 9 * 500, yml);
 			registerNewFuelToConfig(null, Material.BLAZE_POWDER, (short) 0, null, 500, yml);
