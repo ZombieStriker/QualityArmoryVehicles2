@@ -1,6 +1,7 @@
 package me.zombie_striker.qav.fuel;
 
 import com.cryptomorin.xseries.ReflectionUtils;
+import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -120,9 +121,7 @@ public class FuelItemStack {
 		FileConfiguration config = YamlConfiguration.loadConfiguration(yml);
 		String splitChar = newSplit;
 
-		if (!config.getBoolean("generated", false)) {
-			config.set("generated", true);
-
+		if (Main.ENABLE_FILE_CREATION) {
 			registerNewFuelToConfig(null, Material.COAL, (short) 0, null, 500, yml);
 			registerNewFuelToConfig(null, Material.COAL_BLOCK, (short) 0, null, 9 * 500, yml);
 			registerNewFuelToConfig(null, Material.BLAZE_POWDER, (short) 0, null, 500, yml);
