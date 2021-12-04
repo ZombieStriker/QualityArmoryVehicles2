@@ -1,3 +1,9 @@
+2.1
+  Changelog:
+    - 1.18 support
+    - Applied a workaround to fix passengers visual bugs
+    - Fixed fuel file creation
+
 2.0.9
   Changelog:
     - Added WorldGuard and Towny support
