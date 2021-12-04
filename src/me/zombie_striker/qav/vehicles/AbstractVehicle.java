@@ -1,6 +1,7 @@
 package me.zombie_striker.qav.vehicles;
 
 import com.comphenix.protocol.events.PacketEvent;
+import com.cryptomorin.xseries.ReflectionUtils;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.finput.FInput;
@@ -491,8 +492,16 @@ public abstract class AbstractVehicle {
 				e.eject();
 				e.teleport(offset);
 				rider.teleport(offset);
-				e.setPassenger(rider);
 
+				if (ReflectionUtils.supports(13)) {
+					Main.DEBUG("Found 1.13 version. Applying a workaround for a server-side bug.");
+
+					Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> e.setPassenger(rider), 5L);
+				} else {
+					e.setPassenger(rider);
+				}
+
+				Main.DEBUG("Moved other stand. Previous rider: " + rider + " - new rider: " + e.getPassenger());
 			}
 
 			Vector distance = offset.toVector().clone().subtract(e.getLocation().toVector());
