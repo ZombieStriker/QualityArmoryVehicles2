@@ -1,3 +1,7 @@
+2.1.1
+  Changelog:
+    - Added an option to callback on dismount
+
 2.1
   Changelog:
     - 1.18 support

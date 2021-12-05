@@ -82,6 +82,7 @@ public class Main extends JavaPlugin {
 	public static boolean disableAllFuelChecks = false;
 	public static boolean enableVehicleDamage = true;
 	public static boolean disableCreativeCloning = false;
+	public static boolean removeVehicleOnDismount = false;
 	public static boolean removeVehicleONLEAVE = false;
 	public static boolean destroyVehicleONLEAVE = false;
 	public static boolean swapEndermiteWithChicken = false;
@@ -243,6 +244,13 @@ public class Main extends JavaPlugin {
 								//Shift
 								PlayerExitQAVehicleEvent event = new PlayerExitQAVehicleEvent(ve,player);
 								Bukkit.getPluginManager().callEvent(event);
+
+								if (removeVehicleOnDismount && QualityArmoryVehicles.isVehicle(player.getVehicle())) {
+									VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
+									if (vehicle != null && vehicle.getDriverSeat().equals(player.getVehicle())) {
+										QAVCommand.callback(vehicle,player, "Dismount");
+									}
+								}
 							}
 
 						}
@@ -367,6 +375,7 @@ public class Main extends JavaPlugin {
 		disableAllFuelChecks = (boolean) a("enable_Debug_RemoveFuelChecks", disableAllFuelChecks);
 		setOwnerIfNoneExist = (boolean) a("enable_SetOwnerOfVehicleIfUnowned", setOwnerIfNoneExist);
 		ENABLE_FILE_CREATION = (boolean) a("Enable_Creation_Of_Default_Files", ENABLE_FILE_CREATION);
+		removeVehicleOnDismount = (boolean) a("enable_RemoveVehiclesOnDismount", removeVehicleOnDismount);
 		removeVehicleONLEAVE = (boolean) a("enable_RemoveVehiclesOnPlayerQuit", removeVehicleONLEAVE);
 		destroyVehicleONLEAVE = (boolean) a("enable_DestroyVehiclesOnPlayerQuit", destroyVehicleONLEAVE);
 		disableCreativeCloning = (boolean) a("enable_StopCreativeDuplication", disableCreativeCloning);

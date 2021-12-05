@@ -325,11 +325,19 @@ public class QAVListener implements Listener {
 	@EventHandler
 	public void onLeave(PlayerQuitEvent event) {
 		Entity vehicle = event.getPlayer().getVehicle();
-		if (QualityArmoryVehicles.isVehicle(vehicle)) {
+		if (QualityArmoryVehicles.isVehicle(vehicle) || QualityArmoryVehicles.isPassager(vehicle)) {
 			VehicleEntity entity = QualityArmoryVehicles.getVehicleEntityByEntity(vehicle);
 			if (entity != null) {
 				if (vehicle.equals(entity.getDriverSeat())) {
 					entity.getDriverSeat().eject();
+
+					if (Main.destroyVehicleONLEAVE) {
+						entity.deconstruct(event.getPlayer(), "Quit");
+					}
+
+					if (Main.removeVehicleONLEAVE) {
+						QAVCommand.callback(entity, event.getPlayer(), "Quit");
+					}
 				}
 
 				if (entity.getPassagerSeats().contains(vehicle)) {
