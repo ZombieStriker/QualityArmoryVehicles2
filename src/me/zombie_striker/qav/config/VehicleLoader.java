@@ -172,7 +172,7 @@ public class VehicleLoader {
 		String input = config.getString("InputManager.keys."+type.getId(), "none");
 
 		if (!input.equalsIgnoreCase("none")) {
-			vehicle.getInputs().put(type, FInputManager.getHandler(input));
+			vehicle.getInputs().put(type.toString(), FInputManager.getHandler(input));
 		}
 	}
 }

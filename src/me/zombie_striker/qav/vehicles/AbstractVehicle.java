@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public abstract class AbstractVehicle {
 	protected static final double pitchIncrement = Math.PI / 60;
 	protected static final double maxAngle = Math.PI / 4;
 
-	private Map<FInput.ClickType,FInput> inputs = new HashMap<>();
+	private Map<String,FInput> inputs = new HashMap<>();
 	private double widthRadius = 5;
 	private double height = 4;
 	private String internalName;
@@ -538,11 +539,11 @@ public abstract class AbstractVehicle {
 		this.passagerOffset = sizes;
 	}
 
-	public @Nullable FInput getInput(FInput.ClickType type) {
-		return inputs.get(type);
+	public @Nullable FInput getInput(FInput.@NotNull ClickType type) {
+		return inputs.get(type.toString());
 	}
 
-	public Map<FInput.ClickType, FInput> getInputs() {
+	public Map<String,FInput> getInputs() {
 		return inputs;
 	}
 

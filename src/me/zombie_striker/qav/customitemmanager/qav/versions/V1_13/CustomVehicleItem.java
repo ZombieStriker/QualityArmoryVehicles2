@@ -250,7 +250,7 @@ public class CustomVehicleItem extends AbstractItem {
 			VehicleYML.registerVehicle(VehicleTypes.PLANE, "ufo", 122).setDisplayname("UFO")
 					.setCenter(new Vector(-1, 0, 0)).setFrontVectorOffset(4.5).setBackVectorOffset(4.5)
 					.setPassagerLocations(new Vector(-1.5, 0, 0)).setTrunkSize(54).setStopMeleeDamage(true)
-					.setRequireFuel(false).setWidth(4.5).setHeight(4.2).setMaxHealth(1050).setCost(42069)
+					.setRequireFuel(false).setWidth(3.5).setHeight(4.2).setMaxHealth(1050).setCost(42069)
 					.setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD).setKeyInputManagerLMB(FInputManager.CAR_HONK).setDrivingSounds(false)
 					.setLore("&7Press [Space] to start flying", "&7 Press [LMB] to make a mysterious sound.")
 					.save();
