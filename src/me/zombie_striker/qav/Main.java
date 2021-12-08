@@ -121,9 +121,14 @@ public class Main extends JavaPlugin {
 		return QAMini.isVersionHigherThan(first, second);
 	}
 
+	@Override
 	public void onEnable() {
 		ConfigurationSerialization.registerClass(UnlockedVehicle.class);
 		ConfigurationSerialization.registerClass(VehicleEntity.class);
+
+		if (this.getDescription().getVersion().contains("SNAPSHOT")) {
+			this.getLogger().warning(String.format("You are using a SNAPSHOT version of %s(%s). This is not recommended for production use.", this.getName(), this.getDescription().getVersion()));
+		}
 
 		new MetricsLite(this,12753);
 
