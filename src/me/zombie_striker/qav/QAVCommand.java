@@ -11,7 +11,6 @@ import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -177,8 +176,7 @@ public class QAVCommand implements CommandExecutor, TabCompleter {
 				return true;
 			}
 
-			VehicleEntity ve = new VehicleEntity(ab, location.getBlock().getRelative(BlockFace.UP).getLocation(), target.getUniqueId());
-			ve.spawn();
+			QualityArmoryVehicles.spawnVehicle(ab,location,target);
 			return true;
 		}
 

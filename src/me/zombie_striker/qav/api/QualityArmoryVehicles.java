@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
@@ -163,23 +164,13 @@ public class QualityArmoryVehicles {
 	}
 
 	public static VehicleEntity spawnVehicle(UnlockedVehicle ab, Player player) {
-		VehicleEntity vehicleEntity = new VehicleEntity(ab.getVehicleType(),player.getLocation(),player.getUniqueId());
-		vehicleEntity.setHealth(ab.getHealth());
-
-		VehicleSpawnEvent event =  new VehicleSpawnEvent(player, vehicleEntity);
-		Bukkit.getPluginManager().callEvent(event);
-		if (event.isCanceled()) {
-			return null;
-		}
-
-		vehicleEntity.spawn();
-		return vehicleEntity;
+		return spawnVehicle(ab.getVehicleType(), player);
 	}
 	public static VehicleEntity spawnVehicle(AbstractVehicle ab, Player player) {
 		return spawnVehicle(ab,player.getLocation(),player);
 	}
 	public static VehicleEntity spawnVehicle(AbstractVehicle ab, Location location, Player player) {
-		VehicleEntity vehicleEntity = new VehicleEntity(ab,location,player.getUniqueId());
+		VehicleEntity vehicleEntity = new VehicleEntity(ab,location.getBlock().getRelative(BlockFace.UP).getLocation(),player.getUniqueId());
 		VehicleSpawnEvent event =  new VehicleSpawnEvent(player, vehicleEntity);
 		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCanceled()) {
