@@ -278,6 +278,7 @@ public class Main extends JavaPlugin {
 
 
 		QualityArmoryVehicles.setPlugin(this);
+		EconHandler.setupEconomy();
 		if (Bukkit.getPluginManager().getPlugin("QualityArmory") == null) {
 			minihandler = new QAMini();
 			Bukkit.getPluginManager().registerEvents(minihandler, this);
@@ -286,7 +287,6 @@ public class Main extends JavaPlugin {
 				ParticleHandlers.initValues();
 			} catch (Error | Exception e5) {
 			}
-			EconHandler.setupEconomy();
 
 			QAMini.overrideURL = (boolean) a("QAMini.resourcepackurl_override", QAMini.overrideURL);
 			QAMini.S_ITEM_VARIENTS_NEW = ChatColor.translateAlternateColorCodes('&',

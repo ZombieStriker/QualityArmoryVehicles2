@@ -27,11 +27,6 @@ public class EconHandler {
 	}
 
 	public static void pay(int cost, Player player) {
-		try {
-			me.zombie_striker.qg.handlers.EconHandler.pay(cost, player);
-			return;
-		} catch (Error | Exception ignored) {
-		}
 		if (isVault())
 			econ.withdrawPlayer(player, cost);
 	}
