@@ -90,6 +90,7 @@ public class MessagesConfig {
 	public static String COMMANDMESSAGE_CALLBACKALL = " All %count% vehicles have been returned to their owners.";
 	public static String COMMANDMESSAGES_REMOVE_VEHICLE_GARAGE =  "All \"%car%\" vehicle types have been removed from %name%'s garage.";
 	public static String COMMANDMESSAGES_TEXTURE = "Click here to download the resource pack";
+	public static String COOLDOWN = "&cYou have to wait %time%ms before performing this action again.";
 
 	public static void init() {
 		messagesyml = YamlConfiguration.loadConfiguration(messagesymlfile);
@@ -213,6 +214,8 @@ public class MessagesConfig {
 				a("Messages.actionBar", MESSAGE_ACTIOBAR_MOVE));
 		COMMANDMESSAGES_RELOAD =
 				a("Messages.reload", COMMANDMESSAGES_RELOAD);
+		COOLDOWN =
+				a("Messages.cooldown", COOLDOWN);
 		b();
 	}
 

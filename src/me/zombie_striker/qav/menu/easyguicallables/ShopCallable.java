@@ -14,10 +14,23 @@ import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class ShopCallable extends EasyGUICallable {
+	private static final Map<UUID,Long> LAST_SHOP = new HashMap<>();
+
 	@Override
 	public void call(ClickData data) {
+		if (Main.enableShopCooldown && LAST_SHOP.containsKey(data.getClicker().getUniqueId())) {
+			if ((System.currentTimeMillis() - LAST_SHOP.get(data.getClicker().getUniqueId())) < 500) {
+				data.getClicker().sendMessage(MessagesConfig.COOLDOWN.replace("%time%", "500"));
+				return;
+			}
 
+			LAST_SHOP.remove(data.getClicker().getUniqueId());
+		}
 
 		Main.DEBUG("Shop menu clicked");
 		data.cancelPickup(true);
@@ -39,6 +52,7 @@ public class ShopCallable extends EasyGUICallable {
 
 					EconHandler.pay(repairItem.getCost(), data.getClicker());
 					data.getClicker().getInventory().addItem(repairItem.asItem());
+					LAST_SHOP.put(data.getClicker().getUniqueId(), System.currentTimeMillis());
 				}
 				if(FuelItemStack.getFuelForItem(data.getClickedItem()) > 0){
 					FuelItemStack fuelItemStack = FuelItemStack.getFuelItemInstance(data.getClickedItem());
@@ -52,6 +66,7 @@ public class ShopCallable extends EasyGUICallable {
 						EconHandler.pay(fuelItemStack.getCost(), data.getClicker());
 						data.getClicker().getInventory().addItem(item);
 						Main.DEBUG("Finished paying for fuel");
+						LAST_SHOP.put(data.getClicker().getUniqueId(), System.currentTimeMillis());
 					} else {
 						data.getClicker().sendMessage(MessagesConfig.MESSAGE_NOT_ENOUGH_MONEY);
 					}
@@ -83,6 +98,7 @@ public class ShopCallable extends EasyGUICallable {
 					data.getClicker().getInventory().addItem(item);
 				}
 				Main.DEBUG("Finished paying for vehicle");
+				LAST_SHOP.put(data.getClicker().getUniqueId(), System.currentTimeMillis());
 			} else {
 				data.getClicker().sendMessage(MessagesConfig.MESSAGE_NOT_ENOUGH_MONEY);
 			}

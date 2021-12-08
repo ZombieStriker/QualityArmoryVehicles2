@@ -1,6 +1,10 @@
 2.1.1
   Changelog:
     - Added an option to callback on dismount
+    - Added an option to enable a shop cooldown of 500 milliseconds after buying an item
+    - Fixed UFO inputs
+    - Fixed UFO default hitbox size
+    - Various updates to the economy handler
 
 2.1
   Changelog:
