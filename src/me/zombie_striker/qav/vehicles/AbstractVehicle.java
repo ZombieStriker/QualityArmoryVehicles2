@@ -434,8 +434,15 @@ public abstract class AbstractVehicle {
 			}
 		}
 
-		if (vehicleEntity.getDriverSeat().getLocation().getY() >= vehicleEntity.getDriverSeat().getLocation().getWorld().getMaxHeight()) {
-			Main.DEBUG("Y limit: " + vehicleEntity.getDriverSeat().getLocation().getWorld().getMaxHeight() + " y: " + vehicleEntity.getDriverSeat().getLocation().getY());
+		try {
+			if (vehicleEntity.getDriverSeat().getLocation().getY() >= vehicleEntity.getDriverSeat().getLocation().getWorld().getMaxHeight()) {
+				Main.DEBUG("Y limit: " + vehicleEntity.getDriverSeat().getLocation().getWorld().getMaxHeight() + " y: " + vehicleEntity.getDriverSeat().getLocation().getY());
+				velocity.setY(velocity.getY()-1);
+			}
+		} catch (Error | Exception ignored) {}
+
+		if (vehicleEntity.getDriverSeat().getLocation().getY() >= Main.maxYheightForVehicles) {
+			Main.DEBUG("Y limit: " + Main.maxYheightForVehicles + " y: " + vehicleEntity.getDriverSeat().getLocation().getY());
 			velocity.setY(velocity.getY()-1);
 		}
 		applyModifiers(vehicleEntity, velocity);
