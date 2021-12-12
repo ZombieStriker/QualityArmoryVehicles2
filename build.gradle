@@ -55,7 +55,7 @@ repositories {
 dependencies {
     implementation("com.github.cryptomorin:XSeries:8.5.0.1")
     implementation("net.jodah:expiringmap:0.5.10")
-    compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
     compileOnly("us.myles:viaversion:3.2.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("me.zombie_striker:QualityArmory:2.0.4")
