@@ -73,7 +73,7 @@ shadowJar {
     archiveVersion.set("")
     archiveClassifier.set("")
 
-    destinationDirectory.set(new File("server/plugins"))
+    // destinationDirectory.set(new File("server/plugins"))
 
     relocate("com.cryptomorin.xseries", "me.zombie_striker.qav.util.xseries")
     relocate("net.jodah.expiringmap", "me.zombie_striker.qav.util.expiringmap")
