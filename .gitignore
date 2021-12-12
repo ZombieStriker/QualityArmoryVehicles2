@@ -126,3 +126,7 @@ libs/
 
 # Legacy version
 legacy/
+
+# Gradle
+.gradle/
+build/

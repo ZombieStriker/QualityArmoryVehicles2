@@ -1,0 +1,95 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id "com.github.johnrengelman.shadow" version "7.1.0"
+}
+
+group = 'me.zombie_striker'
+version = '2.1.1-SNAPSHOT'
+description = 'QualityArmoryVehicles'
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+
+    maven {
+        url = uri('https://maven.pkg.github.com/OWNER/*')
+    }
+
+    maven {
+        url = uri('https://repo.codemc.io/repository/maven-public/')
+    }
+
+    maven {
+        url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+    }
+
+    maven {
+        url = uri('https://jitpack.io')
+    }
+
+    maven {
+        url = uri('https://repo.viaversion.com')
+    }
+
+    maven {
+        url = uri('https://repo.dmulloy2.net/nexus/repository/public/')
+    }
+
+    maven {
+        url = uri('https://repo.citizensnpcs.co/')
+    }
+
+    maven {
+        url = uri('https://papermc.io/repo/repository/maven-public/')
+    }
+
+    maven {
+        url = uri('https://maven.enginehub.org/repo/')
+    }
+}
+
+dependencies {
+    implementation("com.github.cryptomorin:XSeries:8.5.0.1")
+    implementation("net.jodah:expiringmap:0.5.10")
+    compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("us.myles:viaversion:3.2.1")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+    compileOnly("me.zombie_striker:QualityArmory:2.0.4")
+    compileOnly("com.github.TownyAdvanced:Towny:0.97.5.1")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6")
+    compileOnly("net.milkbowl.vault:VaultAPI:1.7")
+}
+
+jar {
+    archiveVersion.set("")
+    archiveClassifier.set("")
+}
+
+shadowJar {
+    archiveVersion.set("")
+    archiveClassifier.set("")
+
+    destinationDirectory.set(new File("server/plugins"))
+
+    relocate("com.cryptomorin.xseries", "me.zombie_striker.qav.util.xseries")
+    relocate("net.jodah.expiringmap", "me.zombie_striker.qav.util.expiringmap")
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy DuplicatesStrategy.INCLUDE
+        inputs.property 'version', version
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.build.dependsOn tasks.shadowJar
