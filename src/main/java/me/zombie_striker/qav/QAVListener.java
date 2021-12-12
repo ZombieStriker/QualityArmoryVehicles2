@@ -110,10 +110,6 @@ public class QAVListener implements Listener {
 		VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(event.getPlayer().getVehicle());
 		if (vehicle == null) return;
 
-		if (!(vehicle.getType() instanceof AbstractPlane)) {
-			return;
-		}
-
 		event.setCancelled(true);
 		Main.DEBUG("Cancelled kick event for flying because player is on plane.");
 	}
