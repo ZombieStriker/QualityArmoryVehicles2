@@ -9,6 +9,7 @@ import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.util.HotbarMessager;
+import me.zombie_striker.qav.util.VehicleUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -148,7 +149,7 @@ public abstract class AbstractVehicle {
 		return bodyFix;
 	}
 
-	protected double getRotationDelta() {
+	public double getRotationDelta() {
 		return rotationDelta;
 	}
 
@@ -455,7 +456,7 @@ public abstract class AbstractVehicle {
 			Player player = (Player) passenger;
 			// Handle protection
 			if (!ProtectionHandler.canBreak(player,vehicleEntity.getDriverSeat().getLocation())) {
-				QAVCommand.callback(vehicleEntity, Bukkit.getPlayer(vehicleEntity.getOwner()), "Not allowed");
+				VehicleUtils.callback(vehicleEntity, Bukkit.getPlayer(vehicleEntity.getOwner()), "Not allowed");
 			}
 
 			// Send actionbar

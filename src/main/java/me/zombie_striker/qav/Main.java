@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.cryptomorin.xseries.ReflectionUtils;
 import com.google.common.io.Files;
+import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
 import me.zombie_striker.qav.customitemmanager.CustomItemManager;
 import me.zombie_striker.qav.customitemmanager.qav.versions.V1_13.CustomVehicleItem;
@@ -24,6 +25,7 @@ import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
 import me.zombie_striker.qav.util.ForksUtil;
+import me.zombie_striker.qav.util.VehicleUtils;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -176,7 +178,7 @@ public class Main extends JavaPlugin {
 		loadComplexParts(false);
 		loadVehicles(false);
 
-		QAVCommand command = new QAVCommand(this);
+		QAVCommand command = new QAVCommand();
 		getCommand("QualityArmoryVehicles").setExecutor(command);
 		getCommand("QualityArmoryVehicles").setTabCompleter(command);
 		if (enableGarage)
@@ -254,7 +256,7 @@ public class Main extends JavaPlugin {
 								if (removeVehicleOnDismount && QualityArmoryVehicles.isVehicle(player.getVehicle())) {
 									VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
 									if (vehicle != null && vehicle.getDriverSeat().equals(player.getVehicle())) {
-										QAVCommand.callback(vehicle,player, "Dismount");
+										VehicleUtils.callback(vehicle,player, "Dismount");
 									}
 								}
 							}

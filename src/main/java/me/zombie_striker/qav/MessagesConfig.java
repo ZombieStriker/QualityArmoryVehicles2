@@ -62,6 +62,8 @@ public class MessagesConfig {
 	public static String MESSAGE_ACTIOBAR_MOVE = "&aVehicle: &f%type% | &aFuel: &f%fuel%";
 	public static String subcommand_GiveVehicle = " <car> <?:player>: Gives you or another player a car";
 	public static String subcommand_SpawnVehicle = " <car> : Spawns a car at your location";
+	public static String subcommand_RemoveVehicle = " <car> : Removes all vehicles of a type";
+	public static String subcommand_list = " : Get loaded vehicles list";
 	public static String subcommand_removeNearbyVehicles = " <distance> : Removes all cars nearby";
 	public static String subcommand_setAsPass = " <id> : Sets the player as a passager for the closest car. (Seats start at 0)";
 	public static String subcommand_Shop = " : Opens the vehicle shop";
@@ -88,6 +90,7 @@ public class MessagesConfig {
 	public static String COMMANDMESSAGES_SPAWN_VEHICLE = " Vehicle %car% has been spawned.";
 	public static String COMMANDMESSAGE_REMOVE_NEARBY = " Removed %count% nearby vehicles within a %distance% radius.";
 	public static String COMMANDMESSAGE_CALLBACKALL = " All %count% vehicles have been returned to their owners.";
+	public static String COMMANDMESSAGE_CALLBACK = "Called back all vehicles within a %radius% radius of the player.";
 	public static String COMMANDMESSAGES_REMOVE_VEHICLE_GARAGE =  "All \"%car%\" vehicle types have been removed from %name%'s garage.";
 	public static String COMMANDMESSAGES_TEXTURE = "Click here to download the resource pack";
 	public static String COOLDOWN = "&cYou have to wait %time%ms before performing this action again.";
@@ -102,6 +105,8 @@ public class MessagesConfig {
 				a("Commands.spawnvehicle", subcommand_SpawnVehicle));
 		subcommand_removeNearbyVehicles = (
 				a("Commands.removenearby", subcommand_removeNearbyVehicles));
+		subcommand_RemoveVehicle = (
+				a("Commands.removeVehicle", subcommand_RemoveVehicle));
 		subcommand_setAsPass = (
 				a("Commands.setAsPassagers", subcommand_setAsPass));
 		subcommand_Shop = (
@@ -208,6 +213,10 @@ public class MessagesConfig {
 				a("Messages.sign.QAVGarage", MESSAGE_SIGN_GARAGE));
 		COMMANDMESSAGES_REMOVE_BUGGED = (
 				a("Messages.removeBugged", COMMANDMESSAGES_REMOVE_BUGGED));
+		COMMANDMESSAGE_CALLBACKALL = (
+				a("Messages.callbackAll", COMMANDMESSAGE_CALLBACKALL));
+		COMMANDMESSAGE_CALLBACK = (
+				a("Messages.callback", COMMANDMESSAGE_CALLBACK));
 		MESSAGE_REPAIR = (
 				a("Messages.repair", MESSAGE_REPAIR));
 		MESSAGE_ACTIOBAR_MOVE = (

@@ -1,5 +1,5 @@
 main: me.zombie_striker.qav.Main
-version: @version@
+version: ${version}
 api-version: 1.13
 name: QualityArmoryVehicles2
 softdepend:

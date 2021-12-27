@@ -18,10 +18,6 @@ public class ProtectionHandler {
         hook("Towny", TownyHook::new);
     }
 
-    public static boolean canBuild(Player player, Location target) {
-        return compatibilities.stream().allMatch(compatibility -> compatibility.canBuild(player, target));
-    }
-
     public static boolean canBreak(Player player, Location target) {
         return compatibilities.stream().allMatch(compatibility -> compatibility.canBreak(player, target));
     }

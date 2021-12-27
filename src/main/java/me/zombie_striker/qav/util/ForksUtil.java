@@ -10,8 +10,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
+
 public class ForksUtil {
     private static boolean paper = false;
+    private static Method getCause;
 
     public static void init() {
         try {
@@ -20,16 +23,21 @@ public class ForksUtil {
         } catch (ClassNotFoundException ignored) {}
 
         if (isFork()) {
+            try {
+                getCause = PlayerKickEvent.class.getDeclaredMethod("getCause");
+            } catch (NoSuchMethodException ignored) {
+                getCause = null;
+            }
+
             QualityArmoryVehicles.getPlugin().getLogger().info("Found spigot fork. Loaded support.");
         }
     }
 
-    @SuppressWarnings("deprecation")
     public static boolean isFlyKick(PlayerKickEvent event) {
-        if(paper){
+        if(paper && getCause != null) {
             try {
-                return event.getCause().name().equals("FLYING_PLAYER");
-            } catch (NoSuchMethodError ignored) {}
+                return getCause.invoke(event).toString().equals("FLYING_PLAYER");
+            } catch (Throwable ignored) {}
         }
 
         return event.getReason().equals("Flying is not enabled on this server");
@@ -42,11 +50,9 @@ public class ForksUtil {
         if (hover != null)
             hover = ChatColor.translateAlternateColorCodes('&', hover);
 
-        if (paper) {
-            try {
-                PaperImpl.sendComponent(player,message,hover,clickURL);
-            } catch (Throwable ignored) {}
-        }
+        try {
+            if (paper && PaperImpl.sendComponent(player, message, hover, clickURL)) return;
+        } catch (Throwable ignored) {}
 
         BaseComponent component = new TextComponent(message);
 

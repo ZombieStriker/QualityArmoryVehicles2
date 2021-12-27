@@ -20,6 +20,6 @@ public class PremiumHandler {
             return;
         }
 
-        sender.sendMessage(String.format("%s " + ChatColor.RED + "Error: This plugin is not signed with any license.", Main.prefix));
+        sender.sendMessage(String.format("%s " + ChatColor.RED + "Error: This plugin is not signed with a license.", Main.prefix));
     }
 }

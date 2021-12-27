@@ -6,9 +6,22 @@ import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
-public class PaperImpl {
+import java.lang.reflect.Method;
 
-    public static void sendComponent(CommandSender player, String message, @Nullable String hover, @Nullable String clickURL) {
+public class PaperImpl {
+    private static Method sendMessage;
+
+    static {
+        try {
+            sendMessage = CommandSender.class.getMethod("sendMessage", Component.class);
+        } catch (Throwable ignored) {
+            sendMessage = null;
+        }
+    }
+
+    public static boolean sendComponent(CommandSender player, String message, @Nullable String hover, @Nullable String clickURL) {
+        if (sendMessage == null) return false;
+
         try {
             Component component = Component.text(message);
 
@@ -20,8 +33,11 @@ public class PaperImpl {
                 component = component.clickEvent(ClickEvent.openUrl(clickURL));
             }
 
-            player.sendMessage(component);
-        } catch (Throwable ignored) {}
+            sendMessage.invoke(player, component);
+            return true;
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
 }

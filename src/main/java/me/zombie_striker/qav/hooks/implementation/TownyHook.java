@@ -9,12 +9,6 @@ import org.bukkit.entity.Player;
 public class TownyHook implements ProtectionHook {
 
     @Override
-    public boolean canBuild(Player player, Location location) {
-        return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(),
-                TownyPermission.ActionType.BUILD);
-    }
-
-    @Override
     public boolean canBreak(Player player, Location location) {
         return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(),
                 TownyPermission.ActionType.DESTROY);

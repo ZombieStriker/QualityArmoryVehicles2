@@ -8,6 +8,7 @@ import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.util.ForksUtil;
+import me.zombie_striker.qav.util.VehicleUtils;
 import me.zombie_striker.qav.vehicles.AbstractCar;
 import me.zombie_striker.qav.vehicles.AbstractHelicopter;
 import me.zombie_striker.qav.vehicles.AbstractPlane;
@@ -332,7 +333,7 @@ public class QAVListener implements Listener {
 					}
 
 					if (Main.removeVehicleONLEAVE) {
-						QAVCommand.callback(entity, event.getPlayer(), "Quit");
+						VehicleUtils.callback(entity, event.getPlayer(), "Quit");
 					}
 				}
 

@@ -3,7 +3,6 @@ package me.zombie_striker.qav.menu;
 import me.zombie_striker.qav.ItemFact;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
-import me.zombie_striker.qav.QAVCommand;
 import me.zombie_striker.qav.UnlockedVehicle;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
@@ -13,6 +12,7 @@ import me.zombie_striker.qav.easygui.EasyGUICallable;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.menu.easyguicallables.ShopCallable;
 import me.zombie_striker.qav.perms.PermissionHandler;
+import me.zombie_striker.qav.util.VehicleUtils;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -204,7 +204,7 @@ public class MenuHandler implements Listener {
 						if (data.getClicker().getInventory().firstEmpty() == -1)
 							data.getClicker().sendMessage(MessagesConfig.MESSAGE_PICKUP_DROPPED);
 
-						QAVCommand.callback(ve,data.getClicker(),"pickup_menu");
+						VehicleUtils.callback(ve,data.getClicker(),"pickup_menu");
 					}
 				}
 			});
@@ -334,7 +334,7 @@ public class MenuHandler implements Listener {
 								.filter((entity) -> entity.getOwner().equals(target.getUniqueId()))
 								.filter((entity) -> entity.getType().getName().equals(unlockedVehicle.getVehicleType().getName()))
 								.findFirst()
-								.ifPresent((ve) -> QAVCommand.callback(ve,target,"Garage callback"));
+								.ifPresent((ve) -> VehicleUtils.callback(ve,target,"Garage callback"));
 						return;
 					}
 
