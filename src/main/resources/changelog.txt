@@ -5,6 +5,11 @@
     - Fixed UFO inputs
     - Fixed UFO default hitbox size
     - Various updates to the economy handler
+    - Converted to gradle
+    - Fixed fly kick event
+    - Rewrite of the command handler
+    - Fixed trains
+    - Rewrite of the WorldGuard integration to add legacy support
 
 2.1
   Changelog:
