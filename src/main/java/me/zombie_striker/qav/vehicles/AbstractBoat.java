@@ -17,7 +17,7 @@ public class AbstractBoat extends AbstractVehicle {
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
 			return;
-		ve.setAngle(ve.getAngleRotation() + ve.getType().getRotationDelta());
+		ve.setAngle((ve.getAngleRotation() + ve.getType().getRotationDelta()) * this.getRotationMultiplier());
 		HeadPoseUtil.setHeadPoseUsingReflection(ve);
 	}
 
@@ -27,7 +27,7 @@ public class AbstractBoat extends AbstractVehicle {
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
 			return;
-		ve.setAngle(ve.getAngleRotation() - ve.getType().getRotationDelta());
+		ve.setAngle((ve.getAngleRotation() - ve.getType().getRotationDelta()) * this.getRotationMultiplier());
 		HeadPoseUtil.setHeadPoseUsingReflection(ve);
 	}
 

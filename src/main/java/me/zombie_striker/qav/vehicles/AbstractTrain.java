@@ -7,11 +7,9 @@ import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.util.HeadPoseUtil;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Rail;
 import org.bukkit.material.PoweredRail;
-import org.bukkit.material.Redstone;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 

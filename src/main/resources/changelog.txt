@@ -10,6 +10,7 @@
     - Rewrite of the command handler
     - Fixed trains
     - Rewrite of the WorldGuard integration to add legacy support
+    - Added rotation multiplier
 
 2.1
   Changelog:

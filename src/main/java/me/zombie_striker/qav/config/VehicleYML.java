@@ -213,7 +213,6 @@ public class VehicleYML {
 				putTimeStamp();
 				c.save(f);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -241,6 +240,7 @@ public class VehicleYML {
 		verify("InputManager.keys.LMB", "none");
 		verify("InputManager.keys.RMB", "none");
 		verify("canDeconstructByEnvironment", true);
+		verify("rotationMultiplier", 1);
 
 		if (get("vehicle_type").equals(VehicleTypes.HELI.getName())) {
 			verify("descentSpeed",-0.1);
