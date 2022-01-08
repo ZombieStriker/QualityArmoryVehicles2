@@ -1,0 +1,2 @@
+UserID: %%__USER__%%
+Commit: ${commit}

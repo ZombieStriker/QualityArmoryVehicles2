@@ -1,3 +1,5 @@
+import java.io.ByteArrayOutputStream
+
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -5,7 +7,7 @@ plugins {
 }
 
 group = "me.zombie_striker"
-version = "2.1.1-SNAPSHOT"
+version = "2.1.1"
 description = "QualityArmoryVehicles"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
@@ -61,7 +63,15 @@ tasks {
     }
 
     processResources {
-        expand("version" to version)
+        expand(mapOf("version" to version, "commit" to gitDescribe))
     }
 }
 
+val gitDescribe: String by lazy {
+    val stdout = ByteArrayOutputStream()
+    rootProject.exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        standardOutput = stdout
+    }
+    stdout.toString().trim()
+}
