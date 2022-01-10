@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.cryptomorin:XSeries:8.6.0")
+    implementation("com.github.cryptomorin:XSeries:8.6.0.0.1")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
     compileOnly("net.kyori:adventure-api:4.9.3") // only used by paper
