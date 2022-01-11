@@ -33,7 +33,7 @@ public abstract class AbstractVehicle {
 	protected static final double pitchIncrement = Math.PI / 60;
 	protected static final double maxAngle = Math.PI / 4;
 
-	private int rotationMultiplier = 1;
+	private double rotationMultiplier = 1;
 	private Map<String,FInput> inputs = new HashMap<>();
 	private double widthRadius = 5;
 	private double height = 4;
@@ -556,11 +556,11 @@ public abstract class AbstractVehicle {
 		return inputs;
 	}
 
-	public int getRotationMultiplier() {
+	public double getRotationMultiplier() {
 		return rotationMultiplier;
 	}
 
-	public void setRotationMultiplier(int rotationMultiplier) {
+	public void setRotationMultiplier(double rotationMultiplier) {
 		this.rotationMultiplier = rotationMultiplier;
 	}
 

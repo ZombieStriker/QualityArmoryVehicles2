@@ -153,7 +153,7 @@ public class VehicleLoader {
 		if (c.contains("center"))
 			vehicle.setCenter(c.getVector("center"));
 		if (c.contains("rotationMultiplier"))
-			vehicle.setRotationMultiplier(c.getInt("rotationMultiplier"));
+			vehicle.setRotationMultiplier(c.getDouble("rotationMultiplier"));
 		registerInput(vehicle, FInput.ClickType.RIGHT, c);
 		registerInput(vehicle, FInput.ClickType.F, c);
 		registerInput(vehicle, FInput.ClickType.LEFT, c);
