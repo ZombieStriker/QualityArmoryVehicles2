@@ -8,6 +8,7 @@ import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
+import me.zombie_striker.qav.util.HeadPoseUtil;
 import me.zombie_striker.qav.util.HotbarMessager;
 import me.zombie_striker.qav.util.VehicleUtils;
 import org.bukkit.Bukkit;
@@ -310,6 +311,7 @@ public abstract class AbstractVehicle {
 		basicDirections(vehicleEntity, jump, aquatic, true, false);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void basicDirections(VehicleEntity vehicleEntity, boolean jump, boolean aquatic, boolean gravity, boolean planeFlying) {
 		if (vehicleEntity.getHealth() <= 0.0 && Main.freezeOnDestroy) return;
 
@@ -326,6 +328,13 @@ public abstract class AbstractVehicle {
 					vehicleEntity.setSpeed(vehicleEntity.getSpeed() + 0.01);
 				}else{
 					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.01);
+				}
+
+				if (vehicleEntity.getDriverSeat().getPassenger() instanceof Player) {
+					Player player = (Player) vehicleEntity.getDriverSeat().getPassenger();
+					Vector direction = player.getEyeLocation().getDirection();
+					vehicleEntity.setDirectionYHeight(direction.getY() * -1);
+					HeadPoseUtil.setHeadPoseUsingReflection(vehicleEntity);
 				}
 			}else {
 				vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.01);

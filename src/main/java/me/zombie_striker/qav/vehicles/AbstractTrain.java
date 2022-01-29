@@ -52,7 +52,7 @@ public class AbstractTrain extends AbstractVehicle {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void tick(VehicleEntity ve) {
-		Location loc = ve.getDriverSeat().getLocation().subtract(0, 0.4, 0);
+		Location loc = ve.getDriverSeat().getLocation();
 		Block block = loc.getBlock();
 
 		int direction = getDirectionFromRail(ve,block);
@@ -64,10 +64,14 @@ public class AbstractTrain extends AbstractVehicle {
 			HeadPoseUtil.setHeadPoseUsingReflection(ve);
 		}
 
-		if (!isOnRail(ve)) return;
-
 		Vector velocity = ve.getDirection().clone();
 		velocity.normalize().multiply(ve.getSpeed());
+
+		if (!BlockCollisionUtil.isSolid(loc)) {
+			velocity.setY(Math.max(-1,ve.getDriverSeat().getVelocity().getY() - 0.05));
+		}
+
+		if (!isOnRail(ve)) return;
 
 		if (BlockCollisionUtil.getMaterial(loc).equals(XMaterial.POWERED_RAIL.parseMaterial())) {
 			if (XMaterial.supports(13)) {
@@ -217,7 +221,7 @@ public class AbstractTrain extends AbstractVehicle {
 	}
 
 	public boolean isOnRail(@NotNull VehicleEntity entity) {
-		return isRail(entity.getDriverSeat().getLocation().subtract(0, 0.4, 0));
+		return isRail(entity.getDriverSeat().getLocation());
 	}
 
 	public boolean isRail(@NotNull Location location) {

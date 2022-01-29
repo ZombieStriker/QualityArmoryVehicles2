@@ -17,7 +17,7 @@ public class FInputManager implements Listener {
 	public static String POLICE_SIREN = ("SIREN");
 	public static String MININUKE_BOMBER = ("MININUKE_BOMBER");
 	public static String TNTBOMBER = ("TNT_BOMBER");
-	public static String LAUNCHER_40mm = ("40mm_LAUNCHER");
+	public static String LAUNCHER_40mm = ("40MM_LAUNCHER");
 	public static String LAUNCHER_556 = ("BULLETS_556");
 
 	public static void init(Main plugin) {
@@ -45,6 +45,7 @@ public class FInputManager implements Listener {
 				if (input == null) return;
 
 				event.setCancelled(true);
+				Main.DEBUG("Calling " + input + " Input for " + vehicle.getType().getName());
 				input.onInput(vehicle);
 			}
 		}
@@ -68,6 +69,7 @@ public class FInputManager implements Listener {
 				if (input == null) return;
 
 				event.setCancelled(true);
+				Main.DEBUG("Calling " + input + " Input for " + vehicle.getType().getName());
 				input.onInput(vehicle);
 			}
 		}

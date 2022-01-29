@@ -18,6 +18,7 @@ import me.zombie_striker.qav.config.VehicleLoader;
 import me.zombie_striker.qav.debugmanager.DebugManager;
 import me.zombie_striker.qav.easygui.EasyGUI;
 import me.zombie_striker.qav.finput.*;
+import me.zombie_striker.qav.finput.inputs.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.fuel.RepairItemStack;
 import me.zombie_striker.qav.hooks.ProtectionHandler;

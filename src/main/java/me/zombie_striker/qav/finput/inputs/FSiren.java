@@ -1,7 +1,9 @@
-package me.zombie_striker.qav.finput;
+package me.zombie_striker.qav.finput.inputs;
 
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.finput.FInput;
+import me.zombie_striker.qav.finput.FInputManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
