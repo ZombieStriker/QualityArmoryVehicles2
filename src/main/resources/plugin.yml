@@ -7,8 +7,9 @@ softdepend:
   - Vault
   - WorldGuard
   - Towny
+  - ModelEngine
+  - QuickShop
 depend: [ProtocolLib]
-spigot-id: 59129
 commands:
   QualityArmoryVehicles:
     description: Create images using blocks

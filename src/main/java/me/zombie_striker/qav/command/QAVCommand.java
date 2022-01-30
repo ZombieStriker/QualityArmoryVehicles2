@@ -35,7 +35,6 @@ public class QAVCommand implements TabExecutor {
         subcommands.add(new RemoveNearbyCommand(this));
         subcommands.add(new ShopCommand(this));
         subcommands.add(new SpawnCommand(this));
-        subcommands.add(new TestCommand(this)); // todo: remove this
 
         for (SubCommand subCommand : subcommands) {
             this.subcommands.put(subCommand.getName().toLowerCase(), subCommand);

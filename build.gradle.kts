@@ -14,28 +14,38 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
-    maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://jitpack.io")
     maven("https://repo.viaversion.com")
     maven("https://repo.dmulloy2.net/nexus/repository/public/")
     maven("https://repo.citizensnpcs.co/")
     maven("https://mvn.lumine.io/repository/maven-public/")
+    maven("https://repo.codemc.io/repository/maven-public/") {
+        metadataSources {
+            artifact()
+        }
+    }
 }
 
 dependencies {
+    // Libraries
     implementation("com.github.cryptomorin:XSeries:8.6.0.0.1")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
-    compileOnly("net.kyori:adventure-api:4.9.3") // only used by paper
+    compileOnly("org.jetbrains:annotations:23.0.0")
+
+    // API
+    compileOnly("net.kyori:adventure-api:4.9.3")
     compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+
+    // Compatibilities
     compileOnly("us.myles:viaversion:3.2.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("me.zombie_striker:QualityArmory:2.0.5.1")
     compileOnly("com.github.TownyAdvanced:Towny:0.97.5.1")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("com.ticxo.modelengine:api:R2.3.1")
-    compileOnly("org.jetbrains:annotations:23.0.0")
+    compileOnly("org.maxgamer:QuickShop:5.1.0.3")
 }
 
 tasks {
