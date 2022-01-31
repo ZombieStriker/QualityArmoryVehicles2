@@ -36,7 +36,7 @@ dependencies {
 
     // API
     compileOnly("net.kyori:adventure-api:4.9.3")
-    compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT")
 
     // Compatibilities
     compileOnly("us.myles:viaversion:3.2.1")
