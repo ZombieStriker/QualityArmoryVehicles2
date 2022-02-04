@@ -26,7 +26,7 @@ public class ModelEngineHook {
     @SuppressWarnings("deprecation")
     private static void createModel0(@NotNull VehicleEntity vehicle) {
         ActiveModel model = ModelEngineAPI.api.getModelManager().createActiveModel(vehicle.getType().getName());
-        if (model == null) return;
+        if (model == null || model.getBlueprint() == null) return;
 
         ModeledEntity modelEntity = ModelEngineAPI.api.getModelManager().createModeledEntity(vehicle.getModelEntity());
         if (modelEntity == null) return;
