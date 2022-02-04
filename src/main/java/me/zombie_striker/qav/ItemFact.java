@@ -54,14 +54,20 @@ public class ItemFact {
 	public static ItemStack getCarItem(AbstractVehicle car, Material material, int data) {
 		ItemStack caritem = null;
 		ItemMeta im = null;
-		try {
-			caritem= new ItemStack(material);
-			im = caritem.getItemMeta();
-			im.setCustomModelData(data);
-		}catch (Error|Exception e45){
+		if (Main.useDamage) {
 			caritem= new ItemStack(material, 1, (short) data);
 			im = caritem.getItemMeta();
+		} else {
+			try {
+				caritem= new ItemStack(material);
+				im = caritem.getItemMeta();
+				im.setCustomModelData(data);
+			}catch (Error|Exception e45){
+				caritem= new ItemStack(material, 1, (short) data);
+				im = caritem.getItemMeta();
+			}
 		}
+
 		if (car != null) {
 			im.setDisplayName(ChatColor.GOLD + car.getDisplayname());
 			if (car.hasLore())
@@ -82,13 +88,18 @@ public class ItemFact {
 	public static ItemStack a(Material m, int data, boolean unbreakable, String displayname, String... lore) {
 		ItemStack i = null;
 		ItemMeta im = null;
-		try {
-			i= new ItemStack(m);
-			im = i.getItemMeta();
-			im.setCustomModelData(data);
-		}catch (Error|Exception e45){
+		if (Main.useDamage) {
 			i= new ItemStack(m, 1, (short) data);
-		im = i.getItemMeta();
+			im = i.getItemMeta();
+		} else {
+			try {
+				i= new ItemStack(m);
+				im = i.getItemMeta();
+				im.setCustomModelData(data);
+			}catch (Error|Exception e45){
+				i= new ItemStack(m, 1, (short) data);
+				im = i.getItemMeta();
+			}
 		}
 
 		im.setDisplayName(displayname);

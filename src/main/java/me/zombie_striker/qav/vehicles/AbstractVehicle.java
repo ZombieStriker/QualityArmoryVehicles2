@@ -7,6 +7,8 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
+import me.zombie_striker.qav.hooks.model.Animation;
+import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.util.HeadPoseUtil;
 import me.zombie_striker.qav.util.HotbarMessager;
@@ -21,14 +23,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbstractVehicle {
 	protected static final double pitchIncrement = Math.PI / 60;
@@ -47,7 +47,9 @@ public abstract class AbstractVehicle {
 	private boolean disableMeleeDamage = true;
 	private boolean disableProjectileDamage = true;
 	private double jumphiehgt = 0.5;
+	private Vector driverSeat;
 	private HashMap<Vector, Integer> passagerOffset = new HashMap<>();
+	private List<Animation> animations = new ArrayList<>();
 
 	private int id;
 	private Material material;
@@ -279,6 +281,14 @@ public abstract class AbstractVehicle {
 		return new Vector(0, 0, 0);
 	}
 
+	public Vector getDriverSeat() {
+		return driverSeat;
+	}
+
+	public void setDriverSeat(Vector driverSeat) {
+		this.driverSeat = driverSeat;
+	}
+
 	public String getName() {
 		return internalName;
 	}
@@ -486,8 +496,11 @@ public abstract class AbstractVehicle {
 		// TODO: Apply backup speed
 	}
 
-	@SuppressWarnings("deprecation")
 	public void handleOtherStands(VehicleEntity ve, Vector velocity) {
+		if (Main.separateModelAndDriver) {
+			ve.getModelEntity().setVelocity(velocity);
+			checkDistance(ve.getModelEntity() ,ve.getDriverSeat().getLocation(), false, this.getDriverSeat());
+		}
 		for (Entity e : ve.getPassagerSeats()) {
 			Location offset = ve.getDriverSeat().getLocation().clone()
 					.add(QualityArmoryVehicles.rotateRelToCar(ve, (ArmorStand) ve.getDriverSeat(),
@@ -499,33 +512,41 @@ public abstract class AbstractVehicle {
 			offset.subtract(0,0.6,0);
 
 			Vector newVelo = velocity.clone();
-			double offDis = offset.distanceSquared(e.getLocation());
-			if (offDis > 1) {
-				final Entity rider = e.getPassenger();
-
-				if (rider == null) {
-					e.remove();
-					continue;
-				}
-
-				e.eject();
-				e.teleport(offset);
-				rider.teleport(offset);
-
-				if (ReflectionUtils.supports(13)) {
-					Main.DEBUG("Found 1.13 version. Applying a workaround for a server-side bug.");
-
-					Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> e.setPassenger(rider), 5L);
-				} else {
-					e.setPassenger(rider);
-				}
-
-				Main.DEBUG("Moved other stand. Previous rider: " + rider + " - new rider: " + e.getPassenger());
-			}
+			checkDistance(e,offset, true, null);
 
 			Vector distance = offset.toVector().clone().subtract(e.getLocation().toVector());
 			newVelo.add(distance);
 			e.setVelocity(newVelo);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void checkDistance(Entity entity, Location offset, boolean passengers, Vector modifier) {
+		double offDis = NumberConversions.square(offset.getX() - entity.getLocation().getX()) + NumberConversions.square(offset.getZ() - entity.getLocation().getZ());
+		if (offDis > 1) {
+			final Entity rider = entity.getPassenger();
+
+			if (passengers && rider == null) {
+				entity.remove();
+				return;
+			}
+
+			entity.eject();
+			entity.teleport(modifier != null ? offset.subtract(modifier) : offset);
+			if (passengers)
+				rider.teleport(offset);
+
+			if (passengers) {
+				if (ReflectionUtils.supports(13)) {
+					Main.DEBUG("Found 1.13 version. Applying a workaround for a server-side bug.");
+
+					Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> entity.setPassenger(rider), 5L);
+				} else {
+					entity.setPassenger(rider);
+				}
+			}
+
+			Main.DEBUG("Moved other stand. Previous rider: " + rider + " - new rider: " + entity.getPassenger());
 		}
 	}
 
@@ -555,6 +576,16 @@ public abstract class AbstractVehicle {
 
 	public void setPassagerSpots(HashMap<Vector, Integer> sizes) {
 		this.passagerOffset = sizes;
+	}
+
+	public List<Animation> getAnimations() {
+		return animations;
+	}
+
+	public void playAnimation(VehicleEntity entity, Animation.AnimationType event, String... args) {
+		animations.stream()
+				.filter(animation -> animation.getType().equals(event) && Arrays.equals(animation.getArgs(), args))
+				.forEach(animation -> ModelEngineHook.playAnimation(entity, animation.getId()));
 	}
 
 	public @Nullable FInput getInput(FInput.@NotNull ClickType type) {
@@ -589,7 +620,9 @@ public abstract class AbstractVehicle {
 				", disableMeleeDamage=" + disableMeleeDamage +
 				", disableProjectileDamage=" + disableProjectileDamage +
 				", jumphiehgt=" + jumphiehgt +
+				", driverSeat=" + driverSeat +
 				", passagerOffset=" + passagerOffset +
+				", animations=" + animations +
 				", id=" + id +
 				", material=" + material +
 				", vehicleModel=" + vehicleModel +

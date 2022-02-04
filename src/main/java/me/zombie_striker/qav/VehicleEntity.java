@@ -1,6 +1,8 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.hooks.model.Animation;
+import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
@@ -62,15 +64,21 @@ public class VehicleEntity implements ConfigurationSerializable {
 		Location loc = (Location) data.get("loc");
 		if(loc==null)
 			return;
-		if (!loc.isWorldLoaded()) {
-			loc.getChunk().load();
-		}
+		try {
+			if (!loc.isWorldLoaded()) {
+				loc.getChunk().load();
+			}
+		} catch (Exception | Error ignored) {}
 		for (Entity e : loc.getWorld().getNearbyEntities(loc, 6, 6, 6)) {
 			if (e.getCustomName() != null && e.getCustomName().startsWith(Main.VEHICLEPREFIX)) {
 				if (e.getCustomName().trim().endsWith(vehicleUUID.toString().trim())) {
 					driverseat = e;
-					if (e instanceof ArmorStand)
-						modelParts.add((ArmorStand) e);
+				}
+			}
+
+			if (e instanceof ArmorStand && e.getCustomName() != null && e.getCustomName().startsWith(Main.MODEL_PREFIX)) {
+				if (e.getCustomName().trim().endsWith(vehicleUUID.toString().trim())) {
+					modelParts.add((ArmorStand) e);
 				}
 			}
 		}
@@ -130,7 +138,11 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public void spawnOrFind() {
+		if (driverseat != null && driverseat.isValid()) {
+			return;
+		}
 
+		this.spawn();
 	}
 
 	public void spawn() {
@@ -139,17 +151,28 @@ public class VehicleEntity implements ConfigurationSerializable {
 		modelParts.add(model);
 
 		model.setHelmet(getType().getModel());
-		model.setVisible(false);
 
 		if (getType().getModelType() == ModelSize.BABY_ARMORSTAND_HEAD) {
 			model.setSmall(true);
 		}
 
-		model.setCustomName(Main.VEHICLEPREFIX+vehicleUUID.toString());
-
 		model.setInvulnerable(true);
 		model.setVisible(false);
-		driverseat = model;
+		if (Main.separateModelAndDriver) {
+			model.setCustomName(Main.MODEL_PREFIX + vehicleUUID.toString());
+
+			ArmorStand driverSeat = (ArmorStand) loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.ARMOR_STAND);
+			driverSeat.setVisible(false);
+			driverSeat.setCustomName(Main.VEHICLEPREFIX + vehicleUUID.toString());
+			driverSeat.setInvulnerable(true);
+			this.driverseat = driverSeat;
+		} else {
+			model.setCustomName(Main.VEHICLEPREFIX + vehicleUUID.toString());
+			this.driverseat = model;
+		}
+
+		ModelEngineHook.createModel(this);
+		vehicleType.playAnimation(this, Animation.AnimationType.SPAWN);
 	}
 
 	public void tick() {
@@ -224,7 +247,6 @@ public class VehicleEntity implements ConfigurationSerializable {
 		return false;
 	}
 
-	@SuppressWarnings("deprecation")
 	public Inventory getFuels() {
 		if (this.fuels == null) {
 			this.fuels = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&', MessagesConfig.MENU_FUELTANK_TITLE.replace("%cartype%", this.getType().getDisplayname())));
@@ -265,6 +287,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public void deconstruct(Player player, String message) {
+		vehicleType.playAnimation(this, Animation.AnimationType.DESPAWN);
 		driverseat.remove();
 		driverseat = null;
 		for (ArmorStand stand : getModelEntities()) {
@@ -278,12 +301,6 @@ public class VehicleEntity implements ConfigurationSerializable {
 		modelParts.clear();
 		Main.vehicles.remove(this);
 		Main.DEBUG(this.getVehicleUUID() + " removed: " + message);
-	}
-
-	public void giveOrDrop(Player player, ItemStack[] is) {
-		for (ItemStack is2 : is) {
-			giveOrDrop(player, is);
-		}
 	}
 
 	public List<UUID> getWhiteList() {

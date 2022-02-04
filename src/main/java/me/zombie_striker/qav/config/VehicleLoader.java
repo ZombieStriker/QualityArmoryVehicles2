@@ -8,6 +8,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.exceptions.InvalidVehicleException;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.finput.FInputManager;
+import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.qamini.QAMini;
 import me.zombie_striker.qav.vehicles.*;
 import org.bukkit.ChatColor;
@@ -146,6 +147,8 @@ public class VehicleLoader {
 
 			vehicle.setPassagerSpots(sizes);
 		}
+		if (c.contains("driverseat.Offset"))
+			vehicle.setDriverSeat(c.getVector("driverseat.Offset"));
 		if (c.contains("stopProjectileDamage"))
 			vehicle.setStopsProjectileDamage(c.getBoolean("stopProjectileDamage"));
 		if (c.contains("stopMeleeDamage"))
@@ -154,6 +157,19 @@ public class VehicleLoader {
 			vehicle.setCenter(c.getVector("center"));
 		if (c.contains("rotationMultiplier"))
 			vehicle.setRotationMultiplier(c.getDouble("rotationMultiplier"));
+		if (c.contains("model.Animations")) {
+			c.getStringList("model.Animations").forEach(animation -> {
+				String[] split = animation.split(":");
+				if (split.length >= 2) {
+					Animation.AnimationType type = Animation.AnimationType.getType(split[0]);
+					if (type != null) {
+						vehicle.getAnimations().add(new Animation(type, split[1], split.length > 2 ? split[2] : null));
+					} else {
+						QualityArmoryVehicles.getPlugin().getLogger().warning("Invalid animation: " + split[0] + " for vehicle: " + vehicle.getName());
+					}
+				}
+			});
+		}
 		registerInput(vehicle, FInput.ClickType.RIGHT, c);
 		registerInput(vehicle, FInput.ClickType.F, c);
 		registerInput(vehicle, FInput.ClickType.LEFT, c);

@@ -4,6 +4,7 @@ import me.zombie_striker.qav.api.events.VehicleSpawnEvent;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
+import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.apache.commons.lang.Validate;
@@ -148,7 +149,7 @@ public class QualityArmoryVehicles {
 	public static boolean isVehicle(Entity e) {
 		if (e == null || e.getCustomName() == null)
 			return false;
-		return (e.getCustomName().startsWith(Main.VEHICLEPREFIX));
+		return (e.getCustomName().startsWith(Main.VEHICLEPREFIX)) || (e.getCustomName().startsWith(Main.MODEL_PREFIX));
 	}
 
 	public static boolean isPassager(Entity e) {
@@ -205,6 +206,7 @@ public class QualityArmoryVehicles {
 							ChatColor.stripColor(ve.getType().getDisplayname())));
 				}
 			}
+			ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
 			ve.getDriverSeat().setPassenger(player);
 		} else {
 			if (ve.getPassagers().size() < ve.getType().getPassagerSpots().size()) {
@@ -212,6 +214,7 @@ public class QualityArmoryVehicles {
 				if (seatId < 0)
 					return;
 
+				ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, seatId + "");
 				setAddPassager(ve, player, seatId);
 			}
 		}

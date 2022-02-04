@@ -4,6 +4,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
 import me.zombie_striker.qav.api.events.VehicleRepairEvent;
+import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.menu.MenuHandler;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
@@ -301,6 +302,8 @@ public class QAVListener implements Listener {
 			if (!Main.freezeOnDestroy) {
 				ve.deconstruct(null,"Destroy");
 			}
+
+			ve.getType().playAnimation(ve, Animation.AnimationType.BREAK);
 
 			try {
 				ParticleHandlers.spawnMushroomCloud(e.getEntity().getLocation());

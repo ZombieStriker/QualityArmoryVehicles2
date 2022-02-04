@@ -21,6 +21,7 @@ import me.zombie_striker.qav.finput.*;
 import me.zombie_striker.qav.finput.inputs.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.fuel.RepairItemStack;
+import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.QuickShopHook;
 import me.zombie_striker.qav.qamini.EconHandler;
@@ -61,6 +62,7 @@ public class Main extends JavaPlugin {
 	public static boolean ENABLE_FILE_CREATION = true;
 
 	public static String PASSAGER_PREFIX = "QA-Passager=";
+	public static String MODEL_PREFIX = "QA-Model=";
 	public static boolean enableGarage=false;
 	public static boolean enableGarageCallback=false;
 	public static boolean useChatForMessage=false;
@@ -110,6 +112,8 @@ public class Main extends JavaPlugin {
 	private static boolean debug_PL_PacketlistenerActive = false;
 	// Roughly 1 coal for 25 seconds. 64 coal for ~26 minutes
 	private static boolean USE_MANUAL_13 = false;
+	public static boolean useDamage = false;
+	public static boolean separateModelAndDriver = false;
 
 
 
@@ -219,6 +223,9 @@ public class Main extends JavaPlugin {
 		ProtectionHandler.init();
 		if (Bukkit.getPluginManager().isPluginEnabled("QuickShop")) {
 			Bukkit.getPluginManager().registerEvents(new QuickShopHook(), this);
+		}
+		if (Bukkit.getPluginManager().isPluginEnabled("ModelEngine")) {
+			ModelEngineHook.init();
 		}
 
 		protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.STEER_VEHICLE) {
@@ -405,6 +412,8 @@ public class Main extends JavaPlugin {
 		bypassCoalInCreative = (boolean) a("bypassCoalInCreative", bypassCoalInCreative);
 		sendActionBarOnMove = (boolean) a("sendActionBarOnMove", sendActionBarOnMove);
 		enableShopCooldown = (boolean) a("enableShopCooldown", enableShopCooldown);
+		useDamage = (boolean) a("unsafe.useDamageInsteadOfCustomModelData", useDamage);
+		separateModelAndDriver = (boolean) a("unsafe.separateModelAndDriver", separateModelAndDriver);
 
 		enable_RequirePermToBuyVehicle = (boolean) a("enable_RequirePermToBuyVehicle", enable_RequirePermToBuyVehicle);
 
