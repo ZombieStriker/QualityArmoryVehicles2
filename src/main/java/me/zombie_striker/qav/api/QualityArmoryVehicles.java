@@ -164,14 +164,14 @@ public class QualityArmoryVehicles {
 		return ve.getBoundingBox().intersects(to);
 	}
 
-	public static VehicleEntity spawnVehicle(UnlockedVehicle ab, Player player) {
+	public static VehicleEntity spawnVehicle(UnlockedVehicle ab,@Nullable Player player) {
 		return spawnVehicle(ab.getVehicleType(), player);
 	}
-	public static VehicleEntity spawnVehicle(AbstractVehicle ab, Player player) {
+	public static VehicleEntity spawnVehicle(AbstractVehicle ab,@Nullable Player player) {
 		return spawnVehicle(ab,player.getLocation(),player);
 	}
-	public static VehicleEntity spawnVehicle(AbstractVehicle ab, Location location, Player player) {
-		VehicleEntity vehicleEntity = new VehicleEntity(ab,location.getBlock().getRelative(BlockFace.UP).getLocation(),player.getUniqueId());
+	public static VehicleEntity spawnVehicle(AbstractVehicle ab, Location location,@Nullable Player player) {
+		VehicleEntity vehicleEntity = new VehicleEntity(ab,location.getBlock().getRelative(BlockFace.UP).getLocation(),player != null ? player.getUniqueId() : null);
 		VehicleSpawnEvent event =  new VehicleSpawnEvent(player, vehicleEntity);
 		Bukkit.getPluginManager().callEvent(event);
 		if (event.isCanceled()) {

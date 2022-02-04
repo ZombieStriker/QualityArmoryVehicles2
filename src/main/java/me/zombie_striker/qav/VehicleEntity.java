@@ -48,7 +48,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 		boundingBox = new BoundingBox(location, vehicleType.getWidthRadius(), vehicleType.getHeight());
 
-		this.owner = owner;
+		this.owner = Main.onlyPublicVehicles ? null : owner;
 		this.whitelist.add(owner);
 
 		health = vehicleType.getMaxHealth();
@@ -84,7 +84,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 		}
 
 		if (data.containsKey("owner"))
-			owner = UUID.fromString((String) data.get("owner"));
+			owner = Main.onlyPublicVehicles ? null : UUID.fromString((String) data.get("owner"));
 
 		fuel = (int) data.get("fuel");
 		if(data.containsKey("fuels")) {
@@ -283,7 +283,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public void setOwner(UUID o) {
-		this.owner = o;
+		this.owner = Main.onlyPublicVehicles ? null : o;
 	}
 
 	public void deconstruct(Player player, String message) {
@@ -308,7 +308,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public boolean allowUserPassager(UUID uuid) {
-		if (allowsPassagers)
+		if (allowsPassagers || Main.onlyPublicVehicles)
 			return true;
 		return whitelist == null || whitelist.contains(uuid);
 	}
@@ -336,7 +336,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public boolean allowUserDriver(UUID uniqueId) {
-		return this.whitelist.contains(uniqueId);
+		return Main.onlyPublicVehicles || this.whitelist.contains(uniqueId);
 	}
 
 	public Entity getPassager(int i) {

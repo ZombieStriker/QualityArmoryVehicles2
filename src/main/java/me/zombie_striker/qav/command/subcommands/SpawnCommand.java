@@ -7,6 +7,7 @@ import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -44,20 +45,18 @@ public class SpawnCommand extends SubCommand {
             return;
         }
 
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs));
-            return;
-        }
-
-        Player target = (Player) sender;
-
         String name = args[0];
-        Location location = target.getLocation();
+        Location location = null;
 
         if (args.length == 4) {
             try {
-                location = new Location(target.getWorld(), Double.parseDouble(args[1]),Double.parseDouble(args[2]),Double.parseDouble(args[3]));
+                location = new Location(Bukkit.getWorlds().get(0), Double.parseDouble(args[1]),Double.parseDouble(args[2]),Double.parseDouble(args[3]));
             } catch (NumberFormatException ignored) {}
+        } else if (sender instanceof Player) {
+            location = ((Player) sender).getLocation();
+        } else {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs));
+            return;
         }
 
         AbstractVehicle ab = QualityArmoryVehicles.getVehicle(name);
@@ -66,7 +65,8 @@ public class SpawnCommand extends SubCommand {
             return;
         }
 
-        QualityArmoryVehicles.spawnVehicle(ab,location,target);
+        assert location != null;
+        QualityArmoryVehicles.spawnVehicle(ab,location,sender instanceof Player ? (Player) sender : null);
     }
 
     @Override

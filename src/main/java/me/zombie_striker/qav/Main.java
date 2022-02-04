@@ -104,6 +104,7 @@ public class Main extends JavaPlugin {
 	public static boolean bypassCoalInCreative = true;
 	public static boolean sendActionBarOnMove = true;
 	public static boolean enableShopCooldown = false;
+	public static boolean onlyPublicVehicles = false;
 	public static boolean disableing = false;
 	public static boolean enable_RequirePermToBuyVehicle = false;
 	public static Object BOUNDINGBOX;
@@ -412,6 +413,7 @@ public class Main extends JavaPlugin {
 		bypassCoalInCreative = (boolean) a("bypassCoalInCreative", bypassCoalInCreative);
 		sendActionBarOnMove = (boolean) a("sendActionBarOnMove", sendActionBarOnMove);
 		enableShopCooldown = (boolean) a("enableShopCooldown", enableShopCooldown);
+		onlyPublicVehicles = (boolean) a("makeVehiclesPublic", onlyPublicVehicles);
 		useDamage = (boolean) a("unsafe.useDamageInsteadOfCustomModelData", useDamage);
 		separateModelAndDriver = (boolean) a("unsafe.separateModelAndDriver", separateModelAndDriver);
 
