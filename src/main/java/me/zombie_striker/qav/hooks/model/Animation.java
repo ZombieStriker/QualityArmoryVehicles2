@@ -1,5 +1,7 @@
 package me.zombie_striker.qav.hooks.model;
 
+import java.util.Arrays;
+
 public class Animation {
     private final AnimationType type;
     private final String id;
@@ -21,6 +23,15 @@ public class Animation {
 
     public String[] getArgs() {
         return args;
+    }
+
+    @Override
+    public String toString() {
+        return "Animation{" +
+                "type=" + type +
+                ", id='" + id + '\'' +
+                ", args=" + Arrays.toString(args) +
+                '}';
     }
 
     public enum AnimationType {
