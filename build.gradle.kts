@@ -31,6 +31,7 @@ dependencies {
     // Libraries
     implementation("com.github.cryptomorin:XSeries:8.6.1")
     implementation("net.jodah:expiringmap:0.5.10")
+    implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:23.0.0")
 
     // API
@@ -62,6 +63,7 @@ tasks {
 
         relocate("com.cryptomorin.xseries", "me.zombie_striker.qav.util.xseries")
         relocate("net.jodah.expiringmap", "me.zombie_striker.qav.util.expiringmap")
+        relocate("org.codemc.worldguardwrapper", "me.zombie_striker.qav.hooks.worldguard")
     }
 
     build {
