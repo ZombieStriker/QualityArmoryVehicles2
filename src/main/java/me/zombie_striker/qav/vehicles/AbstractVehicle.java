@@ -325,7 +325,7 @@ public abstract class AbstractVehicle {
 	public void basicDirections(VehicleEntity vehicleEntity, boolean jump, boolean aquatic, boolean gravity, boolean planeFlying) {
 		if (vehicleEntity.getHealth() <= 0.0 && Main.freezeOnDestroy) return;
 
-		Location block = vehicleEntity.getDriverSeat().getLocation().subtract(0, 0.4, 0);
+		Location block = Main.separateModelAndDriver ? vehicleEntity.getModelEntity().getLocation() .subtract(0,0.4,0): vehicleEntity.getDriverSeat().getLocation().subtract(0, 0.4, 0);
 		Material material = BlockCollisionUtil.getMaterial(block);
 
 		if (Main.customSpeedModifier.containsKey(material)) {

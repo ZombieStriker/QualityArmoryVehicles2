@@ -18,6 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Turtle;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -44,7 +45,7 @@ public class QualityArmoryVehicles {
 
 	public static VehicleEntity getVehicleEntityByEntity(Entity entity){
 		for(VehicleEntity ve : Main.vehicles){
-			if(ve!=null && entity instanceof ArmorStand)
+			if(ve!=null)
 				if(ve.getDriverSeat()==entity || ve.getModelEntities().contains(entity) || ve.getPassagerSeats().contains(entity)){
 					return ve;
 				}

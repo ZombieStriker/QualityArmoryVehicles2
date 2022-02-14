@@ -130,3 +130,4 @@ legacy/
 # Gradle
 .gradle/
 build/
+!gradle-wrapper.jar

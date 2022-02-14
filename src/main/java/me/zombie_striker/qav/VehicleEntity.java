@@ -145,6 +145,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 		this.spawn();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void spawn() {
 		Location loc = boundingBox.getLocation();
 		ArmorStand model = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
@@ -161,8 +162,22 @@ public class VehicleEntity implements ConfigurationSerializable {
 		if (Main.separateModelAndDriver) {
 			model.setCustomName(Main.MODEL_PREFIX + vehicleUUID.toString());
 
-			ArmorStand driverSeat = (ArmorStand) loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.ARMOR_STAND);
-			driverSeat.setVisible(false);
+			Entity driverSeat;
+
+			if (Main.useTurtles) {
+				try {
+					driverSeat = loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.TURTLE);
+					((LivingEntity) driverSeat).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1),
+							false);
+				} catch (Exception ignored) {
+					driverSeat = loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.ARMOR_STAND);
+					((ArmorStand) driverSeat).setVisible(false);
+				}
+			} else {
+				driverSeat = loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.ARMOR_STAND);
+				((ArmorStand) driverSeat).setVisible(false);
+			}
+
 			driverSeat.setCustomName(Main.VEHICLEPREFIX + vehicleUUID.toString());
 			driverSeat.setInvulnerable(true);
 			this.driverseat = driverSeat;
@@ -372,7 +387,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	public Entity spawnSeat(Location spawn, int seatID) {
 		Entity used = null;
 		double size = 2;//seatID == -1 ? getType().getSeatHeight() : getType().getPassagerSizeById(seatID);
-		if (size < 1) {
+		if (Main.useTurtles || size < 1) {
 			try {
 				used = spawn.getWorld().spawnEntity(spawn, EntityType.TURTLE);
 				used.setInvulnerable(true);
@@ -410,8 +425,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 			((ArmorStand) used).setInvulnerable(false);
 			((ArmorStand) used).setCollidable(false);
 		}
-		if (used != null)
-			used.setCustomName(Main.VEHICLEPREFIX + vehicleUUID.toString());
+		used.setCustomName(Main.VEHICLEPREFIX + vehicleUUID.toString());
 		return used;
 	}
 

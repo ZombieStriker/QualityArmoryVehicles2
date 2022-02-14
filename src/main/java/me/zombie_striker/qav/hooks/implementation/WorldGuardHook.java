@@ -1,38 +1,49 @@
 package me.zombie_striker.qav.hooks.implementation;
 
+
 import me.zombie_striker.qav.hooks.ProtectionHook;
+import me.zombie_striker.qg.hooks.protection.worldguard.WorldGuardWrapper;
+import me.zombie_striker.qg.hooks.protection.worldguard.flag.IWrappedFlag;
+import me.zombie_striker.qg.hooks.protection.worldguard.flag.WrappedState;
+import me.zombie_striker.qg.hooks.protection.worldguard.region.IWrappedRegion;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.codemc.worldguardwrapper.WorldGuardWrapper;
-import org.codemc.worldguardwrapper.flag.IWrappedFlag;
-import org.codemc.worldguardwrapper.flag.WrappedState;
-import org.codemc.worldguardwrapper.region.IWrappedRegion;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class WorldGuardHook implements ProtectionHook {
     private final WorldGuardWrapper worldGuard;
-    private final IWrappedFlag<WrappedState> breakFlag;
+    private final IWrappedFlag<WrappedState> blockBreak;
 
     public WorldGuardHook() {
         worldGuard = WorldGuardWrapper.getInstance();
-        breakFlag = worldGuard.getFlag("block-break", WrappedState.class).orElse(null);
+        blockBreak = worldGuard.getFlag("BLOCK-BREAK", WrappedState.class).orElse(createFlag("BLOCK-BREAK"));
     }
 
     @Override
     public boolean canBreak(Player player, Location location) {
-        IWrappedRegion top = null;
-        int topPriority = Integer.MIN_VALUE;
-
-        for (IWrappedRegion region : worldGuard.getRegions(location)) {
-            if (region.getPriority() > topPriority) {
-                top = region;
-                topPriority = region.getPriority();
-            }
+        for (IWrappedRegion k : worldGuard.getRegions(location)) {
+            WrappedState wrappedState = k.getFlag(blockBreak).orElse(WrappedState.ALLOW);
+            if (wrappedState.equals(WrappedState.DENY)) return false;
         }
 
-        if (top == null) return true;
-
-        // todo: fix in base of player domain
-        return breakFlag == null || !top.getFlag(breakFlag).isPresent() || !top.getFlag(breakFlag).get().equals(WrappedState.DENY);
+        return true;
     }
 
+    @Contract(value = "_ -> new", pure = true)
+    private @NotNull IWrappedFlag<WrappedState> createFlag(String name) {
+        return new IWrappedFlag<WrappedState>() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public Optional<WrappedState> getDefaultValue() {
+                return Optional.of(WrappedState.ALLOW);
+            }
+        };
+    }
 }

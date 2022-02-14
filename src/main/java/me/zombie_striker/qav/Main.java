@@ -115,6 +115,7 @@ public class Main extends JavaPlugin {
 	private static boolean USE_MANUAL_13 = false;
 	public static boolean useDamage = false;
 	public static boolean separateModelAndDriver = false;
+	public static boolean useTurtles = false;
 
 
 
@@ -225,7 +226,7 @@ public class Main extends JavaPlugin {
 		if (Bukkit.getPluginManager().isPluginEnabled("QuickShop")) {
 			Bukkit.getPluginManager().registerEvents(new QuickShopHook(), this);
 		}
-		if (Bukkit.getPluginManager().isPluginEnabled("ModelEngine")) {
+		if (Bukkit.getPluginManager().isPluginEnabled("ModelEngine") && (boolean) a("hooks.ModelEngine", false)) {
 			ModelEngineHook.init();
 		}
 
@@ -416,6 +417,7 @@ public class Main extends JavaPlugin {
 		onlyPublicVehicles = (boolean) a("makeVehiclesPublic", onlyPublicVehicles);
 		useDamage = (boolean) a("unsafe.useDamageInsteadOfCustomModelData", useDamage);
 		separateModelAndDriver = (boolean) a("unsafe.separateModelAndDriver", separateModelAndDriver);
+		useTurtles = (boolean) a("unsafe.useTurtles", useTurtles);
 
 		enable_RequirePermToBuyVehicle = (boolean) a("enable_RequirePermToBuyVehicle", enable_RequirePermToBuyVehicle);
 
