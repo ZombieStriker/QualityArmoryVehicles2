@@ -2,12 +2,12 @@ package me.zombie_striker.qav.hooks.implementation;
 
 
 import me.zombie_striker.qav.hooks.ProtectionHook;
-import me.zombie_striker.qg.hooks.protection.worldguard.WorldGuardWrapper;
-import me.zombie_striker.qg.hooks.protection.worldguard.flag.IWrappedFlag;
-import me.zombie_striker.qg.hooks.protection.worldguard.flag.WrappedState;
-import me.zombie_striker.qg.hooks.protection.worldguard.region.IWrappedRegion;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
+import org.codemc.worldguardwrapper.flag.IWrappedFlag;
+import org.codemc.worldguardwrapper.flag.WrappedState;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
