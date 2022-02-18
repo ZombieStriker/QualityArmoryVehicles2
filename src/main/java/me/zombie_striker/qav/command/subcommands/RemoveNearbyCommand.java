@@ -5,6 +5,7 @@ import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
+import me.zombie_striker.qav.perms.PermissionHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,11 @@ public class RemoveNearbyCommand extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
+        if (!sender.hasPermission(PermissionHandler.PERM_REMOVE_VEHICLE)) {
+            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+            return;
+        }
+
         int radius = 6;
         if (args.length > 0) {
             radius = Integer.parseInt(args[0]);

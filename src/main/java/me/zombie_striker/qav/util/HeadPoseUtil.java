@@ -99,6 +99,8 @@ public class HeadPoseUtil {
 	}
 
 	public static void setYaw(@NotNull VehicleEntity entity, float yaw) {
+		Main.DEBUG("Setting yaw to " + yaw);
+
 		if (ReflectionUtils.supports(13)) {
 			entity.getDriverSeat().setRotation(yaw, entity.getDriverSeat().getLocation().getPitch());
 		} else {

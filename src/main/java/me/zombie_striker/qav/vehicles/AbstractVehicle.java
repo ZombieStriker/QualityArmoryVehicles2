@@ -499,7 +499,9 @@ public abstract class AbstractVehicle {
 	public void handleOtherStands(VehicleEntity ve, Vector velocity) {
 		if (Main.separateModelAndDriver) {
 			ve.getModelEntity().setVelocity(velocity);
-			checkDistance(ve.getModelEntity() ,ve.getDriverSeat().getLocation(), false, this.getDriverSeat());
+			if (checkDistance(ve.getModelEntity() ,ve.getDriverSeat().getLocation().subtract(ve.getType().getDriverSeat()), false, this.getDriverSeat())) {
+				HeadPoseUtil.setHeadPoseUsingReflection(ve);
+			}
 		}
 		for (Entity e : ve.getPassagerSeats()) {
 			Location offset = ve.getDriverSeat().getLocation().clone()
@@ -521,33 +523,29 @@ public abstract class AbstractVehicle {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void checkDistance(Entity entity, Location offset, boolean passengers, Vector modifier) {
-		double offDis = NumberConversions.square(offset.getX() - entity.getLocation().getX()) + NumberConversions.square(offset.getZ() - entity.getLocation().getZ());
+	private boolean checkDistance(Entity entity, Location offset, boolean passengers, Vector modifier) {
+		double offDis = offset.distance(entity.getLocation());
 		if (offDis > 1) {
 			final Entity rider = entity.getPassenger();
 
 			if (passengers && rider == null) {
 				entity.remove();
-				return;
+				return false;
 			}
 
 			entity.eject();
-			entity.teleport(modifier != null ? offset.subtract(modifier) : offset);
-			if (passengers)
-				rider.teleport(offset);
+			entity.teleport(modifier != null ? offset.add(modifier) : offset);
+			if (passengers) rider.teleport(offset);
 
 			if (passengers) {
-				if (ReflectionUtils.supports(13)) {
-					Main.DEBUG("Found 1.13 version. Applying a workaround for a server-side bug.");
-
-					Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> entity.setPassenger(rider), 5L);
-				} else {
-					entity.setPassenger(rider);
-				}
+				Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> entity.setPassenger(rider), 5L);
 			}
 
 			Main.DEBUG("Moved other stand. Previous rider: " + rider + " - new rider: " + entity.getPassenger());
+			return true;
 		}
+
+		return false;
 	}
 
 	public boolean isAllowedInShop() {

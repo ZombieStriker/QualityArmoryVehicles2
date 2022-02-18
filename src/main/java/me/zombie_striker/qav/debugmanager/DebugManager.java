@@ -14,7 +14,7 @@ public class DebugManager {
 	private static final List<Player> playerRecievers = new ArrayList<>();
 	private static boolean displayInConsole = true;
 
-	private static final String debugPrefix = ChatColor.GREEN + "[DEBUG]" + ChatColor.WHITE + " ";
+	private static final String debugPrefix = Main.prefix + ChatColor.GREEN + " [DEBUG]" + ChatColor.WHITE + " ";
 
 	public static void sendDebugMessages(String message) {
 		if (Main.debug && displayInConsole)

@@ -44,6 +44,8 @@ public class QualityArmoryVehicles {
 	}
 
 	public static VehicleEntity getVehicleEntityByEntity(Entity entity){
+		if (entity == null) return null;
+
 		for(VehicleEntity ve : Main.vehicles){
 			if(ve!=null)
 				if(ve.getDriverSeat()==entity || ve.getModelEntities().contains(entity) || ve.getPassagerSeats().contains(entity)){

@@ -40,6 +40,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -127,6 +128,13 @@ public class Main extends JavaPlugin {
 	public static void DEBUG(String message) {
 		DebugManager.sendDebugMessages(message);
 	}
+
+	public static void DEBUG(Object @NotNull ... message) {
+		for (Object o : message) {
+			DebugManager.sendDebugMessages(o.toString());
+		}
+	}
+
 	public static boolean isVersionHigherThan(int first, int second) {
 		return QAMini.isVersionHigherThan(first, second);
 	}
