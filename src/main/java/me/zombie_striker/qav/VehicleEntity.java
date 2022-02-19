@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -167,8 +168,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 			if (Main.useTurtles) {
 				try {
 					driverSeat = loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.TURTLE);
-					((LivingEntity) driverSeat).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1),
-							false);
+					giveEffects(((LivingEntity) driverSeat));
 				} catch (Exception ignored) {
 					driverSeat = loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.ARMOR_STAND);
 					((ArmorStand) driverSeat).setVisible(false);
@@ -236,6 +236,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public void setAngle(double v) {
+		Main.DEBUG("Setting angle to " + v);
+
 		this.rotation = v;
 		direction = new Vector(-Math.sin(rotation), direction.getY(), Math.cos(rotation));
 	}
@@ -408,14 +410,10 @@ public class VehicleEntity implements ConfigurationSerializable {
 			try {
 				((LivingEntity) used).setCollidable(false);
 				((LivingEntity) used).setSilent(true);
+				((LivingEntity) used).setAI(false);
 			} catch (Exception | Error e3) {
 			}
-			((LivingEntity) used).addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, -10000),
-					false);
-			((LivingEntity) used).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1),
-					false);
-			((LivingEntity) used).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 16),
-					false);
+			giveEffects(((LivingEntity) used));
 		} else {
 			used = spawn.getWorld().spawnEntity(spawn, EntityType.ARMOR_STAND);
 			if (size < 2) {
@@ -427,6 +425,15 @@ public class VehicleEntity implements ConfigurationSerializable {
 		}
 		used.setCustomName(Main.VEHICLEPREFIX + vehicleUUID.toString());
 		return used;
+	}
+
+	private void giveEffects(@NotNull LivingEntity entity) {
+		entity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, -10000,false,false),
+				false);
+		entity.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1,false,false),
+				false);
+		entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 16,false,false),
+				false);
 	}
 
 	public boolean isOnGround() {
