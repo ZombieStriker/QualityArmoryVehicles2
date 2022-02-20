@@ -410,7 +410,6 @@ public class VehicleEntity implements ConfigurationSerializable {
 			try {
 				((LivingEntity) used).setCollidable(false);
 				((LivingEntity) used).setSilent(true);
-				((LivingEntity) used).setAI(false);
 			} catch (Exception | Error e3) {
 			}
 			giveEffects(((LivingEntity) used));
@@ -434,6 +433,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 				false);
 		entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 16,false,false),
 				false);
+		((Mob) entity).setAware(false);
 	}
 
 	public boolean isOnGround() {
