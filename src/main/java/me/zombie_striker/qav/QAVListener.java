@@ -89,11 +89,10 @@ public class QAVListener implements Listener {
 			AbstractVehicle vehicle = QualityArmoryVehicles.getVehicleByItem(e.getItem());
 
 			if (vehicle != null) {
+				e.setCancelled(true);
 				VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(vehicle,e.getClickedBlock().getRelative(BlockFace.UP).getLocation(), e.getPlayer());
 
 				if (ve == null) {
-					// event cancelled
-					e.setCancelled(true);
 					return;
 				}
 
@@ -109,9 +108,6 @@ public class QAVListener implements Listener {
 		if (!ForksUtil.isFlyKick(event)) return;
 		if (event.getPlayer().getVehicle() == null) return;
 		if (!QualityArmoryVehicles.isVehicle(event.getPlayer().getVehicle())) return;
-
-		VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(event.getPlayer().getVehicle());
-		if (vehicle == null) return;
 
 		event.setCancelled(true);
 		Main.DEBUG("Cancelled kick event for flying because player is on plane.");

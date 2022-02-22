@@ -158,7 +158,7 @@ public class QualityArmoryVehicles {
 	public static boolean isVehicle(Entity e) {
 		if (e == null || e.getCustomName() == null)
 			return false;
-		return (e.getCustomName().startsWith(Main.VEHICLEPREFIX)) || (e.getCustomName().startsWith(Main.MODEL_PREFIX));
+		return (e.getCustomName().startsWith(Main.VEHICLEPREFIX)) || (e.getCustomName().startsWith(Main.MODEL_PREFIX)) || (e.getCustomName().startsWith(Main.PASSAGER_PREFIX));
 	}
 
 	public static boolean isPassager(Entity e) {
