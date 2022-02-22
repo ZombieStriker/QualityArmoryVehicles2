@@ -75,8 +75,10 @@ public class QAVListener implements Listener {
 				MenuHandler.openOverview(e.getPlayer(), ve);
 			}
 
-			ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
-			ve.getDriverSeat().setPassenger(e.getPlayer());
+			if (ve.getDriverSeat().getPassenger() == null) {
+				ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
+				ve.getDriverSeat().setPassenger(e.getPlayer());
+			}
 		}
 
 	}
