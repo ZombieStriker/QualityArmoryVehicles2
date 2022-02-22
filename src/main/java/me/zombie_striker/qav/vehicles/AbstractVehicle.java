@@ -1,7 +1,6 @@
 package me.zombie_striker.qav.vehicles;
 
 import com.comphenix.protocol.events.PacketEvent;
-import com.cryptomorin.xseries.ReflectionUtils;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.finput.FInput;
@@ -23,7 +22,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +44,7 @@ public abstract class AbstractVehicle {
 	private boolean destructable = true;
 	private boolean disableMeleeDamage = true;
 	private boolean disableProjectileDamage = true;
-	private double jumphiehgt = 0.5;
+	private double jumphiehgt = 0.2;
 	private Vector driverSeat;
 	private HashMap<Vector, Integer> passagerOffset = new HashMap<>();
 	private List<Animation> animations = new ArrayList<>();
@@ -423,7 +421,7 @@ public abstract class AbstractVehicle {
 			boolean goingUp = false;
 			if (BlockCollisionUtil.isSolidAt(movingTo)) {
 				if (!BlockCollisionUtil.isSolidAt(movingTo.clone().add(0, 1, 0))) {
-					velocity.setY(0.2);
+					velocity.setY(jumphiehgt);
 					goingUp = true;
 				}
 			}
@@ -431,7 +429,7 @@ public abstract class AbstractVehicle {
 				Location movingTo2 = vehicleEntity.getCenter().clone().add(vehicleEntity.getDirection().clone());
 				if (BlockCollisionUtil.isSolidAt(movingTo2)) {
 					if (!BlockCollisionUtil.isSolidAt(movingTo2.clone().add(0, 1, 0))) {
-						velocity.setY(0.2);
+						velocity.setY(jumphiehgt);
 						goingUp = true;
 					}
 				}
@@ -440,7 +438,7 @@ public abstract class AbstractVehicle {
 				Location movingTo3 = vehicleEntity.getCenter().clone().subtract(vehicleEntity.getDirection().clone().multiply(vehicleEntity.getBoundingBox().getWidth()));
 				if (BlockCollisionUtil.isSolidAt(movingTo3)) {
 					if (!BlockCollisionUtil.isSolidAt(movingTo3.clone().add(0, 1, 0))) {
-						velocity.setY(0.2);
+						velocity.setY(jumphiehgt);
 						goingUp = true;
 					}
 				}
@@ -449,7 +447,7 @@ public abstract class AbstractVehicle {
 				Location movingTo4 = vehicleEntity.getCenter().clone().subtract(vehicleEntity.getDirection().clone());
 				if (BlockCollisionUtil.isSolidAt(movingTo4)) {
 					if (!BlockCollisionUtil.isSolidAt(movingTo4.clone().add(0, 1, 0))) {
-						velocity.setY(0.2);
+						velocity.setY(jumphiehgt);
 					}
 				}
 			}
@@ -497,24 +495,33 @@ public abstract class AbstractVehicle {
 	}
 
 	public void handleOtherStands(VehicleEntity ve, Vector velocity) {
-		if (Main.separateModelAndDriver) {
-			ve.getModelEntity().setVelocity(velocity);
-			if (checkDistance(ve.getModelEntity() ,ve.getDriverSeat().getLocation().subtract(ve.getType().getDriverSeat()), false, this.getDriverSeat())) {
+		if (!ve.getDriverSeat().equals(ve.getModelEntity())) {
+			Location to = this.getDriverSeat() != null
+					? ve.getDriverSeat().getLocation()
+					.subtract(QualityArmoryVehicles.rotateRelToCar(ve, ve.getModelEntity(),
+							this.getDriverSeat(), false))
+					: ve.getDriverSeat().getLocation();
+			if (checkDistance(ve.getModelEntity(),to,false)) {
 				HeadPoseUtil.setHeadPoseUsingReflection(ve);
 			}
+			Vector velo = velocity.clone();
+			Vector distanceC = to.clone().subtract(ve.getModelEntity().getLocation()).toVector();
+			velo.add(distanceC);
+			ve.getModelEntity().setVelocity(velo);
 		}
+
 		for (Entity e : ve.getPassagerSeats()) {
 			Location offset = ve.getDriverSeat().getLocation().clone()
-					.add(QualityArmoryVehicles.rotateRelToCar(ve, (ArmorStand) ve.getDriverSeat(),
+					.add(QualityArmoryVehicles.rotateRelToCar(ve, ve.getDriverSeat(),
 							getPassagerSpots().get(
 									Integer.parseInt(e.getCustomName().split(Main.PASSAGER_PREFIX)[1])),
 							false));
 
 			offset.add(ve.getDriverSeat().getVelocity());
-			offset.subtract(0,0.6,0);
+			offset.subtract(0, 0.6, 0);
 
 			Vector newVelo = velocity.clone();
-			checkDistance(e,offset, true, null);
+			checkDistance(e, offset, true);
 
 			Vector distance = offset.toVector().clone().subtract(e.getLocation().toVector());
 			newVelo.add(distance);
@@ -523,7 +530,7 @@ public abstract class AbstractVehicle {
 	}
 
 	@SuppressWarnings("deprecation")
-	private boolean checkDistance(Entity entity, Location offset, boolean passengers, Vector modifier) {
+	private boolean checkDistance(Entity entity, Location offset, boolean passengers) {
 		double offDis = offset.distance(entity.getLocation());
 		if (offDis > 1) {
 			final Entity rider = entity.getPassenger();
@@ -534,7 +541,7 @@ public abstract class AbstractVehicle {
 			}
 
 			entity.eject();
-			entity.teleport(modifier != null ? offset.add(modifier) : offset);
+			entity.teleport(offset);
 			if (passengers) rider.teleport(offset);
 
 			if (passengers) {

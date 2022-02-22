@@ -18,9 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Turtle;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,19 +64,27 @@ public class QualityArmoryVehicles {
 		return rotateRelToCar(ve, model, offset, reverse);
 	}
 
-	public static Vector rotateRelToCar(VehicleEntity ve, ArmorStand model, Vector offset, boolean reverse) {
+	public static Vector rotateRelToCar(VehicleEntity ve, Entity model, Vector offset, boolean reverse) {
 		if (model == null)
 			return new Vector(0, 0, 1);
-		EulerAngle ea = model.getHeadPose();
+
+		double x;
+		if (ve.getDriverSeat() instanceof ArmorStand) {
+			x = ((ArmorStand) ve.getDriverSeat()).getHeadPose().getX();
+		} else {
+			x = model.getLocation().getPitch();
+		}
+
+		// EulerAngle ea = model.getHeadPose();
 		double cos = Math.cos(ve.getAngleRotation() - Main.YOFFSET);
 		double sin = Math.sin(ve.getAngleRotation() - Main.YOFFSET);
 		Vector newVal;
-		if (ea.getX() == 0) {
+		if (x == 0) {
 			newVal = new Vector((offset.getX() * cos) - (offset.getZ() * sin), offset.getY(),
 					(offset.getZ() * cos) + (offset.getX() * sin));
 		} else {
-			double shrinkByForY = Math.cos(ea.getX());
-			double yOffset = Math.sin(ea.getX());
+			double shrinkByForY = Math.cos(x);
+			double yOffset = Math.sin(x);
 			double xzdistance = Math.sqrt((offset.getX() * offset.getX()) + (offset.getZ() * offset.getZ()));
 			double y = xzdistance * yOffset;
 			newVal = new Vector(((offset.getX() * cos) - (offset.getZ() * sin)) * shrinkByForY, offset.getY() + y,
