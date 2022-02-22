@@ -19,7 +19,11 @@ repositories {
     maven("https://repo.viaversion.com")
     maven("https://repo.dmulloy2.net/nexus/repository/public/")
     maven("https://repo.citizensnpcs.co/")
-    maven("https://mvn.lumine.io/repository/maven-public/")
+    maven("https://mvn.lumine.io/repository/maven-public/") {
+        metadataSources {
+            artifact()
+        }
+    }
     maven("https://repo.codemc.io/repository/maven-public/") {
         metadataSources {
             artifact()
@@ -44,7 +48,7 @@ dependencies {
     compileOnly("me.zombie_striker:QualityArmory:2.0.5.1")
     compileOnly("com.github.TownyAdvanced:Towny:0.97.5.1")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly("com.ticxo.modelengine:api:R2.4.0")
+    compileOnly("com.ticxo.modelengine:api:R2.4.1")
     compileOnly("org.maxgamer:QuickShop:5.1.0.4")
 }
 
