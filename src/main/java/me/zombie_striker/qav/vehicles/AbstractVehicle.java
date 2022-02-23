@@ -227,6 +227,10 @@ public abstract class AbstractVehicle {
 		this.maxBackupSpeed = maxReverseAcceleration;
 	}
 
+	public double getMaxBackupSpeed() {
+		return maxBackupSpeed;
+	}
+
 	public void setAccerlationSpeed(double baseAcceleration) {
 		this.acceleration = baseAcceleration;
 	}

@@ -46,7 +46,7 @@ public class AbstractTrain extends AbstractVehicle {
 
 	@Override
 	public void handleSpace(VehicleEntity ve, PacketEvent event) {
-		ve.setSpeed(Math.max(ve.getSpeed() + 0.1, -ve.getType().getMaxSpeed()));
+		ve.setSpeed(Math.max(ve.getSpeed() + 0.1, -ve.getType().getMaxBackupSpeed()));
 	}
 
 	@SuppressWarnings("deprecation")
