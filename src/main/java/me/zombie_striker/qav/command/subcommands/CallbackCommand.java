@@ -50,7 +50,7 @@ public class CallbackCommand extends SubCommand {
             radius = Integer.parseInt(args[0]);
         }
         for (VehicleEntity ve : new ArrayList<>(Main.vehicles)) {
-            if (ve.getDriverSeat().getLocation().distanceSquared(loc) < radius * radius)
+            if (ve.getOwner() != null && ve.getOwner().equals(((Player) sender).getUniqueId()) && ve.getDriverSeat().getLocation().distanceSquared(loc) < radius * radius)
                 VehicleUtils.callback(ve, (Player) sender);
         }
 
