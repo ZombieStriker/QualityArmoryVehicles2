@@ -7,6 +7,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
 import me.zombie_striker.qav.perms.PermissionHandler;
+import me.zombie_striker.qav.util.ExposeDebug;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -58,6 +59,12 @@ public class DumpVehicleCommand extends SubCommand {
             if (args.length == 1) {
                 try {
                     Field declaredField = vehicle.getClass().getDeclaredField(args[0]);
+
+                    if (!declaredField.isAnnotationPresent(ExposeDebug.class)) {
+                        player.sendMessage(Main.prefix + ChatColor.RED + " Field " + args[0] + " not found");
+                        return;
+                    }
+
                     declaredField.setAccessible(true);
                     Object value = declaredField.get(vehicle);
                     player.sendMessage(Main.prefix + " " + args[0] + ": " + value);
@@ -65,7 +72,15 @@ public class DumpVehicleCommand extends SubCommand {
                     player.sendMessage(Main.prefix + ChatColor.RED + " Field " + args[0] + " not found");
                 }
             } else {
-                player.sendMessage(Main.prefix + ChatColor.GREEN + " " + ChatColor.stripColor(vehicle.toString()));
+                for (Field field : vehicle.getClass().getDeclaredFields()) {
+                    if (field.isAnnotationPresent(ExposeDebug.class)) {
+                        field.setAccessible(true);
+                        try {
+                            Object value = field.get(vehicle);
+                            player.sendMessage(Main.prefix + " " + field.getName() + ": " + value);
+                        } catch (IllegalAccessException ignored) {}
+                    }
+                }
             }
 
         });

@@ -4,6 +4,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
+import me.zombie_striker.qav.util.ExposeDebug;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,26 +24,26 @@ import java.util.*;
 public class VehicleEntity implements ConfigurationSerializable {
 
 	public AbstractVehicle vehicleType;
-	public boolean allowsPassagers = false;
+	@ExposeDebug public boolean allowsPassagers = false;
 
-	private double rotation = 0;
-	private Vector direction = new Vector(0, 0, 1);
-	private Vector centerOffset = new Vector(0, 0, 0);
+	@ExposeDebug private double rotation = 0;
+	@ExposeDebug private Vector direction = new Vector(0, 0, 1);
+	@ExposeDebug private Vector centerOffset = new Vector(0, 0, 0);
 	private BoundingBox boundingBox;
-	private double speed = 0;
-	private UUID vehicleUUID = UUID.randomUUID();
+	@ExposeDebug private double speed = 0;
+	@ExposeDebug private UUID vehicleUUID = UUID.randomUUID();
 
-	private UUID owner;
+	@ExposeDebug private UUID owner;
 
 	private List<ArmorStand> modelParts = new ArrayList<>();
 	private Entity driverseat;
 	private HashMap<Integer, Entity> passagers = new HashMap<Integer, Entity>();
-	private Inventory inventory;
-	private Inventory fuels;
-	private int fuel = 0;
-	private double yheight = 0;
-	private List<UUID> whitelist = new ArrayList<>();
-	private double health;
+	@ExposeDebug private Inventory inventory;
+	@ExposeDebug private Inventory fuels;
+	@ExposeDebug private int fuel = 0;
+	@ExposeDebug private double yheight = 0;
+	@ExposeDebug private List<UUID> whitelist = new ArrayList<>();
+	@ExposeDebug private double health;
 
 	public VehicleEntity(AbstractVehicle vehicleType, Location location, UUID owner) {
 		this.vehicleType = vehicleType;
