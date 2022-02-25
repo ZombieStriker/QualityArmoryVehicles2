@@ -452,7 +452,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	@Override
 	public String toString() {
-		return "VehicleEntity{" +
+		return "{" +
 				"vehicleType=" + vehicleType +
 				", allowsPassagers=" + allowsPassagers +
 				", rotation=" + rotation +

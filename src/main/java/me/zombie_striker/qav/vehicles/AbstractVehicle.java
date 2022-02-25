@@ -17,7 +17,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -345,8 +344,10 @@ public abstract class AbstractVehicle {
 				if (vehicleEntity.getDriverSeat().getPassenger() instanceof Player) {
 					Player player = (Player) vehicleEntity.getDriverSeat().getPassenger();
 					Vector direction = player.getEyeLocation().getDirection();
-					vehicleEntity.setDirectionYHeight(direction.getY() * -1);
+					vehicleEntity.setDirectionYHeight(direction.getY());
 					HeadPoseUtil.setHeadPoseUsingReflection(vehicleEntity);
+					vehicleEntity.getModelEntity()
+							.setHeadPose(new EulerAngle(direction.getY() * -1, vehicleEntity.getModelEntity().getHeadPose().getY(), 0));
 				}
 			}else {
 				vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.01);
@@ -488,7 +489,8 @@ public abstract class AbstractVehicle {
 				}
 
 				HotbarMessager.sendHotBarMessage(player,MessagesConfig.MESSAGE_ACTIOBAR_MOVE.replace("%type%", vehicleEntity.getType().getDisplayname())
-						.replace("%fuel%", String.valueOf(vehicleEntity.getFuel())));
+						.replace("%fuel%", String.valueOf(vehicleEntity.getFuel()))
+						.replace("%speed%", String.valueOf(Math.round(vehicleEntity.getSpeed() * 20 * (vehicleEntity.getSpeed() < 0 ? -1 : 1)))));
 			}
 		}
 
@@ -615,7 +617,8 @@ public abstract class AbstractVehicle {
 
 	@Override
 	public String toString() {
-		return "AbstractVehicle{" +
+		return "{" +
+				"className='" + this.getClass().getName() + '\'' +
 				"rotationMultiplier=" + rotationMultiplier +
 				", inputs=" + inputs +
 				", widthRadius=" + widthRadius +

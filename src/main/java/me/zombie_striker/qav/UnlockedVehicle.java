@@ -43,6 +43,10 @@ public class UnlockedVehicle implements ConfigurationSerializable {
         return Objects.hash(vehicleType, health, inGarage);
     }
 
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
     public double getHealth() {
         return health;
     }

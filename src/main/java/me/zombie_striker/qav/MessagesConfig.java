@@ -59,7 +59,7 @@ public class MessagesConfig {
 	public static String MESSAGE_CannotPickupWhileInVehicle = "&fYou cannot pickup vehicles that are being driven.";
 	public static String MESSAGE_HOTBAR_OUTOFFUEL = "&fYour vehicle is out of fuel. Find coal and Shift-click the car";
 	public static String MESSAGE_REPAIR = "&fYour vehicle has been repaired successfully.";
-	public static String MESSAGE_ACTIOBAR_MOVE = "&aVehicle: &f%type% | &aFuel: &f%fuel%";
+	public static String MESSAGE_ACTIOBAR_MOVE = "&aVehicle: &f%type% | &aFuel: &f%fuel% | &aSpeed: &f%speed%km/h";
 	public static String subcommand_GiveVehicle = " <car> <?:player>: Gives you or another player a car";
 	public static String subcommand_SpawnVehicle = " <car> : Spawns a car at your location";
 	public static String subcommand_RemoveVehicle = " <car> : Removes all vehicles of a type";
@@ -93,6 +93,7 @@ public class MessagesConfig {
 	public static String COMMANDMESSAGE_CALLBACK = "Called back all vehicles within a %radius% radius of the player.";
 	public static String COMMANDMESSAGES_REMOVE_VEHICLE_GARAGE =  "All \"%car%\" vehicle types have been removed from %name%'s garage.";
 	public static String COMMANDMESSAGES_TEXTURE = "Click here to download the resource pack";
+	public static String COMMANDMESSAGES_NO_VEHICLE = "&4 You have to ride a vehicle to perform this command.";
 	public static String COOLDOWN = "&cYou have to wait %time%ms before performing this action again.";
 
 	public static void init() {
@@ -127,6 +128,8 @@ public class MessagesConfig {
 				a("Commands.debug", subcommand_debug));
 		COMMANDMESSAGES_TEXTURE = (
 				a("Commands.TexturePack", COMMANDMESSAGES_TEXTURE));
+		COMMANDMESSAGES_NO_VEHICLE = (
+				a("Commands.NoVehicle", COMMANDMESSAGES_NO_VEHICLE));
 
 		MENU_OVERVIEW_TITLE = (
 				a("Menu.Overview.Title", MENU_OVERVIEW_TITLE));

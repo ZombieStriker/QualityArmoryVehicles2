@@ -282,6 +282,17 @@ public class QualityArmoryVehicles {
 		return first.orElse(null);
 	}
 
+	public static void setUnlockedVehicles(Player player, List<UnlockedVehicle> vehicles) {
+		File playersFile = getUnlockedVehiclesFile(player);
+		FileConfiguration c = YamlConfiguration.loadConfiguration(playersFile);
+		c.set("unlockedVehicles", vehicles);
+		try {
+			c.save(playersFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public static void removeUnlockedVehicle(Player player, AbstractVehicle ve) {
 		File playersFile = getUnlockedVehiclesFile(player);

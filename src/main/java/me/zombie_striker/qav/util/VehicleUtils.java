@@ -9,6 +9,9 @@ import me.zombie_striker.qav.menu.MenuHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
+import java.util.List;
+
 public final class VehicleUtils {
     public static void callback(VehicleEntity ve, Player player) {
         callback(ve,player,"Callback");
@@ -35,8 +38,21 @@ public final class VehicleUtils {
         if (player != null) {
             if(!Main.enableGarage)
                 MenuHandler.giveOrDrop(player, ItemFact.getCarItem(ve.getType()));
-            else
-                QualityArmoryVehicles.addUnlockedVehicle(player,new UnlockedVehicle(ve.getType(),ve.getHealth(), true));
+            else {
+                List<UnlockedVehicle> unlockedVehicles = QualityArmoryVehicles.unlockedVehicles(player);
+                UnlockedVehicle uv = QualityArmoryVehicles.findUnlockedVehicle(player, ve.getType());
+
+                if (uv == null) {
+                    uv = new UnlockedVehicle(ve.getType(),ve.getHealth(), true);
+                } else {
+                    unlockedVehicles.remove(uv);
+                }
+
+                uv.setInGarage(true);
+                uv.setHealth(ve.getHealth());
+                unlockedVehicles.add(uv);
+                QualityArmoryVehicles.setUnlockedVehicles(player,unlockedVehicles);
+            }
         }
     }
 
