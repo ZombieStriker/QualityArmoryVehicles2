@@ -1,3 +1,14 @@
+2.2
+  Changelog:
+    - Added ModelEngine animations support
+    - Fixed QuickShop support
+    - Added an option to make vehicles public
+    - Added an option to separate the model entity and the driver one
+    - Added an option to make the seat entities turtles
+    - Smooth vehicle movements
+    - Easier plane movements
+    - Added the speed on the action bar
+
 2.1.1
   Changelog:
     - Added an option to callback on dismount
