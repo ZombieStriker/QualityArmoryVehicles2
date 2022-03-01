@@ -39,7 +39,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:23.0.0")
 
     // API
-    compileOnly("net.kyori:adventure-api:4.9.3")
+    compileOnly("net.kyori:adventure-api:4.10.0")
     compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
 
     // Compatibilities
