@@ -166,7 +166,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 			Entity driverSeat;
 
-			if (Main.useTurtles) {
+			if (getType().getModelType().equals(ModelSize.TURTLE)) {
 				try {
 					driverSeat = loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.TURTLE);
 					giveEffects(((LivingEntity) driverSeat));

@@ -116,7 +116,6 @@ public class Main extends JavaPlugin {
 	private static boolean USE_MANUAL_13 = false;
 	public static boolean useDamage = false;
 	public static boolean separateModelAndDriver = false;
-	public static boolean useTurtles = false;
 
 
 
@@ -425,12 +424,6 @@ public class Main extends JavaPlugin {
 		onlyPublicVehicles = (boolean) a("makeVehiclesPublic", onlyPublicVehicles);
 		useDamage = (boolean) a("unsafe.useDamageInsteadOfCustomModelData", useDamage);
 		separateModelAndDriver = (boolean) a("unsafe.separateModelAndDriver", separateModelAndDriver);
-		useTurtles = (boolean) a("unsafe.useTurtles", useTurtles);
-		if (useTurtles && !ReflectionUtils.supports(15)) {
-			useTurtles = false;
-			this.getLogger().warning("Turtles are not supported on this version of Minecraft! If you want to use them please switch to 1.15+");
-		}
-
 		enable_RequirePermToBuyVehicle = (boolean) a("enable_RequirePermToBuyVehicle", enable_RequirePermToBuyVehicle);
 
 		DebugManager.setShouldDisplayInConsole((boolean) a("ENABLE_DEBUG", false));

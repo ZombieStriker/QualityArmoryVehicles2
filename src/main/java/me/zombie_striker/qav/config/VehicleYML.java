@@ -9,6 +9,7 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +79,11 @@ public class VehicleYML {
 		v.setName(name);
 		v.setID(id);
 		return v;
+	}
+
+	public static @NotNull VehicleYML loadVehicle(String name) {
+		File f = new File(Main.carData, "default_" + name + ".yml");
+		return new VehicleYML(f);
 	}
 
 	public VehicleYML(File f) {

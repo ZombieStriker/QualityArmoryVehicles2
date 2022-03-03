@@ -43,6 +43,12 @@ public class VehicleLoader {
 	}
 
 	public static boolean loadVehicleFile(File f) {
+		if (QualityArmoryVehicles.getPlugin().getConfig().getBoolean("unsafe.useTurtles", false)) {
+			new VehicleYML(f)
+					.setModelSize(ModelSize.TURTLE)
+					.save();
+		}
+
 		FileConfiguration c = YamlConfiguration.loadConfiguration(f);
 		String name = c.getString("name");
 		if (Main.verboseLogging)
