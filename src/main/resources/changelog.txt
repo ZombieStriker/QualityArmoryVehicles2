@@ -2,6 +2,7 @@
   Changelog:
     - Added ModelEngine animations support
     - Fixed QuickShop support
+    - Fixed WorldGuard integration
     - Added an option to make vehicles public
     - Added an option to separate the model entity and the driver one
     - Added an option to make the seat entities turtles
