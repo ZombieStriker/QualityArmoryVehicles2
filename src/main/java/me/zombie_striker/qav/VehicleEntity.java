@@ -390,7 +390,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	public Entity spawnSeat(Location spawn, int seatID) {
 		Entity used = null;
 		double size = 2;//seatID == -1 ? getType().getSeatHeight() : getType().getPassagerSizeById(seatID);
-		if (Main.useTurtles || size < 1) {
+		if (this.getType().getModelType().equals(ModelSize.TURTLE) || size < 1) {
 			try {
 				used = spawn.getWorld().spawnEntity(spawn, EntityType.TURTLE);
 				used.setInvulnerable(true);
