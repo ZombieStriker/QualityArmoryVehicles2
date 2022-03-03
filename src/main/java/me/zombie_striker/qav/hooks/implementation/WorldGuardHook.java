@@ -25,7 +25,10 @@ public class WorldGuardHook implements ProtectionHook {
     @Override
     public boolean canBreak(Player player, Location location) {
         for (IWrappedRegion k : worldGuard.getRegions(location)) {
-            WrappedState wrappedState = k.getFlag(blockBreak).orElse(WrappedState.ALLOW);
+            Object wrappedState = k.getFlag(blockBreak).orElse(WrappedState.ALLOW);
+            if(wrappedState.getClass().equals(Optional.class)) {
+                wrappedState = ((Optional<WrappedState>) wrappedState).orElse(WrappedState.ALLOW);
+            }
             if (wrappedState.equals(WrappedState.DENY)) return false;
         }
 
