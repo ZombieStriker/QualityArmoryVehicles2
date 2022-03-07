@@ -44,7 +44,7 @@ dependencies {
 
     // Compatibilities
     compileOnly("us.myles:viaversion:3.2.1")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
     compileOnly("me.zombie_striker:QualityArmory:2.0.5.1")
     compileOnly("com.github.TownyAdvanced:Towny:0.97.5.1")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
