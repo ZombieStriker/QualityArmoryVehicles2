@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "me.zombie_striker"
-version = "2.2"
+version = "2.2.1-SNAPSHOT"
 description = "QualityArmoryVehicles"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
@@ -75,7 +75,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.18.1")
+        minecraftVersion("1.18.2")
     }
 
     processResources {

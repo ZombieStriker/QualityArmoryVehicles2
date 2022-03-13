@@ -551,7 +551,7 @@ public abstract class AbstractVehicle {
 			if (passengers) rider.teleport(offset);
 
 			if (passengers) {
-				Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> entity.setPassenger(rider), 5L);
+				Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> entity.setPassenger(rider), 2L);
 			}
 
 			Main.DEBUG("Moved other stand. Previous rider: " + rider + " - new rider: " + entity.getPassenger());

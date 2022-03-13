@@ -71,19 +71,6 @@ public class VehicleEntity implements ConfigurationSerializable {
 				loc.getChunk().load();
 			}
 		} catch (Exception | Error ignored) {}
-		for (Entity e : loc.getWorld().getNearbyEntities(loc, 6, 6, 6)) {
-			if (e.getCustomName() != null && e.getCustomName().startsWith(Main.VEHICLEPREFIX)) {
-				if (e.getCustomName().trim().endsWith(vehicleUUID.toString().trim())) {
-					driverseat = e;
-				}
-			}
-
-			if (e instanceof ArmorStand && e.getCustomName() != null && e.getCustomName().startsWith(Main.MODEL_PREFIX)) {
-				if (e.getCustomName().trim().endsWith(vehicleUUID.toString().trim())) {
-					modelParts.add((ArmorStand) e);
-				}
-			}
-		}
 
 		if (data.containsKey("owner"))
 			owner = Main.onlyPublicVehicles ? null : UUID.fromString((String) data.get("owner"));
@@ -110,6 +97,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 		}
 
 		rotation = (double) data.get("angle");
+
+		this.spawnOrFind(loc);
 	}
 
 	@Override
@@ -139,12 +128,30 @@ public class VehicleEntity implements ConfigurationSerializable {
 		return data;
 	}
 
-	public void spawnOrFind() {
+	public void spawnOrFind(Location loc) {
 		if (driverseat != null && driverseat.isValid()) {
 			return;
 		}
 
-		this.spawn();
+		if (loc != null) {
+			for (Entity e : loc.getWorld().getNearbyEntities(loc, 10, 10, 10)) {
+				if (e.getCustomName() != null && e.getCustomName().startsWith(Main.VEHICLEPREFIX)) {
+					if (e.getCustomName().trim().endsWith(vehicleUUID.toString().trim())) {
+						driverseat = e;
+					}
+				}
+
+				if (e instanceof ArmorStand && e.getCustomName() != null && e.getCustomName().startsWith(Main.MODEL_PREFIX)) {
+					if (e.getCustomName().trim().endsWith(vehicleUUID.toString().trim())) {
+						modelParts.add((ArmorStand) e);
+					}
+				}
+			}
+		}
+
+		if (driverseat == null) {
+			this.spawn();
+		}
 	}
 
 	@SuppressWarnings("deprecation")

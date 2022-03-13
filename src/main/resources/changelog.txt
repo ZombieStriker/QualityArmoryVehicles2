@@ -1,3 +1,7 @@
+2.2.1
+  Changelog:
+    - Fixed vehicle load
+
 2.2
   Changelog:
     - Added ModelEngine animations support

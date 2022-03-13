@@ -202,18 +202,16 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new QAVListener(this), this);
 		EasyGUI.INIT(this);
 
-		Bukkit.getScheduler().runTaskLater(this, () -> {
-			FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
+		FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
 
-			if(dataconfig.contains("data")) {
-				for (VehicleEntity ve : ((List<VehicleEntity>) dataconfig.get("data"))) {
-					if (ve != null && ve.getDriverSeat() != null)
-						vehicles.add(ve);
-				}
-
-				this.getLogger().info("Successfully loaded " + vehicles.size() + " spawned vehicles.");
+		if(dataconfig.contains("data")) {
+			for (VehicleEntity ve : ((List<VehicleEntity>) dataconfig.get("data"))) {
+				if (ve != null && ve.getDriverSeat() != null)
+					vehicles.add(ve);
 			}
-		}, 20);
+
+			this.getLogger().info("Successfully loaded " + vehicles.size() + " spawned vehicles.");
+		}
 
 
 		protocolManager = ProtocolLibrary.getProtocolManager();
@@ -297,6 +295,11 @@ public class Main extends JavaPlugin {
 			yaml.save(vehicledatayml);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+
+		for (VehicleEntity ve : vehicles) {
+			if (ve != null)
+				ve.deconstruct(null, "Disabling");
 		}
 	}
 
