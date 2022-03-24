@@ -33,23 +33,23 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:8.6.1")
+    implementation("com.github.cryptomorin:XSeries:8.7.0")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:23.0.0")
 
     // API
-    compileOnly("net.kyori:adventure-api:4.9.3")
+    compileOnly("net.kyori:adventure-api:4.10.1")
     compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
 
     // Compatibilities
     compileOnly("us.myles:viaversion:3.2.1")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
-    compileOnly("me.zombie_striker:QualityArmory:2.0.5.1")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
+    compileOnly("me.zombie_striker:QualityArmory:2.0.6")
     compileOnly("com.github.TownyAdvanced:Towny:0.97.5.1")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly("com.ticxo.modelengine:api:R2.4.1")
-    compileOnly("org.maxgamer:QuickShop:5.1.0.4")
+    compileOnly("com.ticxo.modelengine:api:R2.5.0")
+    compileOnly("org.maxgamer:QuickShop:5.1.0.5")
 }
 
 tasks {
