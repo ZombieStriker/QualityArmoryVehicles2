@@ -1,6 +1,12 @@
-2.2.1
+2.3
   Changelog:
     - Fixed vehicle load
+    - Fixed entity moving
+    - Prevent passengers from getting kicked for flying
+    - Now users can't join vehicle if the seat is not empty
+    - Performance fixes
+    - Added tractors
+    - Added drills
 
 2.2
   Changelog:
