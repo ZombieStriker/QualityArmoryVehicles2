@@ -75,6 +75,9 @@ public class VehicleLoader {
 			case DRILL:
 				vehicle = new AbstractDrill(name,id);
 				break;
+			case TRACTOR:
+				vehicle = new AbstractTractor(name,id);
+				break;
 			default:
 				throw new InvalidVehicleException("Vehicle type does not exist.");
 		}
