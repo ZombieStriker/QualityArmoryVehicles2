@@ -39,6 +39,7 @@ public class MessagesConfig {
 	public static String ICONLORE_LIST_FUEL = "&fFuel In tank: ";
 	public static String ICONLORE_TRUNK_CONTAINS = "&fContains:";
 	public static String ICONLORE_HEALTH_FORMAT = "&f%health% / %maxhealth%";
+	public static String ICONLORE_COST = "&6Cost: ";
 	public static String ICONLORE_currentowner = "&fCurrent owner: %owner%";
 	public static String ICONLORE_PASSAGERS_DRIVERSEAT = "&aDriver Seat";
 	public static String MESSAGE_ADD_PLAYER_WHITELIST = "&fAdded player %name% to whitelist";
@@ -178,6 +179,8 @@ public class MessagesConfig {
 				a("Icon.Public_Status.Lore_Format", ICONLORE_PUBLIC));
 		ICONLORE_PASSAGERS_DRIVERSEAT = (
 				a("Icon.PASSAGER.DRIVERSEAT.Lore_Format", ICONLORE_PASSAGERS_DRIVERSEAT));
+		ICONLORE_COST = (
+				a("Icon.Shop.Cost", ICONLORE_COST));
 
 		MESSAGE_ADD_PLAYER_WHITELIST = (
 				a("Messages.addplayertowhitelist", MESSAGE_ADD_PLAYER_WHITELIST));

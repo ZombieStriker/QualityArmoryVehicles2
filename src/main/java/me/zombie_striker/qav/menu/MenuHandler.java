@@ -248,13 +248,13 @@ public class MenuHandler implements Listener {
 		int i = 0;
 		if (Main.repairItem.shouldBeInShop()) {
 			buttons.add(ItemFact.a(Main.repairItem.getMaterial(), Main.repairItem.getData(), true, Main.repairItem.getName(),
-					ChatColor.GOLD + "Cost: " + Main.repairItem.getCost()));
+					MessagesConfig.ICONLORE_COST + Main.repairItem.getCost()));
 			callables.add(button);
 		}
 		for (FuelItemStack fuel : FuelItemStack.getFuels()) {
 			if (fuel.isAllowedInShop()) {
 				buttons.add(ItemFact.a(fuel.getMaterial(), fuel.getData(), true, fuel.getDisplayname(),
-						ChatColor.GOLD + "Cost: " + fuel.getCost()));
+						MessagesConfig.ICONLORE_COST + fuel.getCost()));
 				callables.add(button);
 				i++;
 			}
@@ -264,7 +264,7 @@ public class MenuHandler implements Listener {
 				if (!Main.enable_RequirePermToBuyVehicle || PermissionHandler.canDrive(player, ab))
 					if (class1 == null || class1.isInstance(ab)) {
 						buttons.add(ItemFact.a(ab.getMaterial(), ab.getItemData(), true, ab.getDisplayname(),
-								ChatColor.GOLD + "Cost: " + ab.getCost()));
+								MessagesConfig.ICONLORE_COST + ab.getCost()));
 						callables.add(button);
 						i++;
 					}
