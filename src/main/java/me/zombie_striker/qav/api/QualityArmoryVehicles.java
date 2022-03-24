@@ -17,7 +17,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
@@ -345,5 +347,14 @@ public class QualityArmoryVehicles {
 			}
 		}
 		return list;
+	}
+
+	public static void giveOrDrop(Inventory inventory, Location location, ItemStack item) {
+		if (inventory.firstEmpty() != -1) {
+			inventory.addItem(item);
+		} else {
+			location.getWorld().dropItem(location, item);
+		}
+
 	}
 }

@@ -8,6 +8,8 @@ public enum VehicleTypes {
 	BOAT("Boat"),
 	HELI("Helicopter"),
 	TRAIN("Train"),
+	DRILL("Drill"),
+	TRACTOR("Tractor"),
 	INVALID("Invalid");
 
 	private String name;

@@ -38,8 +38,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 	private List<ArmorStand> modelParts = new ArrayList<>();
 	private Entity driverseat;
 	private HashMap<Integer, Entity> passagers = new HashMap<Integer, Entity>();
-	@ExposeDebug private Inventory inventory;
-	@ExposeDebug private Inventory fuels;
+	private Inventory inventory;
+	private Inventory fuels;
 	@ExposeDebug private int fuel = 0;
 	@ExposeDebug private double yheight = 0;
 	@ExposeDebug private List<UUID> whitelist = new ArrayList<>();
@@ -147,6 +147,10 @@ public class VehicleEntity implements ConfigurationSerializable {
 					}
 				}
 			}
+		}
+
+		if (!Main.separateModelAndDriver && driverseat != null && modelParts.size() == 0) {
+			modelParts.add((ArmorStand) driverseat);
 		}
 
 		if (driverseat == null) {
