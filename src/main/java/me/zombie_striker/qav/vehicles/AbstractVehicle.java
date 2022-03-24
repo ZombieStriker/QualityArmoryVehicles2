@@ -84,7 +84,6 @@ public abstract class AbstractVehicle {
 		if (this.enableFuel()) {
 			FuelItemStack.updateFuel(ve);
 			if (ve.getFuel() <= 0) {
-				event.setCancelled(true);
 				shouldReturn = false;
 				try {
 					if (event.getPlayer() != null)

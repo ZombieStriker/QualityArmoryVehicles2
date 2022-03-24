@@ -1,3 +1,7 @@
+2.3.0.1
+  Changelog:
+    - Fixed fuel
+
 2.3
   Changelog:
     - Fixed vehicle load
