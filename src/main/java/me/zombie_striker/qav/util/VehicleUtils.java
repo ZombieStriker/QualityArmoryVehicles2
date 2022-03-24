@@ -5,12 +5,12 @@ import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.UnlockedVehicle;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import me.zombie_striker.qav.menu.MenuHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
 import java.util.List;
+
+import static com.cryptomorin.xseries.XItemStack.giveOrDrop;
 
 public final class VehicleUtils {
     public static void callback(VehicleEntity ve, Player player) {
@@ -21,12 +21,12 @@ public final class VehicleUtils {
         if (player != null) {
             for (ItemStack item : ve.getTrunk()) {
                 if (item != null)
-                    MenuHandler.giveOrDrop(player,item);
+                    giveOrDrop(player,item);
             }
 
             for (ItemStack item : ve.getFuels().getContents()) {
                 if (item != null)
-                    MenuHandler.giveOrDrop(player,item);
+                    giveOrDrop(player,item);
             }
 
         }
@@ -37,7 +37,7 @@ public final class VehicleUtils {
         ve.deconstruct(player, message);
         if (player != null) {
             if(!Main.enableGarage)
-                MenuHandler.giveOrDrop(player, ItemFact.getCarItem(ve.getType()));
+                giveOrDrop(player, ItemFact.getCarItem(ve.getType()));
             else {
                 List<UnlockedVehicle> unlockedVehicles = QualityArmoryVehicles.unlockedVehicles(player);
                 UnlockedVehicle uv = QualityArmoryVehicles.findUnlockedVehicle(player, ve.getType());

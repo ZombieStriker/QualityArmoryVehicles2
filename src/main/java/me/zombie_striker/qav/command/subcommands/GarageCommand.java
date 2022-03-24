@@ -4,7 +4,7 @@ import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
-import me.zombie_striker.qav.menu.MenuHandler;
+import me.zombie_striker.qav.menu.GarageMenu;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +34,6 @@ public class GarageCommand extends SubCommand {
             return;
         }
 
-        MenuHandler.openGarage((Player) sender);
+        new GarageMenu((Player) sender, (Player) sender).open();
     }
 }

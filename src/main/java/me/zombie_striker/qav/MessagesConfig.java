@@ -96,7 +96,9 @@ public class MessagesConfig {
 	public static String COMMANDMESSAGES_TEXTURE = "Click here to download the resource pack";
 	public static String COMMANDMESSAGES_NO_VEHICLE = "&4 You have to ride a vehicle to perform this command.";
 	public static String COOLDOWN = "&cYou have to wait %time%ms before performing this action again.";
-
+	public static String NEXT_PAGE = "&aNext Page";
+	public static String PREV_PAGE = "&cPrevious Page";
+	
 	public static void init() {
 		messagesyml = YamlConfiguration.loadConfiguration(messagesymlfile);
 
@@ -181,7 +183,10 @@ public class MessagesConfig {
 				a("Icon.PASSAGER.DRIVERSEAT.Lore_Format", ICONLORE_PASSAGERS_DRIVERSEAT));
 		ICONLORE_COST = (
 				a("Icon.Shop.Cost", ICONLORE_COST));
-
+		NEXT_PAGE =
+				a("Icon.Next", NEXT_PAGE);
+		PREV_PAGE =
+				a("Icon.Previous", PREV_PAGE);
 		MESSAGE_ADD_PLAYER_WHITELIST = (
 				a("Messages.addplayertowhitelist", MESSAGE_ADD_PLAYER_WHITELIST));
 		MESSAGE_REMOVE_PLAYER_WHITELIST = (

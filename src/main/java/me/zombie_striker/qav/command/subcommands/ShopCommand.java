@@ -3,8 +3,7 @@ package me.zombie_striker.qav.command.subcommands;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
-import me.zombie_striker.qav.menu.MenuHandler;
-import me.zombie_striker.qav.vehicles.AbstractVehicle;
+import me.zombie_striker.qav.menu.ShopMenu;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +32,6 @@ public class ShopCommand extends SubCommand {
             return;
         }
 
-        MenuHandler.openShop((Player) sender, AbstractVehicle.class);
+        new ShopMenu((Player) sender).open();
     }
 }

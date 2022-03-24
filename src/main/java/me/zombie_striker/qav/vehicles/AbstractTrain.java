@@ -41,12 +41,16 @@ public class AbstractTrain extends AbstractVehicle {
 		if (!this.handleFuel(ve,event)) {
 			return;
 		}
-		ve.setSpeed(Math.max(ve.getSpeed() + 0.1, -ve.getType().getMaxSpeed()));
+		ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxBackupSpeed()));
 	}
 
 	@Override
 	public void handleSpace(VehicleEntity ve, PacketEvent event) {
-		ve.setSpeed(Math.max(ve.getSpeed() + 0.1, -ve.getType().getMaxBackupSpeed()));
+		if(ve.getSpeed()>0) {
+			ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxBackupSpeed()));
+		}else{
+			ve.setSpeed(Math.max(ve.getSpeed() + 0.1, -ve.getType().getMaxSpeed()));
+		}
 	}
 
 	@SuppressWarnings("deprecation")

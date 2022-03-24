@@ -546,9 +546,9 @@ public abstract class AbstractVehicle {
 				return false;
 			}
 
+			if (passengers) rider.teleport(offset);
 			entity.eject();
 			entity.teleport(offset);
-			if (passengers) rider.teleport(offset);
 
 			if (passengers) {
 				Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> entity.setPassenger(rider), 2L);

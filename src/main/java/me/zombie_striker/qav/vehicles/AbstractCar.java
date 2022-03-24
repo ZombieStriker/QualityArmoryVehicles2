@@ -1,7 +1,9 @@
 package me.zombie_striker.qav.vehicles;
 
 import com.comphenix.protocol.events.PacketEvent;
+import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
+import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.api.events.VehicleChangeSpeedEvent;
 import me.zombie_striker.qav.api.events.VehicleTurnEvent;
 import me.zombie_striker.qav.util.HeadPoseUtil;
@@ -73,7 +75,7 @@ public class AbstractCar extends AbstractVehicle {
 	@Override
 	public void handleSpace(VehicleEntity ve, PacketEvent event) {
 		if(ve.getSpeed()>0) {
-			ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxSpeed()));
+			ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxBackupSpeed()));
 		}else{
 			ve.setSpeed(Math.max(ve.getSpeed() + 0.1, -ve.getType().getMaxSpeed()));
 		}
@@ -98,8 +100,11 @@ public class AbstractCar extends AbstractVehicle {
 	@Override
 	public void tick(VehicleEntity vehicleEntity) {
 		basicDirections(vehicleEntity,canJump(),false);
-		if(vehicleEntity.isSubmerged()){
+		if(Main.destroyOnWater && vehicleEntity.isSubmerged()){
 			vehicleEntity.deconstruct(null,"UnderWater");
+			if (Main.enableGarage) {
+				QualityArmoryVehicles.removeUnlockedVehicle(Bukkit.getPlayer(vehicleEntity.getOwner()), vehicleEntity.getType());
+			}
 		}
 	}
 

@@ -16,7 +16,6 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.api.events.PlayerExitQAVehicleEvent;
 import me.zombie_striker.qav.config.VehicleLoader;
 import me.zombie_striker.qav.debugmanager.DebugManager;
-import me.zombie_striker.qav.easygui.EasyGUI;
 import me.zombie_striker.qav.finput.*;
 import me.zombie_striker.qav.finput.inputs.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
@@ -92,6 +91,7 @@ public class Main extends JavaPlugin {
 	public static boolean removeVehicleOnDismount = false;
 	public static boolean removeVehicleONLEAVE = false;
 	public static boolean destroyVehicleONLEAVE = false;
+	public static boolean destroyOnWater = true;
 	public static boolean swapEndermiteWithChicken = false;
 	public static boolean garageFuel = true;
 	public static boolean enableCarPushing = true;
@@ -200,7 +200,6 @@ public class Main extends JavaPlugin {
 			getCommand("garage").setExecutor(new GarageCommand());
 
 		Bukkit.getPluginManager().registerEvents(new QAVListener(this), this);
-		EasyGUI.INIT(this);
 
 		FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
 
@@ -410,6 +409,7 @@ public class Main extends JavaPlugin {
 		removeVehicleOnDismount = (boolean) a("enable_RemoveVehiclesOnDismount", removeVehicleOnDismount);
 		removeVehicleONLEAVE = (boolean) a("enable_RemoveVehiclesOnPlayerQuit", removeVehicleONLEAVE);
 		destroyVehicleONLEAVE = (boolean) a("enable_DestroyVehiclesOnPlayerQuit", destroyVehicleONLEAVE);
+		destroyOnWater = (boolean) a("enable_DestroyVehiclesOnWater", destroyOnWater);
 		disableCreativeCloning = (boolean) a("enable_StopCreativeDuplication", disableCreativeCloning);
 		enableVehiclePlayerCollision = (boolean) a("enable_VehiclePlayerCollision", enableVehiclePlayerCollision);
 		swapEndermiteWithChicken = (boolean) a("enable_SwapEndermiteWithCheckenForLowRider", swapEndermiteWithChicken);

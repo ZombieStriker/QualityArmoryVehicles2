@@ -1,6 +1,6 @@
 package me.zombie_striker.qav;
 
-import me.zombie_striker.qav.menu.MenuHandler;
+import me.zombie_striker.qav.menu.GarageMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,7 +33,7 @@ public class GarageCommand implements CommandExecutor {
             return true;
         }
 
-        MenuHandler.openGarageToOther((Player) commandSender,target);
+        new GarageMenu((Player) commandSender,target).open();
 
         return true;
     }

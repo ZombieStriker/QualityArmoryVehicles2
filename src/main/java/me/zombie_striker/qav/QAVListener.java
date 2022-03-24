@@ -5,7 +5,7 @@ import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
 import me.zombie_striker.qav.api.events.VehicleRepairEvent;
 import me.zombie_striker.qav.hooks.model.Animation;
-import me.zombie_striker.qav.menu.MenuHandler;
+import me.zombie_striker.qav.menu.OverviewMenu;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.util.ForksUtil;
@@ -72,7 +72,7 @@ public class QAVListener implements Listener {
 			}
 
 			if (e.getPlayer().isSneaking()) {
-				MenuHandler.openOverview(e.getPlayer(), ve);
+				new OverviewMenu(e.getPlayer(), ve).open();
 			}
 
 			if (ve.allowUserDriver(e.getPlayer().getUniqueId()) && ve.getDriverSeat().getPassenger() == null) {
@@ -122,7 +122,7 @@ public class QAVListener implements Listener {
 			if (ve != null) {
 				e.setCancelled(true);
 				if (e.getPlayer().isSneaking()) {
-					MenuHandler.openOverview(e.getPlayer(), ve);
+					new OverviewMenu(e.getPlayer(), ve).open();
 				} else {
 					if (ve.allowUserDriver(e.getPlayer().getUniqueId()) && ve.getDriverSeat().getPassenger() == null) {
 						ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
@@ -157,7 +157,7 @@ public class QAVListener implements Listener {
 		if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
 			if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
 				if (e.getPlayer().hasPermission(PermissionHandler.PERM_OPEN_VEHICLE_GUI)) {
-					MenuHandler.openOverview(e.getPlayer(), ve);
+					new OverviewMenu(e.getPlayer(), ve).open();
 				} else {
 					e.getPlayer()
 							.sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
