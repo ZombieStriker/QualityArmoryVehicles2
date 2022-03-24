@@ -69,6 +69,7 @@ tasks {
         relocate("com.cryptomorin.xseries", "me.zombie_striker.qav.util.xseries")
         relocate("net.jodah.expiringmap", "me.zombie_striker.qav.util.expiringmap")
         relocate("org.codemc.worldguardwrapper", "me.zombie_striker.qav.hooks.worldguard")
+        relocate("dev.triumphteam.gui", "me.zombie_striker.qav.gui")
     }
 
     build {
