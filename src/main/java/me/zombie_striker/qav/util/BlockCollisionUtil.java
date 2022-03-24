@@ -41,8 +41,8 @@ public class BlockCollisionUtil {
 	}
 
 	public static double getHeight(Block b){
-		Material type = b.getType();
-		if (b.getType().name().contains("SLAB") || b.getType().name().contains("STEP")) {
+		Material type = getMaterial(b.getLocation());
+		if (type.name().contains("SLAB") || type.name().contains("STEP")) {
 			if (b.getData() == 0)
 				return 0.5;
 			if (b.getData() == 1)
