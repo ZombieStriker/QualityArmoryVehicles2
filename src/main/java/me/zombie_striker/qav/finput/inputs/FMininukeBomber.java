@@ -6,6 +6,7 @@ import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.finput.FInputManager;
 import me.zombie_striker.qav.qamini.ExplosionHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
+import me.zombie_striker.qav.util.BlockCollisionUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -91,7 +92,7 @@ public class FMininukeBomber implements FInput {
 						try {
 							issolid = me.zombie_striker.qg.guns.utils.GunUtil.isSolid(s.getBlock(), s);
 						} catch (Error | Exception e4) {
-							issolid = s.getBlock().getType().isSolid();
+							issolid = BlockCollisionUtil.isSolid(s);
 						}
 						if (issolid || entityNear || distance < 0) {
 							ExplosionHandler.handleAOEExplosion(player, s, 100, 8);

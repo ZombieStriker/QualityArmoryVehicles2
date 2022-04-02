@@ -5,6 +5,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.finput.FInputManager;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
+import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.BulletProtectionUtil;
@@ -238,7 +239,7 @@ public class FShootBullet implements FInput {
 					blocksThatWillPLAYBreak.add(
 							new Location(start.getWorld(), start.getBlockX(), start.getBlockY(), start.getBlockZ()));
 				}
-				if (QAMain.destructableBlocks.contains(start.getBlock().getType())) {
+				if (QAMain.destructableBlocks.contains(BlockCollisionUtil.getMaterial(start))) {
 					blocksThatWillBreak.add(start);
 				}
 
@@ -286,7 +287,7 @@ public class FShootBullet implements FInput {
 						}
 				} else {
 					// start.getWorld().spawnParticle(Particle.BLOCK_DUST,start,start.getBlock().getTypeId());
-					start.getWorld().playEffect(start, Effect.STEP_SOUND, start.getBlock().getType());
+					start.getWorld().playEffect(start, Effect.STEP_SOUND, BlockCollisionUtil.getMaterial(start));
 					break;
 				}
 			}
@@ -308,7 +309,7 @@ public class FShootBullet implements FInput {
 	public static double getTargetedSolidMaxDistance(Vector v, Location start, double maxDistance) {
 		Location test = start.clone();
 		for (int i = 0; i < maxDistance; i++) {
-			if (test.getBlock().getType() != Material.AIR) {
+			if (BlockCollisionUtil.getMaterial(test) != Material.AIR) {
 				if (isSolid(test))
 					return start.distance(test);
 			}
@@ -317,15 +318,6 @@ public class FShootBullet implements FInput {
 		return maxDistance;
 	}
 	public static boolean isSolid(Location loc) {
-		if (loc.getBlock().getType().name().contains("RAIL"))
-			return false;
-		boolean solid;
-		try {
-			solid = me.zombie_striker.qg.guns.utils.GunUtil.isSolid(loc.getBlock(), loc);
-		} catch (Error | Exception e4) {
-			solid = loc.getBlock().getType().isSolid();
-		}
-		return loc.getBlock().getType().name().contains("LEAVES") || loc.getBlock().getType() == Material.GLASS
-				|| solid;
+		return BlockCollisionUtil.isSolid(loc);
 	}
 }

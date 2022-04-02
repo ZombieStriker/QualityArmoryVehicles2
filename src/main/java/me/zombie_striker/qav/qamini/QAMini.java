@@ -68,28 +68,30 @@ public class QAMini implements Listener {
 
 	@SuppressWarnings("deprecation")
 	public static boolean isSolid(Block b, Location l) {
-		if (b.getType().name().endsWith("CARPET")) {
+		Material material = b.getType();
+
+		if (material.name().endsWith("CARPET")) {
 			return false;
 		}
-		if (b.getType().name().contains("LEAVE")) {
+		if (material.name().contains("LEAVE")) {
 			return true;
 		}
-		if (b.getType().name().contains("SLAB") || b.getType().name().contains("STEP")) {
+		if (material.name().contains("SLAB") || material.name().contains("STEP")) {
 			return (!(l.getY() - l.getBlockY() > 0.5) || b.getData() != 0)
 					&& (!(l.getY() - l.getBlockY() <= 0.5) || b.getData() != 1);
 		}
-		if (b.getType().name().contains("BED_") || b.getType().name().contains("_BED")
-				|| b.getType().name().contains("DAYLIGHT_DETECTOR")) {
+		if (material.name().contains("BED_") || material.name().contains("_BED")
+				|| material.name().contains("DAYLIGHT_DETECTOR")) {
 			return !(l.getY() - l.getBlockY() > 0.5);
 		}
-		if (b.getType().name().contains("GLASS")) {
+		if (material.name().contains("GLASS")) {
 			return true;
 		}
 
-		if (b.getType().isOccluding()) {
+		if (material.isOccluding()) {
 			return true;
 		}
-		if (b.getType().name().contains("STAIR")) {
+		if (material.name().contains("STAIR")) {
 			if (b.getData() < 4 && (l.getY() - l.getBlockY() < 0.5))
 				return true;
 			if (b.getData() >= 4 && (l.getY() - l.getBlockY() > 0.5))
