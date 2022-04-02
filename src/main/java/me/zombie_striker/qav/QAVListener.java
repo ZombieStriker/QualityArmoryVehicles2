@@ -71,8 +71,9 @@ public class QAVListener implements Listener {
 				return;
 			}
 
-			if (e.getPlayer().isSneaking()) {
+			if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
 				new OverviewMenu(e.getPlayer(), ve).open();
+				return;
 			}
 
 			if (ve.allowUserDriver(e.getPlayer().getUniqueId()) && ve.getDriverSeat().getPassenger() == null) {
@@ -121,7 +122,7 @@ public class QAVListener implements Listener {
 			VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(e.getRightClicked());
 			if (ve != null) {
 				e.setCancelled(true);
-				if (e.getPlayer().isSneaking()) {
+				if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
 					new OverviewMenu(e.getPlayer(), ve).open();
 				} else {
 					if (ve.allowUserDriver(e.getPlayer().getUniqueId()) && ve.getDriverSeat().getPassenger() == null) {
