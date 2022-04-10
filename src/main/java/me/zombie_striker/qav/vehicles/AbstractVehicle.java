@@ -105,6 +105,18 @@ public abstract class AbstractVehicle {
 		return shouldReturn;
 	}
 
+	public boolean hasFuel(VehicleEntity ve) {
+		if (!enableFuel()) return true;
+
+		if (Main.bypassCoalInCreative) {
+			@SuppressWarnings("deprecation") Entity passenger = ve.getDriverSeat().getPassenger();
+			if (passenger instanceof Player && ((Player) passenger).getGameMode().equals(GameMode.CREATIVE)) {
+				return true;
+			}
+		}
+
+		return ve.getFuel() > 0;
+	}
 
 	public abstract void handleTurnLeft(VehicleEntity ve, PacketEvent event);
 

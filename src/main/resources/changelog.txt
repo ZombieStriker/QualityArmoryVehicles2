@@ -1,3 +1,11 @@
+2.3.1
+  Changelog:
+    - Performance fixes
+    - Hitbox improvements
+    - Fixed vehicle open permission
+    - Added an option to revert back to old plane controls
+    - Fixed helicopters with no fuel
+
 2.3.0.1
   Changelog:
     - Fixed fuel

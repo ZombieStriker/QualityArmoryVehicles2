@@ -63,7 +63,7 @@ public class AbstractHelicopter extends AbstractVehicle {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void tick(VehicleEntity vehicleEntity) {
-		if (vehicleEntity.getDriverSeat().getPassenger() == null) {
+		if (vehicleEntity.getDriverSeat().getPassenger() == null || !hasFuel(vehicleEntity)) {
 			vehicleEntity.setDirectionYHeight(-1);
 		}
 

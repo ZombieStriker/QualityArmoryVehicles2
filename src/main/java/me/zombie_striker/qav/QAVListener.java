@@ -18,6 +18,7 @@ import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -120,6 +121,11 @@ public class QAVListener implements Listener {
 	public void oninteractEntity(PlayerInteractEntityEvent e) {
 		if (e.getPlayer().getVehicle() == null) {
 			VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(e.getRightClicked());
+
+			if (ve == null && e.getRightClicked() instanceof Player && e.getRightClicked().getVehicle() != null) {
+				ve = QualityArmoryVehicles.getVehicleEntityByEntity(e.getRightClicked().getVehicle());
+			}
+
 			if (ve != null) {
 				e.setCancelled(true);
 				if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
