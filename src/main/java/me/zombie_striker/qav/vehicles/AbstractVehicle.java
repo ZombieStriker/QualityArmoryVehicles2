@@ -340,7 +340,7 @@ public abstract class AbstractVehicle {
 					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.01);
 				}
 
-				if (vehicleEntity.getDriverSeat().getPassenger() instanceof Player) {
+				if (Main.modernPlaneMovements && vehicleEntity.getDriverSeat().getPassenger() instanceof Player) {
 					Player player = (Player) vehicleEntity.getDriverSeat().getPassenger();
 					Vector direction = player.getEyeLocation().getDirection();
 					vehicleEntity.setDirectionYHeight(direction.getY());

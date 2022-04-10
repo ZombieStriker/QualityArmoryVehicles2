@@ -116,6 +116,7 @@ public class Main extends JavaPlugin {
 	private static boolean USE_MANUAL_13 = false;
 	public static boolean useDamage = false;
 	public static boolean separateModelAndDriver = false;
+	public static boolean modernPlaneMovements = true;
 
 
 
@@ -427,6 +428,7 @@ public class Main extends JavaPlugin {
 		onlyPublicVehicles = (boolean) a("makeVehiclesPublic", onlyPublicVehicles);
 		useDamage = (boolean) a("unsafe.useDamageInsteadOfCustomModelData", useDamage);
 		separateModelAndDriver = (boolean) a("unsafe.separateModelAndDriver", separateModelAndDriver);
+		modernPlaneMovements = (boolean) a("modernPlaneMovements", modernPlaneMovements);
 		enable_RequirePermToBuyVehicle = (boolean) a("enable_RequirePermToBuyVehicle", enable_RequirePermToBuyVehicle);
 
 		DebugManager.setShouldDisplayInConsole((boolean) a("ENABLE_DEBUG", false));
