@@ -12,7 +12,7 @@ softdepend:
 depend: [ProtocolLib]
 commands:
   QualityArmoryVehicles:
-    description: Create images using blocks
+    description: The main plugin command to manage vehicles
     aliases: [qav]
   garage:
     description: Open the garage
