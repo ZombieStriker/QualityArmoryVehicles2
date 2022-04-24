@@ -38,7 +38,8 @@ public class Animation {
         SPAWN,
         DESPAWN,
         ENTER,
-        BREAK;
+        BREAK,
+        RUN;
 
         public static AnimationType getType(final String s) {
             for (final AnimationType type : values()) {

@@ -484,6 +484,7 @@ public abstract class AbstractVehicle {
 		vehicleEntity.getDriverSeat().setVelocity(velocity);
 		handleOtherStands(vehicleEntity,velocity);
 
+		playAnimation(vehicleEntity, Animation.AnimationType.RUN);
 
 		Entity passenger = vehicleEntity.getDriverSeat().getPassenger();
 		if (passenger instanceof Player) {

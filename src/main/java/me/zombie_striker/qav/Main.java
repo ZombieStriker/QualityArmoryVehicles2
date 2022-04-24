@@ -94,8 +94,6 @@ public class Main extends JavaPlugin {
 	public static boolean destroyOnWater = true;
 	public static boolean swapEndermiteWithChicken = false;
 	public static boolean garageFuel = true;
-	public static boolean enableCarPushing = true;
-	public static boolean enableEntityPushing = true;
 	public static boolean enableVehiclePlayerCollision = true;
 	public static boolean requirePermissionToDrive = false;
 	public static boolean setOwnerIfNoneExist = false;
@@ -415,8 +413,6 @@ public class Main extends JavaPlugin {
 		enableVehiclePlayerCollision = (boolean) a("enable_VehiclePlayerCollision", enableVehiclePlayerCollision);
 		swapEndermiteWithChicken = (boolean) a("enable_SwapEndermiteWithCheckenForLowRider", swapEndermiteWithChicken);
 		garageFuel = (boolean) a("enable_FuelCarsWhenSpawnedFromGarage", garageFuel);
-		enableCarPushing = (boolean) a("enable_PushCarsOnCrash", enableCarPushing);
-		enableEntityPushing = (boolean) a("enable_PushEntityOnCollide", enableEntityPushing);
 		useHeads = (boolean) a("enable_UseHeadsForGUI", useHeads);
 		debug = (boolean) a("ENABLE_DEBUG", debug);
 		debugWithCommand = (boolean) a("override_debug_withCommand", debugWithCommand);
