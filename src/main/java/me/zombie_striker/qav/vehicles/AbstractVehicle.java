@@ -8,10 +8,8 @@ import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
-import me.zombie_striker.qav.util.BlockCollisionUtil;
-import me.zombie_striker.qav.util.HeadPoseUtil;
-import me.zombie_striker.qav.util.HotbarMessager;
-import me.zombie_striker.qav.util.VehicleUtils;
+import me.zombie_striker.qav.nms.NMSUtil;
+import me.zombie_striker.qav.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -165,7 +163,7 @@ public abstract class AbstractVehicle {
 		return rotationDelta;
 	}
 
-	protected double getMaxSpeed() {
+	public double getMaxSpeed() {
 		return maxSpeed;
 	}
 
@@ -558,13 +556,7 @@ public abstract class AbstractVehicle {
 				return false;
 			}
 
-			if (passengers) rider.teleport(offset);
-			entity.eject();
-			entity.teleport(offset);
-
-			if (passengers) {
-				Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> entity.setPassenger(rider), 2L);
-			}
+			NMSUtil.teleport(entity,offset);
 
 			Main.DEBUG("Moved other stand. Previous rider: " + rider + " - new rider: " + entity.getPassenger());
 			return true;

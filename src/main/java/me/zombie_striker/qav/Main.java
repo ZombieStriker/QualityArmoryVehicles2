@@ -23,6 +23,7 @@ import me.zombie_striker.qav.fuel.RepairItemStack;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.QuickShopHook;
+import me.zombie_striker.qav.nms.NMSUtil;
 import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
@@ -189,6 +190,9 @@ public class Main extends JavaPlugin {
 		} else {
 			CustomItemManager.setResourcepack((String) a("QAMini.resourcepackurl", CustomItemManager.getResourcepack()));
 		}
+
+		NMSUtil.init();
+
 		loadComplexParts(false);
 		loadVehicles(false);
 
