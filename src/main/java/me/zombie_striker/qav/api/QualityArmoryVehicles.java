@@ -1,6 +1,8 @@
 package me.zombie_striker.qav.api;
 
 import me.zombie_striker.qav.api.events.VehicleSpawnEvent;
+import me.zombie_striker.qav.attachments.Attachment;
+import me.zombie_striker.qav.attachments.Wheel;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
@@ -17,7 +19,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -130,7 +131,11 @@ public class QualityArmoryVehicles {
 
 
 	public static ItemStack getVehicleItemStack(AbstractVehicle type) {
-		return ItemFact.getCarItem(type);
+		return ItemFact.getItem(type);
+	}
+
+	public static ItemStack getAttachmentItemStack(Attachment attachment) {
+		return ItemFact.getItem(attachment);
 	}
 
 	public static VehicleEntity getVehiclePlayerLookingAt(Player player){

@@ -66,7 +66,7 @@ public class GiveCommand extends SubCommand {
         if (Main.enableGarage) {
             QualityArmoryVehicles.addUnlockedVehicle(reciever,new UnlockedVehicle(ve,ve.getMaxHealth(), true));
         } else {
-            reciever.getInventory().addItem(ItemFact.getCarItem(ve));
+            reciever.getInventory().addItem(ItemFact.getItem(ve));
         }
         sender.sendMessage(Main.prefix + " Gave " + ChatColor.GOLD + reciever.getName() + " " + ve.getName() + ".");
     }

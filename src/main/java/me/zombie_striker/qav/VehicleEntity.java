@@ -1,6 +1,7 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.attachments.Attachment;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
@@ -37,7 +38,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	private List<ArmorStand> modelParts = new ArrayList<>();
 	private Entity driverseat;
-	private HashMap<Integer, Entity> passagers = new HashMap<Integer, Entity>();
+	@ExposeDebug private HashMap<Integer, Entity> passagers = new HashMap<Integer, Entity>();
+	@ExposeDebug private HashMap<Integer, Entity> attachments = new HashMap<>();
 	private Inventory inventory;
 	private Inventory fuels;
 	@ExposeDebug private int fuel = 0;
@@ -198,6 +200,19 @@ public class VehicleEntity implements ConfigurationSerializable {
 			this.driverseat = model;
 		}
 
+
+/*		for (int i = 0; i < vehicleType.getAttachments().size(); i++) {
+			Attachment attachment = vehicleType.getAttachments().get(i);
+
+			ArmorStand entity = (ArmorStand) driverseat.getLocation().getWorld().spawnEntity(driverseat.getLocation().add(attachment.getVector()), EntityType.ARMOR_STAND);
+			entity.setVisible(false);
+			entity.setSmall(true);
+			entity.setCollidable(false);
+			entity.setInvulnerable(true);
+			entity.setHelmet(attachment.build());
+			attachments.put(i, entity);
+		}*/
+
 		ModelEngineHook.createModel(this);
 		vehicleType.playAnimation(this, Animation.AnimationType.SPAWN);
 	}
@@ -245,6 +260,10 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public Collection<Entity> getPassagerSeats() {
 		return passagers.values();
+	}
+
+	public Map<Integer,Entity> getAttachments() {
+		return attachments;
 	}
 
 	public void setAngle(double v) {
@@ -316,6 +335,10 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public void deconstruct(Player player, String message) {
+		deconstruct(player,message,false);
+	}
+
+	public void deconstruct(Player player, String message, boolean disabling) {
 		vehicleType.playAnimation(this, Animation.AnimationType.DESPAWN);
 		driverseat.remove();
 		driverseat = null;
@@ -325,10 +348,13 @@ public class VehicleEntity implements ConfigurationSerializable {
 		for (Entity entity : getPassagerSeats()) {
 			entity.remove();
 		}
+		for (Entity entity : getAttachments().values()) {
+			entity.remove();
+		}
 
 		passagers.clear();
 		modelParts.clear();
-		Main.vehicles.remove(this);
+		if (!disabling) Main.vehicles.remove(this);
 		Main.DEBUG(this.getVehicleUUID() + " removed: " + message);
 	}
 

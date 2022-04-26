@@ -1,5 +1,7 @@
 package me.zombie_striker.qav;
 
+import me.zombie_striker.qav.attachments.Attachment;
+import me.zombie_striker.qav.attachments.Wheel;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class ItemFact {
@@ -41,44 +44,50 @@ public class ItemFact {
 		return a(m, 0, displayname, lore);
 	}
 
-	public static ItemStack getCarItem(AbstractVehicle car) {
+	public static ItemStack getItem(AbstractVehicle car) {
 		if(car != null)
-		return getCarItem(car, car.getMaterial(), car.getItemData());
+			return getItem(car.getDisplayname(), car.getLore(), car.getMaterial(), car.getItemData());
 		return null;
 	}
 
-	public static ItemStack getCarItem(AbstractVehicle car, Material material) {
-		return getCarItem(car, material, car.getItemData());
+	public static ItemStack getItem(Attachment attachment) {
+		if(attachment != null)
+			return getItem(attachment.getName(), null, attachment.getMaterial(), attachment.getId());
+		return null;
 	}
 
-	public static ItemStack getCarItem(AbstractVehicle car, Material material, int data) {
-		ItemStack caritem = null;
+	public static ItemStack getItem(AbstractVehicle car, Material material) {
+		return getItem(car.getDisplayname(),car.getLore(), material, car.getItemData());
+	}
+
+	public static ItemStack getItem(String name, List<String> lore, Material material, int data) {
+		ItemStack item = null;
 		ItemMeta im = null;
 		if (Main.useDamage) {
-			caritem= new ItemStack(material, 1, (short) data);
-			im = caritem.getItemMeta();
+			item= new ItemStack(material, 1, (short) data);
+			im = item.getItemMeta();
 		} else {
 			try {
-				caritem= new ItemStack(material);
-				im = caritem.getItemMeta();
+				item= new ItemStack(material);
+				im = item.getItemMeta();
 				im.setCustomModelData(data);
 			}catch (Error|Exception e45){
-				caritem= new ItemStack(material, 1, (short) data);
-				im = caritem.getItemMeta();
+				item= new ItemStack(material, 1, (short) data);
+				im = item.getItemMeta();
 			}
 		}
 
-		if (car != null) {
-			im.setDisplayName(ChatColor.GOLD + car.getDisplayname());
-			if (car.hasLore())
-				im.setLore(car.getLore());
+		if (name != null) {
+			im.setDisplayName(ChatColor.GOLD + name);
+			if (lore != null)
+				im.setLore(lore);
 		}
 		try {
 			im.setUnbreakable(true);
 		} catch (Error | Exception e4) {
 		}
-		caritem.setItemMeta(im);
-		return caritem;
+		item.setItemMeta(im);
+		return item;
 	}
 
 	public static ItemStack a(Material m, int data, String displayname, String... lore) {

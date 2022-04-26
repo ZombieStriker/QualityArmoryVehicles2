@@ -3,6 +3,7 @@ package me.zombie_striker.qav.vehicles;
 import com.comphenix.protocol.events.PacketEvent;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.attachments.Attachment;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
@@ -15,6 +16,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +46,7 @@ public abstract class AbstractVehicle {
 	private double jumphiehgt = 0.2;
 	private Vector driverSeat;
 	private HashMap<Vector, Integer> passagerOffset = new HashMap<>();
+	private List<Attachment> attachments = new ArrayList<>();
 	private List<Animation> animations = new ArrayList<>();
 
 	private int id;
@@ -130,7 +133,7 @@ public abstract class AbstractVehicle {
 
 	public ItemStack getModel() {
 		if (vehicleModel == null) {
-			vehicleModel = ItemFact.getCarItem(this);
+			vehicleModel = ItemFact.getItem(this);
 		}
 		return vehicleModel;
 	}
@@ -543,6 +546,22 @@ public abstract class AbstractVehicle {
 			newVelo.add(distance);
 			e.setVelocity(newVelo);
 		}
+
+		for (Map.Entry<Integer,Entity> entry : ve.getAttachments().entrySet()) {
+			Attachment attachment = attachments.get(entry.getKey());
+			Location offset = ve.getDriverSeat().getLocation().clone().add(attachment.getVector());
+
+			offset.add(ve.getDriverSeat().getVelocity());
+			offset.subtract(0, 0.6, 0);
+
+			Vector newVelo = velocity.clone();
+			checkDistance(entry.getValue(), offset, true);
+
+			Vector distance = offset.toVector().clone().subtract(entry.getValue().getLocation().toVector());
+			newVelo.add(distance);
+			entry.getValue().setVelocity(newVelo);
+			attachment.animate(ve,(ArmorStand) entry.getValue());
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -593,6 +612,10 @@ public abstract class AbstractVehicle {
 		this.passagerOffset = sizes;
 	}
 
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
 	public List<Animation> getAnimations() {
 		return animations;
 	}
@@ -617,6 +640,10 @@ public abstract class AbstractVehicle {
 
 	public void setRotationMultiplier(double rotationMultiplier) {
 		this.rotationMultiplier = rotationMultiplier;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
 	}
 
 	@Override

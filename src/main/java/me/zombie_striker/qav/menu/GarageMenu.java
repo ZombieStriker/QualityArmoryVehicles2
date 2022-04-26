@@ -25,7 +25,7 @@ public class GarageMenu extends Menu {
 
         final List<UnlockedVehicle> list = QualityArmoryVehicles.unlockedVehicles(target);
         for (UnlockedVehicle uv : list) {
-            this.addItem(new GuiItem(ItemFact.getCarItem(uv.getVehicleType()), (e) -> {
+            this.addItem(new GuiItem(ItemFact.getItem(uv.getVehicleType()), (e) -> {
                 Main.DEBUG("Open Garage");
 
                 if (!Main.enableGarage) {

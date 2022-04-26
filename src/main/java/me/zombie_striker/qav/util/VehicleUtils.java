@@ -37,7 +37,7 @@ public final class VehicleUtils {
         ve.deconstruct(player, message);
         if (player != null) {
             if(!Main.enableGarage)
-                giveOrDrop(player, ItemFact.getCarItem(ve.getType()));
+                giveOrDrop(player, ItemFact.getItem(ve.getType()));
             else {
                 List<UnlockedVehicle> unlockedVehicles = QualityArmoryVehicles.unlockedVehicles(player);
                 UnlockedVehicle uv = QualityArmoryVehicles.findUnlockedVehicle(player, ve.getType());

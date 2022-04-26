@@ -1,5 +1,8 @@
 package me.zombie_striker.qav.config;
 
+import me.zombie_striker.qav.attachments.Attachment;
+import me.zombie_striker.qav.attachments.AttachmentType;
+import me.zombie_striker.qav.attachments.Wheel;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.ModelSize;
@@ -159,6 +162,21 @@ public class VehicleLoader {
 
 			vehicle.setPassagerSpots(sizes);
 		}
+/*		if (c.contains("attachments")) {
+			List<Attachment> attachments = new ArrayList<>();
+
+			for (String s : c.getConfigurationSection("attachments").getKeys(false)) {
+				ConfigurationSection c2 = c.getConfigurationSection("attachments." + s);
+
+				switch (AttachmentType.valueOf(c2.getString("type").toUpperCase())) {
+					case WHEEL:
+						attachments.add(new Wheel(c2.getString("model.name"), c2.getStringList("model.lore"), c2.getInt("model.id"), Material.getMaterial(c2.getString("model.material").toUpperCase()), c2.getVector("position")));
+				}
+
+			}
+
+			vehicle.setAttachments(attachments);
+		}*/
 		if (c.contains("driverseat.Offset"))
 			vehicle.setDriverSeat(c.getVector("driverseat.Offset"));
 		if (c.contains("stopProjectileDamage"))

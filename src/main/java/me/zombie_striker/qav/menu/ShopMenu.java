@@ -94,7 +94,7 @@ public class ShopMenu extends Menu {
                         }
 
                         if (EconHandler.hasEnough(ab.getCost(), (Player) e.getWhoClicked())) {
-                            ItemStack item = ItemFact.getCarItem(ab);
+                            ItemStack item = ItemFact.getItem(ab);
                             if (e.getWhoClicked().getInventory().firstEmpty() == -1) {
                                 e.getWhoClicked().sendMessage("Your inventory is full.");
                                 Main.DEBUG("inventory was full");

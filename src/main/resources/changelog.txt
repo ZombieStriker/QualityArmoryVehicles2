@@ -1,3 +1,9 @@
+2.3.2
+  Changelog:
+    - Fixed passengers teleportation
+    - Added run animation
+    - Fixed concurrent modification exception
+
 2.3.1
   Changelog:
     - Performance fixes

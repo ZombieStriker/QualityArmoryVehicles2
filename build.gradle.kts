@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "me.zombie_striker"
-version = "2.3.1"
+version = "2.3.2"
 description = "QualityArmoryVehicles"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
@@ -47,7 +47,7 @@ dependencies {
     compileOnly("us.myles:viaversion:3.2.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
     compileOnly("me.zombie_striker:QualityArmory:2.0.6")
-    compileOnly("com.github.TownyAdvanced:Towny:0.98.1.6")
+    compileOnly("com.github.TownyAdvanced:Towny:0.98.1.9")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("com.ticxo.modelengine:api:R2.5.0")
     compileOnly("org.maxgamer:QuickShop:5.1.0.6")

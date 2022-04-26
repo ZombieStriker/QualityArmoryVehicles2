@@ -24,6 +24,7 @@ import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.QuickShopHook;
 import me.zombie_striker.qav.nms.NMSUtil;
+import me.zombie_striker.qav.premium.PremiumHandler;
 import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
@@ -145,6 +146,8 @@ public class Main extends JavaPlugin {
 
 		if (this.getDescription().getVersion().contains("SNAPSHOT")) {
 			this.getLogger().warning(String.format("You are using a SNAPSHOT version of %s(%s). This is not recommended for production use.", this.getName(), this.getDescription().getVersion()));
+		} else if (!PremiumHandler.isPremium()) {
+			this.getLogger().warning("You are using a leaked version of the plugin. Please consider buying the premium version.");
 		}
 
 		new MetricsLite(this,12753);
@@ -301,8 +304,10 @@ public class Main extends JavaPlugin {
 
 		for (VehicleEntity ve : vehicles) {
 			if (ve != null)
-				ve.deconstruct(null, "Disabling");
+				ve.deconstruct(null, "Disabling", true);
 		}
+
+		vehicles.clear();
 	}
 
 	public void initVals() {
