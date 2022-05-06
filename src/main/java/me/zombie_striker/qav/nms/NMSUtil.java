@@ -46,17 +46,17 @@ public final class NMSUtil {
         if (entityClass != null) {
             try {
                 getHandle = entityClass.getMethod("getHandle");
-            } catch (NoSuchMethodException ignored) {}
+            } catch (Exception | Error ignored) {}
         }
 
         Class<?> entity = ReflectionUtils.getNMSClass("world.entity","Entity");
         if (entity != null) {
             try {
                 teleport = entity.getMethod(MAPPINGS.get("absMoveTo"), double.class,double.class,double.class,float.class,float.class);
-            } catch (NoSuchMethodException ignored) {
+            } catch (Exception | Error ignored) {
                 try {
                     teleport = entity.getMethod("setLocation", double.class,double.class,double.class,float.class,float.class);
-                } catch (NoSuchMethodException ignored2) {}
+                } catch (Exception | Error ignored2) {}
             }
         }
 
@@ -73,7 +73,7 @@ public final class NMSUtil {
         try {
             Main.DEBUG("Trying to teleporting with NMS.");
             teleport.invoke(getHandle.invoke(entity), to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (Exception | Error e) {
             fallbackTeleport(entity, to);
         }
     }
