@@ -27,7 +27,7 @@ public class FInputManager implements Listener {
 	public static HashMap<String, FInput> handlers = new HashMap<>();
 
 	public static void add(FInput c) {
-		handlers.put(c.getName(), c);
+		handlers.put(c.getName().toUpperCase(), c);
 	}
 
 	public static FInput getHandler(String name) {

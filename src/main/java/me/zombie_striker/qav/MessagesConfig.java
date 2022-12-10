@@ -95,6 +95,7 @@ public class MessagesConfig {
 	public static String COMMANDMESSAGES_REMOVE_VEHICLE_GARAGE =  "All \"%car%\" vehicle types have been removed from %name%'s garage.";
 	public static String COMMANDMESSAGES_TEXTURE = "Click here to download the resource pack";
 	public static String COMMANDMESSAGES_NO_VEHICLE = "&4 You have to ride a vehicle to perform this command.";
+	public static String COMMANDMESSAGES_WHITELIST_OVERRIDE = "&4 You have toggled whitelist override.";
 	public static String COOLDOWN = "&cYou have to wait %time%ms before performing this action again.";
 	public static String NEXT_PAGE = "&aNext Page";
 	public static String PREV_PAGE = "&cPrevious Page";
@@ -133,6 +134,8 @@ public class MessagesConfig {
 				a("Commands.TexturePack", COMMANDMESSAGES_TEXTURE));
 		COMMANDMESSAGES_NO_VEHICLE = (
 				a("Commands.NoVehicle", COMMANDMESSAGES_NO_VEHICLE));
+		COMMANDMESSAGES_WHITELIST_OVERRIDE = (
+				a("Commands.WhitelistOverride", COMMANDMESSAGES_WHITELIST_OVERRIDE));
 
 		MENU_OVERVIEW_TITLE = (
 				a("Menu.Overview.Title", MENU_OVERVIEW_TITLE));

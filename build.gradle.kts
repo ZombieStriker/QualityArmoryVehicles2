@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "me.zombie_striker"
-version = "2.3.3"
+version = "2.3.4"
 description = "QualityArmoryVehicles"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
@@ -33,7 +33,7 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:8.7.1")
+    implementation("com.github.cryptomorin:XSeries:9.1.0")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.2")
@@ -46,11 +46,11 @@ dependencies {
     // Compatibilities
     compileOnly("us.myles:viaversion:3.2.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
-    compileOnly("me.zombie_striker:QualityArmory:2.0.6")
-    compileOnly("com.github.TownyAdvanced:Towny:0.98.1.11")
+    compileOnly("me.zombie_striker:QualityArmory:2.0.7")
+    compileOnly("com.github.TownyAdvanced:Towny:0.98.2.0")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("com.ticxo.modelengine:api:R2.5.0")
-    compileOnly("org.maxgamer:QuickShop:5.1.0.6")
+    compileOnly("org.maxgamer:QuickShop:5.1.0.7")
 }
 
 tasks {
@@ -77,7 +77,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.18.2")
+        minecraftVersion("1.19.2")
     }
 
     processResources {

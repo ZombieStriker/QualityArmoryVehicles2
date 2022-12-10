@@ -8,11 +8,15 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.cryptomorin.xseries.XItemStack.giveOrDrop;
 
 public final class VehicleUtils {
+    private static final List<UUID> OVERRIDE_WHITELIST = new ArrayList<>();
+
     public static void callback(VehicleEntity ve, Player player) {
         callback(ve,player,"Callback");
     }
@@ -54,6 +58,22 @@ public final class VehicleUtils {
                 QualityArmoryVehicles.setUnlockedVehicles(player,unlockedVehicles);
             }
         }
+    }
+
+    public static boolean isOverrideWhitelisted(UUID uuid) {
+        return OVERRIDE_WHITELIST.contains(uuid);
+    }
+
+    public static void setOverrideWhitelisted(UUID uuid, boolean whitelisted) {
+        if (whitelisted) {
+            OVERRIDE_WHITELIST.add(uuid);
+        } else {
+            OVERRIDE_WHITELIST.remove(uuid);
+        }
+    }
+
+    public static void toggleOverrideWhitelisted(UUID uuid) {
+        setOverrideWhitelisted(uuid, !isOverrideWhitelisted(uuid));
     }
 
 }

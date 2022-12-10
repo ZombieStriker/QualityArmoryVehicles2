@@ -1,3 +1,8 @@
+2.3.4
+  Changelog:
+    - 1.19 support
+    - Fixed whitelist override command
+
 2.3.3
   Changelog:
     - Fixed plugin startup

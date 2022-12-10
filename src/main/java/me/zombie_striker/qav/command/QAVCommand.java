@@ -33,6 +33,7 @@ public class QAVCommand implements TabExecutor {
         subcommands.add(new RemoveBuggedCommand(this));
         subcommands.add(new RemoveCommand(this));
         subcommands.add(new RemoveNearbyCommand(this));
+        subcommands.add(new OverrideWhitelistCommand(this));
         subcommands.add(new ShopCommand(this));
         subcommands.add(new SpawnCommand(this));
         subcommands.add(new DumpVehicleCommand(this));

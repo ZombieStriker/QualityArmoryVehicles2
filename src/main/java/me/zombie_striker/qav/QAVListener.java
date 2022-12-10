@@ -178,13 +178,19 @@ public class QAVListener implements Listener {
 							.sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
 				}
 			}
-		} else if (e.getPlayer().hasPermission(PermissionHandler.PERM_OVERRIDE_WHITELIST)) {
-			if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
-				if (ve.getDriverSeat().getPassenger() == null)
+		} else if (e.getPlayer().hasPermission(PermissionHandler.PERM_OVERRIDE_WHITELIST) || VehicleUtils.isOverrideWhitelisted(e.getPlayer().getUniqueId())) {
+			if (ve.getDriverSeat().getPassenger() == null) {
+				if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
 					ve.getDriverSeat().setPassenger(e.getPlayer());
-			} else {
-				e.getPlayer().sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
+				} else {
+					e.getPlayer().sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
+				}
+
+				return;
 			}
+
+			QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(),
+					ve.allowUserDriver(e.getPlayer().getUniqueId()));
 		}
 	}
 
