@@ -1,6 +1,8 @@
 package me.zombie_striker.qav.hooks.model;
 
 import com.ticxo.modelengine.api.ModelEngineAPI;
+import com.ticxo.modelengine.api.animation.state.DefaultStateHandler;
+import com.ticxo.modelengine.api.animation.state.ModelState;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import me.zombie_striker.qav.Main;
@@ -32,18 +34,18 @@ public class ModelEngineHook {
     @SuppressWarnings("deprecation")
     private static void createModel0(@NotNull VehicleEntity vehicle) {
         MODELS.remove(vehicle.getVehicleUUID());
-        ActiveModel model = ModelEngineAPI.api.getModelManager().createActiveModel(vehicle.getType().getName());
+        ActiveModel model = ModelEngineAPI.createActiveModel(vehicle.getType().getName());
         if (model == null) return;
 
-        ModeledEntity modelEntity = ModelEngineAPI.api.getModelManager().createModeledEntity(vehicle.getModelEntity());
+        ModeledEntity modelEntity = ModelEngineAPI.createModeledEntity(vehicle.getModelEntity());
         if (modelEntity == null) return;
 
         Main.DEBUG("Created model for " + vehicle.getType().getName());
 
         vehicle.getModelEntity().setHelmet(new ItemStack(Material.AIR));
 
-        modelEntity.addActiveModel(model);
-        modelEntity.detectPlayers();
+        modelEntity.addModel(model, false);
+        modelEntity.getRangeManager().setRenderDistance(100);
         MODELS.put(vehicle.getVehicleUUID(),modelEntity);
     }
 
@@ -61,7 +63,10 @@ public class ModelEngineHook {
         if (!MODELS.containsKey(vehicle.getVehicleUUID()))
             createModel(vehicle);
 
-        MODELS.get(vehicle.getVehicleUUID()).getActiveModel(vehicle.getType().getName()).addState(id,10,10,1);
+        MODELS.get(vehicle.getVehicleUUID())
+                .getModel(vehicle.getType().getName())
+                .getDefaultStateHandler()
+                .setProperty(ModelState.WALK, new DefaultStateHandler.Property(id, 10, 1, 1));
         Main.DEBUG("Playing animation for " + vehicle.getType().getName());
     }
 
