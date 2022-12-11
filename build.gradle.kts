@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("xyz.jpenilla.run-paper") version "2.0.0"
+    id("xyz.jpenilla.run-paper") version "2.0.1"
 }
 
 group = "me.zombie_striker"
