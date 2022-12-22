@@ -50,7 +50,7 @@ dependencies {
     compileOnly("com.github.TownyAdvanced:Towny:0.98.4.4")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("com.ticxo.modelengine:api:R3.1.1")
-    compileOnly("org.maxgamer:QuickShop:5.1.0.9")
+    compileOnly("org.maxgamer:QuickShop:5.1.1.0")
 }
 
 tasks {
