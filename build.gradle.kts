@@ -37,7 +37,7 @@ dependencies {
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.3")
-    compileOnly("org.jetbrains:annotations:23.0.0")
+    compileOnly("org.jetbrains:annotations:24.0.1")
 
     // API
     compileOnly("net.kyori:adventure-api:4.12.0")
