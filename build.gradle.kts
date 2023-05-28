@@ -2,8 +2,8 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "8.1.0"
-    id("xyz.jpenilla.run-paper") version "2.0.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
 group = "me.zombie_striker"
@@ -33,24 +33,24 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:9.3.0")
+    implementation("com.github.cryptomorin:XSeries:9.3.1")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
-    implementation("dev.triumphteam:triumph-gui:3.1.4")
+    implementation("dev.triumphteam:triumph-gui:3.1.5")
     compileOnly("org.jetbrains:annotations:24.0.1")
 
     // API
-    compileOnly("net.kyori:adventure-api:4.12.0")
+    compileOnly("net.kyori:adventure-api:4.13.1")
     compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
 
     // Compatibilities
     compileOnly("us.myles:viaversion:3.2.1")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
     compileOnly("me.zombie_striker:QualityArmory:2.0.7")
-    compileOnly("com.github.TownyAdvanced:Towny:0.98.6.14")
+    compileOnly("com.github.TownyAdvanced:Towny:0.99.0.11")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly("com.ticxo.modelengine:api:R3.1.5")
-    compileOnly("org.maxgamer:QuickShop:5.1.1.2")
+    compileOnly("com.ticxo.modelengine:api:R3.1.7")
+    compileOnly("org.maxgamer:QuickShop:5.1.2.0")
 }
 
 tasks {
