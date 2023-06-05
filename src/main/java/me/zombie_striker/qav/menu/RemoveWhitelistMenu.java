@@ -12,11 +12,8 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class RemoveWhitelistMenu extends Menu {
@@ -33,31 +30,15 @@ public class RemoveWhitelistMenu extends Menu {
     public void setupItems() {
         this.setPageButtons();
 
-        GuiAction<InventoryClickEvent> action = event -> {
-            Main.DEBUG("Clicked remove whitelist");
-            if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR
-                    || !event.getCurrentItem().hasItemMeta())
-                return;
-            OfflinePlayer clicked = getClickedSkull(event.getCurrentItem());
-            if (clicked != null && ve != null) {
-                if (MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST != null)
-                    event.getWhoClicked().sendMessage(
-                            MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST.replace("%name%", Objects.requireNonNull(clicked.getName())));
-                if (ve.allowUserDriver(clicked.getUniqueId()))
-                    ve.removeFromWhitelist(clicked.getUniqueId());
-                overview.open();
-                Main.DEBUG("Removed from whitelist");
-            }
-        };
-
         if (ve.getWhiteList() != null) {
             for (UUID uuid : ve.getWhiteList()) {
                 if (!uuid.equals(ve.getOwner())) {
-                    String name = Bukkit.getOfflinePlayer(uuid).getName();
-                    if(Main.useHeads) {
-                        this.addItem(new GuiItem(ItemFact.askull(name, ChatColor.YELLOW + name), action));
-                    }else{
-                        this.addItem(new GuiItem(ItemFact.a(Material.STONE, ChatColor.YELLOW + name), action));
+                    OfflinePlayer offline = Bukkit.getOfflinePlayer(uuid);
+                    String name = offline.getName();
+                    if (Main.useHeads) {
+                        this.addItem(new GuiItem(ItemFact.askull(name, ChatColor.YELLOW + name), getAction(offline)));
+                    } else {
+                        this.addItem(new GuiItem(ItemFact.a(Material.STONE, ChatColor.YELLOW + name), getAction(offline)));
                     }
                 }
             }
@@ -65,25 +46,19 @@ public class RemoveWhitelistMenu extends Menu {
 
     }
 
-    @SuppressWarnings("deprecation")
-    private OfflinePlayer getClickedSkull(ItemStack clicked) {
-        try {
-            if (clicked != null && clicked.getType() != Material.PLAYER_HEAD) {
-                Bukkit.getOfflinePlayer(ChatColor.stripColor(clicked.getItemMeta().getDisplayName()));
+    private GuiAction<InventoryClickEvent> getAction(OfflinePlayer player) {
+        return event -> {
+            Main.DEBUG("Clicked remove whitelist");
+            if (ve != null) {
+                if (MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST != null)
+                    event.getWhoClicked().sendMessage(
+                            MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST.replace("%name%", player.getName() == null ? "Unknown" : player.getName()));
+                if (ve.allowUserDriver(player.getUniqueId()))
+                    ve.removeFromWhitelist(player.getUniqueId());
+                overview.open();
+                Main.DEBUG("Removed from whitelist");
             }
-        }catch (Error|Exception e4){
-            if (clicked.getType().name().equals("SKULL_ITEM")) {
-                Bukkit.getOfflinePlayer(ChatColor.stripColor(clicked.getItemMeta().getDisplayName()));
-            }
-        }
-        try {
-            return clicked == null ? null : ((SkullMeta) clicked.getItemMeta()).getOwningPlayer();
-        } catch (Error | Exception ignored) {
-        }
-        try {
-            return Bukkit.getOfflinePlayer(Objects.requireNonNull(((SkullMeta) clicked.getItemMeta()).getOwner()));
-        }catch(Error|Exception e4){
-            return Bukkit.getOfflinePlayer(ChatColor.stripColor(clicked.getItemMeta().getDisplayName()));
-        }
+        };
     }
+
 }
