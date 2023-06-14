@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "me.zombie_striker"
-version = "2.3.5"
+version = "2.3.6"
 description = "QualityArmoryVehicles"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8

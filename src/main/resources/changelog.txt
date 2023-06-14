@@ -1,3 +1,7 @@
+2.3.6
+  Changelog:
+    - 1.20 support
+
 2.3.4
   Changelog:
     - 1.19 support
