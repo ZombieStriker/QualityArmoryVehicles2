@@ -32,7 +32,7 @@ public final class NMSUtil {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
 
             for (String key : config.getKeys(false)) {
-                MAPPINGS.put(key, config.getString(key + "." + ReflectionUtils.VERSION));
+                MAPPINGS.put(key, config.getString(key + "." + ReflectionUtils.NMS_VERSION));
             }
 
             reader.close();
@@ -59,7 +59,7 @@ public final class NMSUtil {
             }
         }
 
-        QualityArmoryVehicles.getPlugin().getLogger().info("Loaded NMS mappings & support. NMS version: " + ReflectionUtils.VERSION);
+        QualityArmoryVehicles.getPlugin().getLogger().info("Loaded NMS mappings & support. NMS version: " + ReflectionUtils.NMS_VERSION);
     }
 
     public static void teleport(Entity entity, Location to) {

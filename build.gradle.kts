@@ -33,14 +33,14 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:9.3.1")
+    implementation("com.github.cryptomorin:XSeries:9.4.0")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.5")
     compileOnly("org.jetbrains:annotations:24.0.1")
 
     // API
-    compileOnly("net.kyori:adventure-api:4.13.1")
+    compileOnly("net.kyori:adventure-api:4.14.0")
     compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
 
     // Compatibilities
@@ -49,7 +49,7 @@ dependencies {
     compileOnly("me.zombie_striker:QualityArmory:2.0.7")
     compileOnly("com.github.TownyAdvanced:Towny:0.99.0.11")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly("com.ticxo.modelengine:api:R3.1.7")
+    compileOnly("com.ticxo.modelengine:api:R3.1.8")
     compileOnly("org.maxgamer:QuickShop:5.1.2.0")
 }
 
