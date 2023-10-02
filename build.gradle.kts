@@ -34,7 +34,7 @@ repositories {
 dependencies {
     // Libraries
     implementation("com.github.cryptomorin:XSeries:9.4.0")
-    implementation("net.jodah:expiringmap:0.5.10")
+    implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.5")
     compileOnly("org.jetbrains:annotations:24.0.1")
