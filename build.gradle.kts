@@ -46,7 +46,7 @@ dependencies {
     // Compatibilities
     compileOnly("us.myles:viaversion:3.2.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-    compileOnly("me.zombie_striker:QualityArmory:2.0.7")
+    compileOnly("me.zombie_striker:QualityArmory:2.0.11")
     compileOnly("com.github.TownyAdvanced:Towny:0.99.0.11")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("com.ticxo.modelengine:api:R3.1.8")
