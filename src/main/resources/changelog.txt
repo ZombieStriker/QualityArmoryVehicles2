@@ -1,3 +1,8 @@
+2.3.7
+  Changelog:
+    - 1.20.2 support
+    - Fixed vehicle damage
+
 2.3.6
   Changelog:
     - 1.20 support
