@@ -45,7 +45,9 @@ public final class NMSUtil {
         if (entityClass != null) {
             try {
                 getHandle = entityClass.getMethod("getHandle");
-            } catch (Exception | Error ignored) {}
+            } catch (Exception | Error ignored) {
+                Main.DEBUG("Unable to find getHandle method. This may cause bugs. Please report this error.");
+            }
         }
 
         Class<?> entity = ReflectionUtils.getNMSClass("world.entity","Entity");
@@ -55,7 +57,9 @@ public final class NMSUtil {
             } catch (Exception | Error ignored) {
                 try {
                     teleport = entity.getMethod("setLocation", double.class,double.class,double.class,float.class,float.class);
-                } catch (Exception | Error ignored2) {}
+                } catch (Exception | Error ignored2) {
+                    Main.DEBUG("Unable to find teleport method. This may cause bugs. Please report this error.");
+                }
             }
         }
 
@@ -73,6 +77,7 @@ public final class NMSUtil {
             Main.DEBUG("Trying to teleporting with NMS.");
             teleport.invoke(getHandle.invoke(entity), to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
         } catch (Exception | Error e) {
+            Main.DEBUG("Unable to teleport with NMS. Falling back to legacy teleport.");
             fallbackTeleport(entity, to);
         }
     }
