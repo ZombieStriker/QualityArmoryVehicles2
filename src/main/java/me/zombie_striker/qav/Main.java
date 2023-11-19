@@ -20,6 +20,7 @@ import me.zombie_striker.qav.finput.*;
 import me.zombie_striker.qav.finput.inputs.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.fuel.RepairItemStack;
+import me.zombie_striker.qav.hooks.QualityArmoryListener;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.QuickShopHook;
@@ -338,6 +339,10 @@ public class Main extends JavaPlugin {
 		} else {
 			Plugin qa = Bukkit.getPluginManager().getPlugin("QualityArmory");
 			QAMini.verboseLogging = qa.getConfig().getBoolean("verboseItemLogging");
+			try {
+				this.getServer().getPluginManager().registerEvents(new QualityArmoryListener(), this);
+			} catch (Error | Exception ignored) {
+			}
 		}
 
 		items = new File(this.getDataFolder(), "items");
