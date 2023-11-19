@@ -2,14 +2,12 @@ package me.zombie_striker.qav.api;
 
 import me.zombie_striker.qav.api.events.VehicleSpawnEvent;
 import me.zombie_striker.qav.attachments.Attachment;
-import me.zombie_striker.qav.attachments.Wheel;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -27,10 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @SuppressWarnings({"deprecation", "unused"})
 public class QualityArmoryVehicles {
@@ -59,7 +54,7 @@ public class QualityArmoryVehicles {
 
     public static Vector rotateRelToCar(Entity e, Vector offset, boolean reverse) {
         VehicleEntity ve = getVehicleEntityByEntity(e);
-        Validate.notNull(ve);
+        Objects.requireNonNull(ve);
         return rotateRelToCar(ve, ve.getModelEntity(), offset, reverse);
     }
 
