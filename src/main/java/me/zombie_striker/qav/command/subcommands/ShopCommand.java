@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.command.subcommands;
 
+import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
@@ -28,7 +29,7 @@ public class ShopCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
             return;
         }
 

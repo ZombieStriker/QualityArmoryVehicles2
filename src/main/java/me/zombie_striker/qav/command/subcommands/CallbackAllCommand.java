@@ -33,7 +33,7 @@ public class CallbackAllCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission(PermissionHandler.PERM_CALLBACK_ALL)) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
             return;
         }
 
@@ -46,6 +46,6 @@ public class CallbackAllCommand extends SubCommand {
             }
         }
 
-        sender.sendMessage(MessagesConfig.COMMANDMESSAGE_CALLBACKALL.replace("%count%", String.valueOf(count)));
+        sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGE_CALLBACKALL.replace("%count%", String.valueOf(count)));
     }
 }

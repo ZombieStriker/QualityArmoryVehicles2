@@ -28,7 +28,7 @@ public class ReloadCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission("qualityarmoryvehicles.reload")) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
             return;
         }
 

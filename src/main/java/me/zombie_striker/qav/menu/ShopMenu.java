@@ -39,7 +39,7 @@ public class ShopMenu extends Menu {
                 RepairItemStack repairItem = Main.repairItem;
 
                 if (!EconHandler.hasEnough(repairItem.getCost(), (Player) e.getWhoClicked())) {
-                    e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_NOT_ENOUGH_MONEY);
+                    e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_NOT_ENOUGH_MONEY);
                     return;
                 }
 
@@ -61,7 +61,7 @@ public class ShopMenu extends Menu {
                     if (!canShop(e.getWhoClicked())) return;
 
                     if (!EconHandler.hasEnough(fuel.getCost(), (Player) e.getWhoClicked())) {
-                        e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_NOT_ENOUGH_MONEY);
+                        e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_NOT_ENOUGH_MONEY);
                         return;
                     }
 
@@ -88,7 +88,7 @@ public class ShopMenu extends Menu {
                             int maxAmount = PermissionHandler.getMaxOwnVehicles((Player) e.getWhoClicked());
                             int spawned = QualityArmoryVehicles.getOwnedVehicles(e.getWhoClicked().getUniqueId()).size();
                             if (spawned >= maxAmount) {
-                                e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_TOO_MANY_VEHICLES);
+                                e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_TOO_MANY_VEHICLES);
                                 return;
                             }
                         }
@@ -101,7 +101,7 @@ public class ShopMenu extends Menu {
                                 return;
                             }
                             EconHandler.pay(ab.getCost(), (Player) e.getWhoClicked());
-                            e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_BOUGHT_CAR
+                            e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_BOUGHT_CAR
                                     .replace("%car%", ab.getDisplayname()).replace("%price%", ab.getCost() + ""));
                             if (Main.enableGarage) {
                                 QualityArmoryVehicles.addUnlockedVehicle((Player) e.getWhoClicked(), new UnlockedVehicle(ab,ab.getMaxHealth(),true));
@@ -111,7 +111,7 @@ public class ShopMenu extends Menu {
                             Main.DEBUG("Finished paying for vehicle");
                             LAST_SHOP.put(e.getWhoClicked().getUniqueId(), System.currentTimeMillis());
                         } else {
-                            e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_NOT_ENOUGH_MONEY);
+                            e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_NOT_ENOUGH_MONEY);
                         }
                     }));
                 }

@@ -71,7 +71,7 @@ public class QAVListener implements Listener {
 				if (event.isCancelled()) return;
 
 				ve.setHealth(ve.getType().getMaxHealth());
-				e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.MESSAGE_REPAIR));
+				e.getPlayer().sendMessage(Main.prefix + MessagesConfig.MESSAGE_REPAIR);
 				return;
 			}
 

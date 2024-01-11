@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.qamini;
 
+import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
 import me.zombie_striker.qav.customitemmanager.CustomItemManager;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
@@ -240,18 +241,15 @@ public class QAMini implements Listener {
 				if (warning)
 					try {
 						player.sendTitle(
-								ChatColor.RED + ChatColor.translateAlternateColorCodes('&',
-										"&c&l Downloading Resourcepack..."),
-								ChatColor.translateAlternateColorCodes('&',
-										"&f Accept the resourcepack to see the custom items"));
+								MessagesConfig.RESOURCEPACK_TITLE,
+								MessagesConfig.RESOURCEPACK_SUBTITLE);
 					} catch (Error e2) {
-						player.sendMessage(ChatColor.RED
-								+ ChatColor.translateAlternateColorCodes('&', "&c&l Downloading Resourcepack..."));
-						player.sendMessage(ChatColor.RED + ChatColor.translateAlternateColorCodes('&',
-								"&f Accept the resourcepack to see the custom items"));
+						player.sendMessage(MessagesConfig.RESOURCEPACK_TITLE);
+						player.sendMessage(MessagesConfig.RESOURCEPACK_SUBTITLE);
 					}
-				player.sendMessage(Main.prefix
-						+ "In case the resourcepack crashes your client, reject the request and use /qa getResourcepack to get the resourcepack.");
+				if (MessagesConfig.RESOURCEPACK_CRASH.length() > 2) {
+					player.sendMessage(Main.prefix + MessagesConfig.RESOURCEPACK_CRASH);
+				}
 				new BukkitRunnable() {
 					@Override
 					public void run() {

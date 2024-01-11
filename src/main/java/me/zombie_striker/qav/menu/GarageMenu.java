@@ -39,12 +39,12 @@ public class GarageMenu extends Menu {
                 if (Main.enableVehicleLimiter
                         && QualityArmoryVehicles.getOwnedVehicles(target.getUniqueId())
                         .size() >= PermissionHandler.getMaxOwnVehicles(target)) {
-                    e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_TOO_MANY_VEHICLES);
+                    e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_TOO_MANY_VEHICLES);
                     e.getWhoClicked().closeInventory();
                 } else {
                     if (Main.requirePermissionToDrive) {
                         if (!PermissionHandler.canDrive(player, ab)) {
-                            e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_NO_PERM_DRIVE);
+                            e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_NO_PERM_DRIVE);
                             Main.DEBUG("Cannot drive because player does not have permission");
                             return;
                         }
@@ -77,7 +77,7 @@ public class GarageMenu extends Menu {
                     }
 
                     if (inUse >= amountHas) {
-                        e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_TOO_MANY_VEHICLES_Type);
+                        e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_TOO_MANY_VEHICLES_Type);
                         Main.DEBUG("Player has too many vehicles.");
                         return;
                     }

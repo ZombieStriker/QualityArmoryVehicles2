@@ -52,7 +52,7 @@ public class RemoveWhitelistMenu extends Menu {
             if (ve != null) {
                 if (MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST != null)
                     event.getWhoClicked().sendMessage(
-                            MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST.replace("%name%", player.getName() == null ? "Unknown" : player.getName()));
+                            Main.prefix + MessagesConfig.MESSAGE_REMOVE_PLAYER_WHITELIST.replace("%name%", player.getName() == null ? "Unknown" : player.getName()));
                 if (ve.allowUserDriver(player.getUniqueId()))
                     ve.removeFromWhitelist(player.getUniqueId());
                 overview.open();

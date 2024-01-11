@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.command.subcommands;
 
+import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
@@ -33,12 +34,12 @@ public class OverrideWhitelistCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission(PermissionHandler.PERM_OVERRIDE_WHITELIST_COMMAND)) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
             return;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
             return;
         }
 

@@ -94,7 +94,7 @@ public abstract class AbstractVehicle {
 							} catch (Error | Exception ignored) {
 							}
 						} else {
-							event.getPlayer().sendMessage(MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
+							event.getPlayer().sendMessage(Main.prefix + MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
 						}
 				} catch (Error | Exception ignored) {
 				}

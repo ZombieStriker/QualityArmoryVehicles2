@@ -115,13 +115,13 @@ public class OverviewMenu extends Menu {
 
                     driver = ve.getDriverSeat().getPassenger();
                     if (driver != null) {
-                        e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_CannotPickupWhileInVehicle);
+                        e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_CannotPickupWhileInVehicle);
                         return;
                     }
                     e.getWhoClicked().closeInventory();
 
                     if (e.getWhoClicked().getInventory().firstEmpty() == -1)
-                        e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_PICKUP_DROPPED);
+                        e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_PICKUP_DROPPED);
 
                     VehicleUtils.callback(ve,(Player) e.getWhoClicked(),"pickup_menu");
                 }
@@ -135,7 +135,7 @@ public class OverviewMenu extends Menu {
                     MessagesConfig.ICONLORE_currentowner.replaceAll("%owner%", name)), (e) -> {
                 if (ve.getOwner() != null && ve.getOwner().equals(e.getWhoClicked().getUniqueId())) {
                     ve.setOwner(null);
-                    e.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_NO_OWNER_NOW);
+                    e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_NO_OWNER_NOW);
                     e.getWhoClicked().closeInventory();
                 }
             }));

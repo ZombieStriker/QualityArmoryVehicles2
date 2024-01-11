@@ -57,7 +57,7 @@ public class Main extends JavaPlugin {
 	public static boolean debug = false;
 	public static boolean verboseLogging = false;
 
-	public static String prefix = "&6[QA-Vehicles]&f";
+	public static String prefix = "&6&lQAVehicles &f&l»&7";
 
 	public static QAMini minihandler = null;// = new QAMini();
 

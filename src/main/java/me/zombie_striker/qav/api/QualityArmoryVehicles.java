@@ -186,7 +186,7 @@ public class QualityArmoryVehicles {
     public static VehicleEntity spawnVehicle(AbstractVehicle ab, Location location, @Nullable Player player) {
         if (location.getWorld() != null && Main.blacklistedWorlds.contains(location.getWorld().getName())) {
             if (player != null)
-                player.sendMessage(Main.prefix + " " + MessagesConfig.MESSAGE_BLACKLIST_WORLD);
+                player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_BLACKLIST_WORLD);
             return null;
         }
 
@@ -221,7 +221,7 @@ public class QualityArmoryVehicles {
             if (ve.getOwner() == null && Main.setOwnerIfNoneExist) {
                 ve.setOwner(player.getUniqueId());
                 if (MessagesConfig.MESSAGE_NOW_OWN_CAR.length() > 1) {
-                    player.sendMessage(MessagesConfig.MESSAGE_NOW_OWN_CAR.replace("%car%",
+                    player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_NOW_OWN_CAR.replace("%car%",
                             ChatColor.stripColor(ve.getType().getDisplayname())));
                 }
             }

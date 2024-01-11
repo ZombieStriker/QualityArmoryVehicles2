@@ -34,7 +34,7 @@ public class CallbackCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission(PermissionHandler.PERM_CALLBACK)) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
             return;
         }
 
@@ -54,6 +54,6 @@ public class CallbackCommand extends SubCommand {
                 VehicleUtils.callback(ve, (Player) sender);
         }
 
-        sender.sendMessage(MessagesConfig.COMMANDMESSAGE_CALLBACK.replace("%radius%", String.valueOf(radius)));
+        sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGE_CALLBACK.replace("%radius%", String.valueOf(radius)));
     }
 }

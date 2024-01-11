@@ -36,12 +36,12 @@ public class DumpVehicleCommand extends SubCommand {
     @Override
     public void perform(@NotNull CommandSender sender, String[] args) {
         if (!sender.hasPermission(PermissionHandler.PERM_DEBUG)) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
             return;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
             return;
         }
 
@@ -50,7 +50,7 @@ public class DumpVehicleCommand extends SubCommand {
             VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
 
             if (vehicle == null) {
-                sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_VEHICLE);
+                sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_VEHICLE);
                 return;
             }
 

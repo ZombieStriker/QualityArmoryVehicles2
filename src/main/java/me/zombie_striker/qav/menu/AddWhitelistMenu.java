@@ -41,7 +41,7 @@ public class AddWhitelistMenu extends Menu {
     private GuiAction<InventoryClickEvent> getAction(Player player) {
         return event -> {
             Main.DEBUG("Opend add whitelist");
-            event.getWhoClicked().sendMessage(MessagesConfig.MESSAGE_ADD_PLAYER_WHITELIST.replace("%name%", player.getName()));
+            event.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_ADD_PLAYER_WHITELIST.replace("%name%", player.getName()));
             if (!ve.allowUserDriver(player.getUniqueId()))
                 ve.addToWhitelist(player.getUniqueId());
             overview.open();

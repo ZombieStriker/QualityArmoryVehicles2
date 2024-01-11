@@ -29,7 +29,7 @@ public class DebugCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission(PermissionHandler.PERM_DEBUG)) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
             return;
         }
 

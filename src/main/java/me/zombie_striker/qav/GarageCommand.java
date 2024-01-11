@@ -13,7 +13,7 @@ public class GarageCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
+            commandSender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
             return true;
         }
 
@@ -21,7 +21,7 @@ public class GarageCommand implements CommandExecutor {
 
         if (args.length == 1) {
             if (!commandSender.hasPermission("qualityarmoryvehicles.garage.other")) {
-                commandSender.sendMessage(MessagesConfig.COMMANDMESSAGES_NO_PERM);
+                commandSender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_PERM);
                 return true;
             }
 

@@ -30,7 +30,7 @@ public class GarageCommand extends SubCommand {
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
             return;
         }
 

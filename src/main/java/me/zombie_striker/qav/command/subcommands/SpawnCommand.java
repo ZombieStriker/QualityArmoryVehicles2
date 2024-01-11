@@ -8,7 +8,6 @@ import me.zombie_striker.qav.command.SubCommand;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,13 +54,13 @@ public class SpawnCommand extends SubCommand {
         } else if (sender instanceof Player) {
             location = ((Player) sender).getLocation();
         } else {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs));
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
             return;
         }
 
         AbstractVehicle ab = QualityArmoryVehicles.getVehicle(name);
         if (ab == null) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', MessagesConfig.COMMANDMESSAGES_VALID_VEHICLE));
+            sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_VALID_VEHICLE);
             return;
         }
 
