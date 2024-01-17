@@ -483,6 +483,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public boolean isSubmerged() {
+		if (driverseat == null)
+			return false;
 		return BlockCollisionUtil.getMaterial(driverseat.getLocation().add(0, 1.6, 0)) == Material.WATER;
 	}
 

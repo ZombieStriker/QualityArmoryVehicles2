@@ -491,7 +491,7 @@ public abstract class AbstractVehicle {
 		if (passenger instanceof Player) {
 			Player player = (Player) passenger;
 			// Handle protection
-			if (!ProtectionHandler.canBreak(player,vehicleEntity.getDriverSeat().getLocation())) {
+			if (!ProtectionHandler.canMove(player,vehicleEntity.getDriverSeat().getLocation())) {
 				VehicleUtils.callback(vehicleEntity, Bukkit.getPlayer(vehicleEntity.getOwner()), "Not allowed");
 			}
 

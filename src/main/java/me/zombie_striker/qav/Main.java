@@ -21,6 +21,7 @@ import me.zombie_striker.qav.finput.inputs.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.fuel.RepairItemStack;
 import me.zombie_striker.qav.hooks.QualityArmoryListener;
+import me.zombie_striker.qav.hooks.implementation.WorldGuardHook;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.QuickShopHook;
@@ -138,6 +139,14 @@ public class Main extends JavaPlugin {
 
 	public static boolean isVersionHigherThan(int first, int second) {
 		return QAMini.isVersionHigherThan(first, second);
+	}
+
+	@Override
+	public void onLoad() {
+		try {
+			if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null)
+				WorldGuardHook.register();
+		} catch (Error | Exception ignored) {}
 	}
 
 	@Override

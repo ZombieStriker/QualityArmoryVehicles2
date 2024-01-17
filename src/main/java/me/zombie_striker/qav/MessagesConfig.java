@@ -46,6 +46,7 @@ public class MessagesConfig {
 	public static String MESSAGE_REMOVE_PLAYER_WHITELIST = " Removed player &6&n%name%&7 from whitelist";
 	public static String MESSAGE_PICKUP_DROPPED = " There were too many items in the trunk. Some items have been dropped to the floor.";
 	public static String MESSAGE_BLACKLIST_WORLD = "&c You are not allowed to place vehicles in this world.";
+	public static String MESSAGE_BLACKLIST_PLACE = "&c You are not allowed to place vehicles in this place.";
 	public static String MESSAGE_NOW_OWN_CAR = " You are now the owner of this &6&n%car%";
 	public static String MESSAGE_BOUGHT_CAR = " You have bought &6%car%&7 for &6$%price%";
 	public static String MESSAGE_NOT_ENOUGH_MONEY = "&c You do not have enough money!";
@@ -80,7 +81,7 @@ public class MessagesConfig {
 	public static String COMMANDMESSAGES_ONLY_PLAYERs = "&c Only players can use this command.";
 	public static String COMMANDMESSAGES_VALID_VEHICLE = "&c The name provided is not of a registered vehicle.";
 	public static String COMMANDMESSAGES_REMOVE_BUGGED = " Removed all bugged vehicles from your world.";
-	public static String COMMANDMESSAGE_CALLBACKALL = " All &6&n%count%&7 vehicles have been returned to their owners.";
+	public static String COMMANDMESSAGE_CALLBACKALL = " &7All &6&n%count%&7 vehicles have been returned to their owners.";
 	public static String COMMANDMESSAGE_CALLBACK = " Called back all vehicles within a &6&n%radius%&7 radius of the player.";
 	public static String COMMANDMESSAGES_TEXTURE = " Click here to download the resource pack";
 	public static String COMMANDMESSAGES_NO_VEHICLE = "&c You have to ride a vehicle to perform this command.";
@@ -207,6 +208,8 @@ public class MessagesConfig {
 
 		MESSAGE_BLACKLIST_WORLD = (
 				a("Messages.BlacklistedWorld_StopPlace", MESSAGE_BLACKLIST_WORLD));
+		MESSAGE_BLACKLIST_PLACE = (
+				a("Messages.BlacklistedPlace_StopPlace", MESSAGE_BLACKLIST_PLACE));
 		MESSAGE_NO_PERM_DRIVE = (
 				a("Messages.NoPermissionToDrive", MESSAGE_NO_PERM_DRIVE));
 		COMMANDMESSAGES_NO_PERM = (

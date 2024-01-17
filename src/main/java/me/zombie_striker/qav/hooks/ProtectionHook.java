@@ -4,5 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public interface ProtectionHook {
-    boolean canBreak(Player player, Location location);
+    boolean canMove(Player player, Location location);
+    boolean canPlace(Player player, Location location);
+    boolean canRemove(Player player, Location location);
 }

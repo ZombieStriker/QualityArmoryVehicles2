@@ -18,12 +18,20 @@ public class ProtectionHandler {
         hook("Towny", TownyHook::new);
     }
 
-    public static boolean canBreak(Player player, Location target) {
-        return compatibilities.stream().allMatch(compatibility -> compatibility.canBreak(player, target));
+    public static boolean canMove(Player player, Location target) {
+        return compatibilities.stream().allMatch(compatibility -> compatibility.canMove(player, target));
+    }
+
+    public static boolean canPlace(Player player, Location target) {
+        return compatibilities.stream().allMatch(compatibility -> compatibility.canPlace(player, target));
+    }
+
+    public static boolean canRemove(Player player, Location target) {
+        return compatibilities.stream().allMatch(compatibility -> compatibility.canRemove(player, target));
     }
 
     public static void hook(String plugin, CompatibilityConstructor constructor) {
-        if (Bukkit.getPluginManager().isPluginEnabled(plugin) && (boolean) Main.a("hooks." + plugin, true)) {
+        if (Bukkit.getPluginManager().getPlugin(plugin) != null && (boolean) Main.a("hooks." + plugin, true)) {
             compatibilities.add(constructor.create());
         }
     }

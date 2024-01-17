@@ -36,68 +36,72 @@ public class GarageMenu extends Menu {
                 }
 
                 AbstractVehicle ab = QualityArmoryVehicles.getVehicleByItem(e.getCurrentItem());
+
+                if (Main.requirePermissionToDrive) {
+                    if (!PermissionHandler.canDrive(player, ab)) {
+                        e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_NO_PERM_DRIVE);
+                        Main.DEBUG("Cannot drive because player does not have permission");
+                        return;
+                    }
+                }
+
+
+                int inUse = 0;
+                for (VehicleEntity ve : QualityArmoryVehicles.getOwnedVehicles(target.getUniqueId())) {
+                    if (ve != null)
+                        if (ve.getDriverSeat() != null && ve.getModelEntity() != null)
+                            if (ve.getType() == ab)
+                                inUse++;
+                }
+                int amountHas = 0;
+                for (UnlockedVehicle alllist : list)
+                    if (alllist.getVehicleType() == ab)
+                        amountHas++;
+
+                UnlockedVehicle unlockedVehicle = QualityArmoryVehicles.findUnlockedVehicle(player, ab);
+                if (!unlockedVehicle.isInGarage()) {
+                    e.getWhoClicked().closeInventory();
+                    QualityArmoryVehicles.removeUnlockedVehicle(target, unlockedVehicle);
+                    Main.vehicles
+                            .stream()
+                            .filter((entity) -> entity.getOwner().equals(target.getUniqueId()))
+                            .filter((entity) -> entity.getType().getName().equals(unlockedVehicle.getVehicleType().getName()))
+                            .findFirst()
+                            .ifPresent((ve) -> VehicleUtils.callback(ve, target, "Garage callback"));
+                    return;
+                }
+
                 if (Main.enableVehicleLimiter
                         && QualityArmoryVehicles.getOwnedVehicles(target.getUniqueId())
                         .size() >= PermissionHandler.getMaxOwnVehicles(target)) {
                     e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_TOO_MANY_VEHICLES);
                     e.getWhoClicked().closeInventory();
-                } else {
-                    if (Main.requirePermissionToDrive) {
-                        if (!PermissionHandler.canDrive(player, ab)) {
-                            e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_NO_PERM_DRIVE);
-                            Main.DEBUG("Cannot drive because player does not have permission");
-                            return;
-                        }
-                    }
 
-
-                    int inUse = 0;
-                    for (VehicleEntity ve : QualityArmoryVehicles.getOwnedVehicles(target.getUniqueId())) {
-                        if (ve != null)
-                            if(ve.getDriverSeat()!=null && ve.getModelEntity()!=null)
-                                if (ve.getType() == ab)
-                                    inUse++;
-                    }
-                    int amountHas = 0;
-                    for (UnlockedVehicle alllist : list)
-                        if (alllist.getVehicleType() == ab)
-                            amountHas++;
-
-                    UnlockedVehicle unlockedVehicle = QualityArmoryVehicles.findUnlockedVehicle(player, ab);
-                    if (!unlockedVehicle.isInGarage()) {
-                        e.getWhoClicked().closeInventory();
-                        QualityArmoryVehicles.removeUnlockedVehicle(target,unlockedVehicle);
-                        Main.vehicles
-                                .stream()
-                                .filter((entity) -> entity.getOwner().equals(target.getUniqueId()))
-                                .filter((entity) -> entity.getType().getName().equals(unlockedVehicle.getVehicleType().getName()))
-                                .findFirst()
-                                .ifPresent((ve) -> VehicleUtils.callback(ve,target,"Garage callback"));
-                        return;
-                    }
-
-                    if (inUse >= amountHas) {
-                        e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_TOO_MANY_VEHICLES_Type);
-                        Main.DEBUG("Player has too many vehicles.");
-                        return;
-                    }
-
-                    VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(unlockedVehicle, (Player) e.getWhoClicked());
-                    if (ve == null)
-                        return;
-                    if (!Main.enableGarageCallback)
-                        QualityArmoryVehicles.removeUnlockedVehicle(target,unlockedVehicle);
-                    else {
-                        QualityArmoryVehicles.removeUnlockedVehicle(target,unlockedVehicle);
-                        unlockedVehicle.setInGarage(false);
-                        QualityArmoryVehicles.addUnlockedVehicle(target,unlockedVehicle);
-                    }
-
-                    if (Main.garageFuel)
-                        ve.setFuel(500 * 64);
-                    ve.getDriverSeat().setPassenger(e.getWhoClicked());
-                    Main.DEBUG("Set as passager and added fuel");
+                    return;
                 }
+
+                if (inUse >= amountHas) {
+                    e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_TOO_MANY_VEHICLES_Type);
+                    Main.DEBUG("Player has too many vehicles.");
+                    return;
+                }
+
+                VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(unlockedVehicle, (Player) e.getWhoClicked());
+                if (ve == null)
+                    return;
+                if (!Main.enableGarageCallback)
+                    QualityArmoryVehicles.removeUnlockedVehicle(target, unlockedVehicle);
+                else {
+                    QualityArmoryVehicles.removeUnlockedVehicle(target, unlockedVehicle);
+                    unlockedVehicle.setInGarage(false);
+                    QualityArmoryVehicles.addUnlockedVehicle(target, unlockedVehicle);
+                }
+
+                if (Main.garageFuel)
+                    ve.setFuel(500 * 64);
+                ve.getDriverSeat().setPassenger(e.getWhoClicked());
+                Main.DEBUG("Set as passager and added fuel");
+
                 e.getWhoClicked().closeInventory();
             }));
         }

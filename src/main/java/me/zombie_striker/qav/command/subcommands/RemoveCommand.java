@@ -2,16 +2,20 @@ package me.zombie_striker.qav.command.subcommands;
 
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
+import me.zombie_striker.qav.UnlockedVehicle;
 import me.zombie_striker.qav.VehicleEntity;
+import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,8 +55,18 @@ public class RemoveCommand extends SubCommand {
         Main.vehicles.removeIf(ve -> ve.getType().getName().equalsIgnoreCase(args[0]));
 
         for (VehicleEntity entity : collect) {
-            entity.deconstruct(null,"Remove command");
+            entity.deconstruct(null, "Remove command");
         }
+
+        Bukkit.getScheduler().runTaskAsynchronously(QualityArmoryVehicles.getPlugin(), () -> {
+            List<File> files = QualityArmoryVehicles.getUnlockedVehiclesFiles();
+            for (File file : files) {
+                List<UnlockedVehicle> unlockedVehicles = QualityArmoryVehicles.parseUnlockedVehicles(file);
+                unlockedVehicles.removeIf(unlockedVehicle -> unlockedVehicle.getVehicleType().getName().equalsIgnoreCase(args[0]));
+
+                QualityArmoryVehicles.setUnlockedVehicles(file, unlockedVehicles);
+            }
+        });
     }
 
     @Override

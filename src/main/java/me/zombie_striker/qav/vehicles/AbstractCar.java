@@ -99,6 +99,8 @@ public class AbstractCar extends AbstractVehicle {
 
 	@Override
 	public void tick(VehicleEntity vehicleEntity) {
+		if (vehicleEntity.getDriverSeat() == null) return;
+
 		basicDirections(vehicleEntity,canJump(),false);
 		if(Main.destroyOnWater && vehicleEntity.isSubmerged()){
 			vehicleEntity.deconstruct(null,"UnderWater");
