@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.qamini;
 
+import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
 import me.zombie_striker.qav.customitemmanager.CustomItemManager;
@@ -29,7 +30,6 @@ import java.util.*;
 @SuppressWarnings("deprecation")
 public class QAMini implements Listener {
 
-	private static final String SERVER_VERSION;
 	private static final String CALCTEXT = ChatColor.BLACK + "qa:";
 	public static List<MaterialStorage> registeredItems = new ArrayList<>();
 	//public static String customResourcepack = "https://www.dropbox.com/s/i52dxtzop7j8oel/QualityArmoryvCarsOnly%20v1.0.zip?dl=1";
@@ -44,27 +44,8 @@ public class QAMini implements Listener {
 	public static boolean verboseLogging = false;
 	public static String S_ITEM_VARIENTS_NEW = "Variant";
 
-	static {
-		String name = Bukkit.getServer().getClass().getName();
-		name = name.substring(name.indexOf("craftbukkit.") + "craftbukkit.".length());
-		name = name.substring(0, name.indexOf("."));
-		SERVER_VERSION = name;
-	}
-
 	public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
-		String firstChar = SERVER_VERSION.substring(1, 2);
-		int fInt = Integer.parseInt(firstChar);
-		if (fInt < mainVersion)
-			return false;
-		StringBuilder secondChar = new StringBuilder();
-		for (int i = 3; i < 10; i++) {
-			if (SERVER_VERSION.charAt(i) == '_' || SERVER_VERSION.charAt(i) == '.')
-				break;
-			secondChar.append(SERVER_VERSION.charAt(i));
-		}
-
-		int sInt = Integer.parseInt(secondChar.toString());
-		return sInt >= secondVersion;
+		return XReflection.supports(secondVersion);
 	}
 
 	@SuppressWarnings("deprecation")

@@ -41,7 +41,7 @@ public class VehicleLoader {
 			}
 		}
 		if(!Main.verboseLogging){
-			QualityArmoryVehicles.getPlugin().getLogger().info("-Loaded "+count+" Vehicle types");
+			QualityArmoryVehicles.getPlugin().getLogger().info("Loaded "+count+" Vehicle types");
 		}
 	}
 

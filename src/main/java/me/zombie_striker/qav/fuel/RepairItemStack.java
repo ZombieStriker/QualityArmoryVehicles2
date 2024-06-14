@@ -1,6 +1,6 @@
 package me.zombie_striker.qav.fuel;
 
-import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
 import org.bukkit.ChatColor;
@@ -66,7 +66,7 @@ public class RepairItemStack {
         FileConfiguration configuration = YamlConfiguration.loadConfiguration(repairYML);
 
         update(configuration,"name", "&6Repair Vehicle");
-        update(configuration,"material", ReflectionUtils.supports(14) ? Material.RABBIT_HIDE.name() : Material.DIAMOND_AXE.name());
+        update(configuration,"material", XReflection.supports(14) ? Material.RABBIT_HIDE.name() : Material.DIAMOND_AXE.name());
         update(configuration,"lore", Collections.singletonList("&7Use this item to repair your vehicle"));
         update(configuration,"data", 0);
         update(configuration,"shouldBeInShop", true);

@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.qamini;
 
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -21,7 +22,7 @@ public class ParticleHandlers {
 		}
 
 		try {
-			loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 1);
+			loc.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), loc, 1);
 		} catch (Error | Exception ignored) {
 		}
 	}
@@ -86,9 +87,9 @@ public class ParticleHandlers {
 			if (is13) {
 				Particle.DustOptions dust = new Particle.DustOptions(
 						Color.fromRGB((int) (r * 255), (int) (g * 255), (int) (b * 255)), 1);
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
+				loc.getWorld().spawnParticle(XParticle.DUST.get(), loc.getX(), loc.getY(), loc.getZ(), 0, 0, 0, 0, dust);
 			} else {
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
+				loc.getWorld().spawnParticle(XParticle.DUST.get(), loc.getX(), loc.getY(), loc.getZ(), 0, r, g, b, 1);
 			}
 		} catch (Error | Exception e45) {
 			e45.printStackTrace();
@@ -113,7 +114,7 @@ public class ParticleHandlers {
 			Location l = loc.clone().add(x, 0, z);
 
 			for (int i = 0; i < 2; i++)
-				loc.getWorld().spawnParticle(Particle.SPELL, l, 0);
+				loc.getWorld().spawnParticle(XParticle.EFFECT.get(), l, 0);
 		} catch (Error | Exception ignored) {
 		}
 	}

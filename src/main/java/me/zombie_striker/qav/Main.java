@@ -6,7 +6,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.reflection.XReflection;
 import com.google.common.io.Files;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
@@ -99,6 +99,7 @@ public class Main extends JavaPlugin {
 	public static boolean swapEndermiteWithChicken = false;
 	public static boolean garageFuel = true;
 	public static boolean enableVehiclePlayerCollision = true;
+	public static boolean enableCrossVehicleCollision = false;
 	public static boolean requirePermissionToDrive = false;
 	public static boolean setOwnerIfNoneExist = false;
 	public static boolean enableTrunks = true;
@@ -170,7 +171,7 @@ public class Main extends JavaPlugin {
 		initVals();
 
 		ParticleHandlers.initValues();
-		if (ReflectionUtils.supports(9)) {
+		if (XReflection.supports(9)) {
 			FInputManager.init(this);
 			new FMininukeBomber();
 			new FCarHonk();
@@ -434,6 +435,7 @@ public class Main extends JavaPlugin {
 		destroyOnWater = (boolean) a("enable_DestroyVehiclesOnWater", destroyOnWater);
 		disableCreativeCloning = (boolean) a("enable_StopCreativeDuplication", disableCreativeCloning);
 		enableVehiclePlayerCollision = (boolean) a("enable_VehiclePlayerCollision", enableVehiclePlayerCollision);
+		enableCrossVehicleCollision = (boolean) a("enable_CrossVehicleCollision", enableCrossVehicleCollision);
 		swapEndermiteWithChicken = (boolean) a("enable_SwapEndermiteWithCheckenForLowRider", swapEndermiteWithChicken);
 		garageFuel = (boolean) a("enable_FuelCarsWhenSpawnedFromGarage", garageFuel);
 		useHeads = (boolean) a("enable_UseHeadsForGUI", useHeads);

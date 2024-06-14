@@ -29,7 +29,7 @@ public class ForksUtil {
                 getCause = null;
             }
 
-            QualityArmoryVehicles.getPlugin().getLogger().info("Found spigot fork. Loaded support.");
+            QualityArmoryVehicles.getPlugin().getLogger().info("Found paper. Loaded support.");
         }
     }
 

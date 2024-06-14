@@ -1,69 +1,48 @@
 package me.zombie_striker.qav.nms;
 
-import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class NMSUtil {
-    private static final Map<String, String> MAPPINGS = new HashMap<>();
     private static Method teleport;
     private static Method getHandle;
 
+    @SuppressWarnings("deprecation")
     public static void init() {
-        try {
-            InputStream stream = Main.class.getClassLoader().getResourceAsStream("mappings.yml");
-            if (stream == null) {
-                QualityArmoryVehicles.getPlugin().getLogger().warning("Unable to load mappings data. NMS method won't be used and this may cause bugs. Please report this error.");
-                return;
-            }
-
-            Reader reader = new InputStreamReader(stream);
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
-
-            for (String key : config.getKeys(false)) {
-                MAPPINGS.put(key, config.getString(key + "." + ReflectionUtils.NMS_VERSION));
-            }
-
-            reader.close();
-            stream.close();
-        } catch (Exception e) {
-            QualityArmoryVehicles.getPlugin().getLogger().warning("Unable to load mappings data. NMS method won't be used and this may cause bugs. Please report this error.");
+        if (!XReflection.supports(18)) {
+            QualityArmoryVehicles.getPlugin().getLogger().info("[NMS] Legacy NMS support loaded.");
+            return;
         }
 
-        Class<?> entityClass = ReflectionUtils.getCraftClass("entity.CraftEntity");
-        if (entityClass != null) {
+        try {
             try {
+                Class<?> entityClass = XReflection.getCraftClass("entity.CraftEntity");
                 getHandle = entityClass.getMethod("getHandle");
             } catch (Exception | Error ignored) {
-                Main.DEBUG("Unable to find getHandle method. This may cause bugs. Please report this error.");
+                Main.DEBUG("[NMS] Unable to find getHandle method. This may cause bugs. Please report this error.");
             }
-        }
 
-        Class<?> entity = ReflectionUtils.getNMSClass("world.entity","Entity");
-        if (entity != null) {
+            Class<?> entity = XReflection.getNMSClass("world.entity", "Entity");
             try {
-                teleport = entity.getMethod(MAPPINGS.get("absMoveTo"), double.class,double.class,double.class,float.class,float.class);
+                teleport = entity.getMethod("a", double.class, double.class, double.class, float.class, float.class);
             } catch (Exception | Error ignored) {
                 try {
-                    teleport = entity.getMethod("setLocation", double.class,double.class,double.class,float.class,float.class);
+                    teleport = entity.getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
                 } catch (Exception | Error ignored2) {
-                    Main.DEBUG("Unable to find teleport method. This may cause bugs. Please report this error.");
+                    Main.DEBUG("[NMS] Unable to find teleport method. This may cause bugs. Please report this error.");
                 }
             }
-        }
 
-        QualityArmoryVehicles.getPlugin().getLogger().info("Loaded NMS mappings & support. NMS version: " + ReflectionUtils.NMS_VERSION);
+            QualityArmoryVehicles.getPlugin().getLogger().info("[NMS] Modern NMS support loaded.");
+        } catch (Exception | Error e) {
+            Main.DEBUG("[NMS] An exception occurred while loading data. This may cause bugs. Please report this error.");
+        }
     }
 
     public static void teleport(Entity entity, Location to) {

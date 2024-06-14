@@ -481,6 +481,18 @@ public abstract class AbstractVehicle {
 			Main.DEBUG("Y limit: " + Main.maxYheightForVehicles + " y: " + vehicleEntity.getDriverSeat().getLocation().getY());
 			velocity.setY(velocity.getY()-1);
 		}
+
+		if (Main.enableCrossVehicleCollision) {
+			for (VehicleEntity vehicle : Main.vehicles) {
+				if (vehicle.equals(vehicleEntity)) continue;
+
+				if (QualityArmoryVehicles.isWithinVehicle(vehicleEntity.getDriverSeat().getLocation(), vehicle)) {
+					Main.DEBUG("Collision with vehicle: " + vehicle.getType().getName());
+					velocity.multiply(-1);
+				}
+			}
+		}
+
 		applyModifiers(vehicleEntity, velocity);
 		vehicleEntity.getDriverSeat().setVelocity(velocity);
 		handleOtherStands(vehicleEntity,velocity);

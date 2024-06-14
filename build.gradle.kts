@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "me.zombie_striker"
-version = "2.3.8"
+version = "2.3.9-SNAPSHOT"
 description = "QualityArmoryVehicles"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
@@ -15,9 +15,9 @@ repositories {
     mavenCentral()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://jitpack.io")
-    maven("https://repo.viaversion.com")
     maven("https://repo.dmulloy2.net/nexus/repository/public/")
     maven("https://repo.citizensnpcs.co/")
+    maven("https://repo.glaremasters.me/repository/towny/")
     maven("https://mvn.lumine.io/repository/maven-public/") {
         metadataSources {
             artifact()
@@ -32,21 +32,20 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:9.8.1")
-    implementation("net.jodah:expiringmap:0.5.10")
+    implementation("com.github.cryptomorin:XSeries:11.0.0")
+    implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.7")
     compileOnly("org.jetbrains:annotations:24.1.0")
 
     // API
-    compileOnly("net.kyori:adventure-api:4.15.0")
-    compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("net.kyori:adventure-api:4.17.0")
+    compileOnly("org.spigotmc:spigot-api:1.20.6-R0.1-SNAPSHOT")
 
     // Compatibilities
-    compileOnly("us.myles:viaversion:3.2.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-    compileOnly("me.zombie_striker:QualityArmory:2.0.11")
-    compileOnly("com.github.TownyAdvanced:Towny:0.100.0.4")
+    compileOnly("me.zombie_striker:QualityArmory:2.0.13")
+    compileOnly("com.github.TownyAdvanced:Towny:0.100.2.0")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("com.ticxo.modelengine:api:R3.2.0")
     compileOnly("org.maxgamer:QuickShop:5.1.2.0")

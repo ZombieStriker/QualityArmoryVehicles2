@@ -1,5 +1,6 @@
 package me.zombie_striker.qav;
 
+import com.cryptomorin.xseries.XPotion;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.attachments.Attachment;
 import me.zombie_striker.qav.hooks.model.Animation;
@@ -464,12 +465,13 @@ public class VehicleEntity implements ConfigurationSerializable {
 		return used;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void giveEffects(@NotNull LivingEntity entity) {
-		entity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, -10000,false,false),
+		entity.addPotionEffect(new PotionEffect(XPotion.JUMP_BOOST.getPotionEffectType(), Integer.MAX_VALUE, -10000,false,false),
 				false);
-		entity.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1,false,false),
+		entity.addPotionEffect(new PotionEffect(XPotion.INVISIBILITY.getPotionEffectType(), Integer.MAX_VALUE, 1,false,false),
 				false);
-		entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 16,false,false),
+		entity.addPotionEffect(new PotionEffect(XPotion.SLOWNESS.getPotionEffectType(), Integer.MAX_VALUE, 16,false,false),
 				false);
 		((Mob) entity).setAware(false);
 	}

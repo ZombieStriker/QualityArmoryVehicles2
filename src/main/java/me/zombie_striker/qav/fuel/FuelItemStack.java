@@ -1,6 +1,6 @@
 package me.zombie_striker.qav.fuel;
 
-import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import org.bukkit.ChatColor;
@@ -127,7 +127,7 @@ public class FuelItemStack {
 			registerNewFuelToConfig(null, Material.BLAZE_POWDER, (short) 0, null, 500, yml);
 			registerNewFuelToConfig(null, Material.BLAZE_ROD, (short) 0, null, 1000, yml);
 			registerNewFuelToConfig(null, Material.LAVA_BUCKET, (short) 0, null, 20 * 500, yml);
-			registerNewFuelToConfig("&6Fuel Canister", ReflectionUtils.supports(14) ? Material.RABBIT_HIDE : Material.DIAMOND_AXE, (short) 38, Collections.singletonList("&7Fuel for: 500 seconds"), 20 * 500, yml, true,50);
+			registerNewFuelToConfig("&6Fuel Canister", XReflection.supports(14) ? Material.RABBIT_HIDE : Material.DIAMOND_AXE, (short) 38, Collections.singletonList("&7Fuel for: 500 seconds"), 20 * 500, yml, true,50);
 		}
 
 		for (String key : config.getKeys(false)) {
