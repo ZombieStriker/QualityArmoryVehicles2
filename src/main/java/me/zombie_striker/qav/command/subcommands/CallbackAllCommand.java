@@ -40,7 +40,7 @@ public class CallbackAllCommand extends SubCommand {
         int count = 0;
 
         for (VehicleEntity ve : new ArrayList<>(Main.vehicles)) {
-            if (Bukkit.getPlayer(ve.getOwner()) != null) {
+            if (ve.getOwner() != null && Bukkit.getPlayer(ve.getOwner()) != null) {
                 VehicleUtils.callback(ve, Bukkit.getPlayer(ve.getOwner()));
                 count++;
             }
