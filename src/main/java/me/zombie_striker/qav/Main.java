@@ -35,6 +35,7 @@ import me.zombie_striker.qav.util.VehicleUtils;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -288,11 +289,13 @@ public class Main extends JavaPlugin {
 								PlayerExitQAVehicleEvent event = new PlayerExitQAVehicleEvent(ve,player);
 								Bukkit.getPluginManager().callEvent(event);
 
-								if (removeVehicleOnDismount && QualityArmoryVehicles.isVehicle(player.getVehicle())) {
-									VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
-									if (vehicle != null && vehicle.getDriverSeat().equals(player.getVehicle())) {
-										VehicleUtils.callback(vehicle,player, "Dismount");
-									}
+								if (antiCheatHook) {
+									Location location = player.getVehicle().getLocation();
+									player.teleport(location);
+								}
+
+								if (removeVehicleOnDismount) {
+									VehicleUtils.callback(ve, player, "Dismount");
 								}
 							}
 
