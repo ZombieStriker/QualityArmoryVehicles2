@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "me.zombie_striker"
-version = "2.3.9"
+version = "2.3.10-SNAPSHOT"
 description = "QualityArmoryVehicles"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
@@ -32,19 +32,19 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:11.0.0")
+    implementation("com.github.cryptomorin:XSeries:11.2.1")
     implementation("net.jodah:expiringmap:0.5.11")
-    implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT")
+    implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.10")
     compileOnly("org.jetbrains:annotations:24.1.0")
 
     // API
     compileOnly("net.kyori:adventure-api:4.17.0")
-    compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.20.6-R0.1-SNAPSHOT")
 
     // Compatibilities
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-    compileOnly("me.zombie_striker:QualityArmory:2.0.13")
+    compileOnly("me.zombie_striker:QualityArmory:2.0.14.1")
     compileOnly("com.github.TownyAdvanced:Towny:0.100.2.0")
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("com.ticxo.modelengine:api:R3.2.0")
