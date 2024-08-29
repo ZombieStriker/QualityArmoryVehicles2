@@ -40,6 +40,7 @@ public class BlockCollisionUtil {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static double getHeight(Block b) {
         Material type = getMaterial(b.getLocation());
         if (type == null) return 0;
@@ -53,17 +54,13 @@ public class BlockCollisionUtil {
                     }
 
                     return 0.5;
-                } catch (Exception ignored) {
-                    modernCheck = false;
-                }
+                } catch (Exception | Error ignored) {}
             }
 
-            if (!modernCheck) {
-                if (b.getData() == 0)
-                    return 0.5;
-                if (b.getData() == 1)
-                    return 1;
-            }
+            if (b.getData() == 0)
+                return 0.5;
+            if (b.getData() == 1)
+                return 1;
         }
 
         if (customBlockHeights.containsKey(type))
