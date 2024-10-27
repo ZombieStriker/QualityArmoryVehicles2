@@ -162,7 +162,13 @@ public class Main extends JavaPlugin {
 			this.getLogger().warning("You are using a leaked version of the plugin. Please consider buying the premium version.");
 		}
 
-		new MetricsLite(this,12753);
+		MetricsLite metrics = new MetricsLite(this,12753);
+		metrics.addCustomChart(
+				new MetricsLite.SimplePie(
+						"premium",
+						() -> PremiumHandler.isPremium() ? "true" : "false"
+				)
+		);
 
 		carData = new File(getDataFolder(),"vehicles");
 		if(!carData.exists()){
@@ -269,7 +275,7 @@ public class Main extends JavaPlugin {
 					VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
 					if (ve == null)
 						return;
-					
+
 					if (!ve.getDriverSeat().equals(player.getVehicle())) return;
 
 					new BukkitRunnable() {

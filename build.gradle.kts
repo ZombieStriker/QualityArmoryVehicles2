@@ -32,7 +32,7 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:11.2.1")
+    implementation("com.github.cryptomorin:XSeries:11.3.0")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.10")
@@ -44,9 +44,9 @@ dependencies {
 
     // Compatibilities
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-    compileOnly("me.zombie_striker:QualityArmory:2.0.14.1")
-    compileOnly("com.github.TownyAdvanced:Towny:0.100.2.0")
-    compileOnly("net.milkbowl.vault:VaultAPI:1.7")
+    compileOnly("me.zombie_striker:QualityArmory:2.0.15")
+    compileOnly("com.github.TownyAdvanced:Towny:0.100.4.7")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.ticxo.modelengine:api:R3.2.0")
     compileOnly("org.maxgamer:QuickShop:5.1.2.0")
 }
