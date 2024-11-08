@@ -1,3 +1,9 @@
+2.3.10
+  Changelog:
+    - Performance fixes
+    - Added target for remove command
+    - Bump dependencies
+
 2.3.9
   Changelog:
     - 1.21 support

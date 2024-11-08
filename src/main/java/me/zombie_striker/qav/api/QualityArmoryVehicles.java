@@ -213,11 +213,6 @@ public class QualityArmoryVehicles {
 
     @SuppressWarnings("deprecation")
     public static void addPlayerToCar(VehicleEntity ve, Player player, boolean allowDriverSeat) {
-        PlayerEnterQAVehicleEvent event = new PlayerEnterQAVehicleEvent(ve, player);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCanceled()) {
-            return;
-        }
         if (ve == null)
             return;
         if (ve.getDriverSeat() == null) {
@@ -225,6 +220,12 @@ public class QualityArmoryVehicles {
         }
         if ((ve.getDriverSeat().getPassenger() == null && allowDriverSeat)
                 && (!Main.requirePermissionToDrive || PermissionHandler.canDrive(player, ve.getType()))) {
+            PlayerEnterQAVehicleEvent event = new PlayerEnterQAVehicleEvent(ve, player);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCanceled()) {
+                return;
+            }
+
             if (ve.getOwner() == null && Main.setOwnerIfNoneExist) {
                 ve.setOwner(player.getUniqueId());
                 if (MessagesConfig.MESSAGE_NOW_OWN_CAR.length() > 1) {
@@ -239,6 +240,12 @@ public class QualityArmoryVehicles {
                 int seatId = ve.getFirstSeat();
                 if (seatId < 0)
                     return;
+
+                PlayerEnterQAVehicleEvent event = new PlayerEnterQAVehicleEvent(ve, player);
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCanceled()) {
+                    return;
+                }
 
                 ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, seatId + "");
                 setAddPassager(ve, player, seatId);

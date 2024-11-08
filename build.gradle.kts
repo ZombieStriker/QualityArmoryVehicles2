@@ -15,7 +15,7 @@ repositories {
     mavenCentral()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://jitpack.io")
-    maven("https://repo.dmulloy2.net/nexus/repository/public/")
+    maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.citizensnpcs.co/")
     maven("https://repo.glaremasters.me/repository/towny/")
     maven("https://mvn.lumine.io/repository/maven-public/") {
@@ -43,7 +43,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.6-R0.1-SNAPSHOT")
 
     // Compatibilities
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("me.zombie_striker:QualityArmory:2.0.15")
     compileOnly("com.github.TownyAdvanced:Towny:0.100.4.7")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
