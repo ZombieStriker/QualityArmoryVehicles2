@@ -101,12 +101,9 @@ public class Main extends JavaPlugin {
 	public static boolean sendActionBarOnMove = true;
 	public static boolean enableShopCooldown = false;
 	public static boolean onlyPublicVehicles = false;
-	public static boolean disableing = false;
 	public static boolean enable_RequirePermToBuyVehicle = false;
-	public static Object BOUNDINGBOX;
 	public static boolean useHeads = true;
 	private static File vehicledatayml;
-	private static boolean debug_PL_PacketlistenerActive = false;
 	// Roughly 1 coal for 25 seconds. 64 coal for ~26 minutes
 	private static boolean USE_MANUAL_13 = false;
 	public static boolean useDamage = false;
@@ -252,7 +249,7 @@ public class Main extends JavaPlugin {
 	public void onDisable() {
 		ModernInputListener.unregister();
 
-		FileConfiguration yaml = YamlConfiguration.loadConfiguration(vehicledatayml);
+		FileConfiguration yaml = new YamlConfiguration();
 		yaml.set("data",vehicles);
 		try {
 			yaml.save(vehicledatayml);

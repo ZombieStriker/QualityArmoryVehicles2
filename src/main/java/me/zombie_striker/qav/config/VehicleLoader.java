@@ -1,8 +1,5 @@
 package me.zombie_striker.qav.config;
 
-import me.zombie_striker.qav.attachments.Attachment;
-import me.zombie_striker.qav.attachments.AttachmentType;
-import me.zombie_striker.qav.attachments.Wheel;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.ModelSize;

@@ -1,8 +1,10 @@
-2.3.10
+2.4
   Changelog:
     - Performance fixes
     - Added target for remove command
     - Bump dependencies
+    - 1.21.x support
+    - Fixed vehicle duplication
 
 2.3.9
   Changelog:
