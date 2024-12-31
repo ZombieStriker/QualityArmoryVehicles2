@@ -1,6 +1,5 @@
 package me.zombie_striker.qav.vehicles;
 
-import com.comphenix.protocol.events.PacketEvent;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.attachments.Attachment;
@@ -72,7 +71,7 @@ public abstract class AbstractVehicle {
 		this.id = id;
 	}
 
-	public boolean handleFuel(VehicleEntity ve, PacketEvent event) {
+	public boolean handleFuel(VehicleEntity ve, Player player) {
 		boolean shouldReturn = true;
 
 		if (Main.bypassCoalInCreative) {
@@ -87,14 +86,14 @@ public abstract class AbstractVehicle {
 			if (ve.getFuel() <= 0) {
 				shouldReturn = false;
 				try {
-					if (event.getPlayer() != null)
+					if (player != null)
 						if (!Main.useChatForMessage) {
 							try {
-								HotbarMessager.sendHotBarMessage(event.getPlayer(), MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
+								HotbarMessager.sendHotBarMessage(player, MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
 							} catch (Error | Exception ignored) {
 							}
 						} else {
-							event.getPlayer().sendMessage(Main.prefix + MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
+							player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
 						}
 				} catch (Error | Exception ignored) {
 				}
@@ -119,15 +118,15 @@ public abstract class AbstractVehicle {
 		return ve.getFuel() > 0;
 	}
 
-	public abstract void handleTurnLeft(VehicleEntity ve, PacketEvent event);
+	public abstract void handleTurnLeft(VehicleEntity ve, Player player);
 
-	public abstract void handleTurnRight(VehicleEntity ve, PacketEvent event);
+	public abstract void handleTurnRight(VehicleEntity ve, Player player);
 
-	public abstract void handleSpeedIncrease(VehicleEntity ve, PacketEvent event);
+	public abstract void handleSpeedIncrease(VehicleEntity ve, Player player);
 
-	public abstract void handleSpeedDecrease(VehicleEntity ve, PacketEvent event);
+	public abstract void handleSpeedDecrease(VehicleEntity ve, Player player);
 
-	public abstract void handleSpace(VehicleEntity ve, PacketEvent event);
+	public abstract void handleSpace(VehicleEntity ve, Player player);
 
 	public abstract void tick(VehicleEntity vehicleEntity);
 

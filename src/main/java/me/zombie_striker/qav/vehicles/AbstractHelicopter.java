@@ -1,10 +1,10 @@
 package me.zombie_striker.qav.vehicles;
 
-import com.comphenix.protocol.events.PacketEvent;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.events.VehicleTurnEvent;
 import me.zombie_striker.qav.util.HeadPoseUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class AbstractHelicopter extends AbstractVehicle {
@@ -15,7 +15,7 @@ public class AbstractHelicopter extends AbstractVehicle {
 	}
 
 	@Override
-	public void handleTurnLeft(VehicleEntity ve, PacketEvent event) {
+	public void handleTurnLeft(VehicleEntity ve, Player player) {
 		VehicleTurnEvent e = new VehicleTurnEvent(ve,ve.getAngleRotation(), ve.getAngleRotation() + ve.getType().getRotationDelta());
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
@@ -25,7 +25,7 @@ public class AbstractHelicopter extends AbstractVehicle {
 	}
 
 	@Override
-	public void handleTurnRight(VehicleEntity ve, PacketEvent event) {
+	public void handleTurnRight(VehicleEntity ve, Player player) {
 		VehicleTurnEvent e = new VehicleTurnEvent(ve,ve.getAngleRotation(), ve.getAngleRotation() - ve.getType().getRotationDelta());
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
@@ -35,16 +35,16 @@ public class AbstractHelicopter extends AbstractVehicle {
 	}
 
 	@Override
-	public void handleSpeedIncrease(VehicleEntity ve, PacketEvent event) {
-		if (!this.handleFuel(ve,event)) {
+	public void handleSpeedIncrease(VehicleEntity ve, Player player) {
+		if (!this.handleFuel(ve,player)) {
 			return;
 		}
 		ve.setSpeed(Math.min(ve.getSpeed() + 0.1, ve.getType().getMaxSpeed()));
 	}
 
 	@Override
-	public void handleSpeedDecrease(VehicleEntity ve, PacketEvent event) {
-		if (!this.handleFuel(ve,event)) {
+	public void handleSpeedDecrease(VehicleEntity ve, Player player) {
+		if (!this.handleFuel(ve,player)) {
 			return;
 		}
 		ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxBackupSpeed()));
@@ -52,8 +52,8 @@ public class AbstractHelicopter extends AbstractVehicle {
 	}
 
 	@Override
-	public void handleSpace(VehicleEntity ve, PacketEvent event) {
-		if(event.getPlayer().getLocation().getPitch() > 0) {
+	public void handleSpace(VehicleEntity ve, Player player) {
+		if(player.getLocation().getPitch() > 0) {
 			ve.setDirectionYHeight(-1);
 		}else{
 			ve.setDirectionYHeight(1);

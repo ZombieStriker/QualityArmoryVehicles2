@@ -1,6 +1,5 @@
 package me.zombie_striker.qav.vehicles;
 
-import com.comphenix.protocol.events.PacketEvent;
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 import me.zombie_striker.qav.VehicleEntity;
@@ -9,6 +8,7 @@ import me.zombie_striker.qav.util.HeadPoseUtil;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Rail;
+import org.bukkit.entity.Player;
 import org.bukkit.material.PoweredRail;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -19,33 +19,33 @@ public class AbstractTrain extends AbstractVehicle {
 	}
 
 	@Override
-	public void handleTurnLeft(VehicleEntity ve, PacketEvent event) {
+	public void handleTurnLeft(VehicleEntity ve, Player player) {
 
 	}
 
 	@Override
-	public void handleTurnRight(VehicleEntity ve, PacketEvent event) {
+	public void handleTurnRight(VehicleEntity ve, Player player) {
 
 	}
 
 	@Override
-	public void handleSpeedIncrease(VehicleEntity ve, PacketEvent event) {
-		if (!this.handleFuel(ve,event)) {
+	public void handleSpeedIncrease(VehicleEntity ve, Player player) {
+		if (!this.handleFuel(ve,player)) {
 			return;
 		}
 		ve.setSpeed(Math.min(ve.getSpeed() + 0.1, ve.getType().getMaxSpeed()));
 	}
 
 	@Override
-	public void handleSpeedDecrease(VehicleEntity ve, PacketEvent event) {
-		if (!this.handleFuel(ve,event)) {
+	public void handleSpeedDecrease(VehicleEntity ve, Player player) {
+		if (!this.handleFuel(ve,player)) {
 			return;
 		}
 		ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxBackupSpeed()));
 	}
 
 	@Override
-	public void handleSpace(VehicleEntity ve, PacketEvent event) {
+	public void handleSpace(VehicleEntity ve, Player player) {
 		if(ve.getSpeed()>0) {
 			ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxBackupSpeed()));
 		}else{

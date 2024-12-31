@@ -22,7 +22,7 @@ public class AbstractDrill extends AbstractCar {
     public void tick(VehicleEntity vehicleEntity) {
         super.tick(vehicleEntity);
 
-        if (vehicleEntity.getModelEntities().size() == 0) return;
+        if (vehicleEntity.getModelEntities().isEmpty()) return;
 
         Location location = vehicleEntity.getCenter().clone().add(0, 2, 0).add(vehicleEntity.getDirection());
         near(location.getBlock()).forEach(block -> {

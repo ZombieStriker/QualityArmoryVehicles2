@@ -1,6 +1,5 @@
 package me.zombie_striker.qav.vehicles;
 
-import com.comphenix.protocol.events.PacketEvent;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
@@ -8,6 +7,7 @@ import me.zombie_striker.qav.api.events.VehicleChangeSpeedEvent;
 import me.zombie_striker.qav.api.events.VehicleTurnEvent;
 import me.zombie_striker.qav.util.HeadPoseUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -23,7 +23,7 @@ public class AbstractCar extends AbstractVehicle {
 	}
 
 	@Override
-	public void handleTurnLeft(VehicleEntity ve, PacketEvent event) {
+	public void handleTurnLeft(VehicleEntity ve, Player player) {
 		VehicleTurnEvent e = new VehicleTurnEvent(ve,ve.getAngleRotation(), ve.getAngleRotation() + ve.getType().getRotationDelta());
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
@@ -33,7 +33,7 @@ public class AbstractCar extends AbstractVehicle {
 	}
 
 	@Override
-	public void handleTurnRight(VehicleEntity ve, PacketEvent event) {
+	public void handleTurnRight(VehicleEntity ve, Player player) {
 		VehicleTurnEvent e = new VehicleTurnEvent(ve,ve.getAngleRotation(), ve.getAngleRotation() - ve.getType().getRotationDelta());
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
@@ -43,29 +43,29 @@ public class AbstractCar extends AbstractVehicle {
 	}
 
 	@Override
-	public void handleSpeedIncrease(VehicleEntity ve, PacketEvent event) {
+	public void handleSpeedIncrease(VehicleEntity ve, Player player) {
 		VehicleChangeSpeedEvent e = new VehicleChangeSpeedEvent(ve,ve.getSpeed(), Math.min(ve.getSpeed() + 0.1, ve.getType().getMaxSpeed()));
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
 			return;
-		if (!this.handleFuel(ve,event)) {
+		if (!this.handleFuel(ve,player)) {
 			return;
 		}
 		ve.setSpeed(Math.min(ve.getSpeed() + 0.1, ve.getType().getMaxSpeed()));
-			if (!lastSoundDrive.containsKey(event.getPlayer().getUniqueId())
-					|| System.currentTimeMillis() - lastSoundDrive.get(event.getPlayer().getUniqueId()) > 900) {
-				lastSoundDrive.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+			if (!lastSoundDrive.containsKey(player.getUniqueId())
+					|| System.currentTimeMillis() - lastSoundDrive.get(player.getUniqueId()) > 900) {
+				lastSoundDrive.put(player.getUniqueId(), System.currentTimeMillis());
 				ve.getDriverSeat().getLocation().getWorld().playSound(ve.getDriverSeat().getLocation(), getSound(), (float) getSoundVolume(), 1);
 			}
 	}
 
 	@Override
-	public void handleSpeedDecrease(VehicleEntity ve, PacketEvent event) {
+	public void handleSpeedDecrease(VehicleEntity ve, Player player) {
 		VehicleChangeSpeedEvent e = new VehicleChangeSpeedEvent(ve,ve.getSpeed(), Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxSpeed()));
 		Bukkit.getPluginManager().callEvent(e);
 		if(e.isCanceled())
 			return;
-		if (!this.handleFuel(ve,event)) {
+		if (!this.handleFuel(ve,player)) {
 			return;
 		}
 		ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxBackupSpeed()));
@@ -73,7 +73,7 @@ public class AbstractCar extends AbstractVehicle {
 	}
 
 	@Override
-	public void handleSpace(VehicleEntity ve, PacketEvent event) {
+	public void handleSpace(VehicleEntity ve, Player player) {
 		if(ve.getSpeed()>0) {
 			ve.setSpeed(Math.max(ve.getSpeed() - 0.1, -ve.getType().getMaxBackupSpeed()));
 		}else{
@@ -82,14 +82,14 @@ public class AbstractCar extends AbstractVehicle {
 
 		if (canPlaySkidSounds()) {
 			if (ve.getSpeed() > 0.2 || ve.getSpeed() <-0.2) {
-				if (!lastSoundBreak.containsKey(event.getPlayer().getUniqueId())
-						|| System.currentTimeMillis() - lastSoundBreak.get(event.getPlayer().getUniqueId()) > 2000) {
-					lastSoundBreak.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+				if (!lastSoundBreak.containsKey(player.getUniqueId())
+						|| System.currentTimeMillis() - lastSoundBreak.get(player.getUniqueId()) > 2000) {
+					lastSoundBreak.put(player.getUniqueId(), System.currentTimeMillis());
 					try {
-						event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(),
+						player.getWorld().playSound(player.getLocation(),
 								me.zombie_striker.qg.guns.utils.WeaponSounds.CARSKID.getSoundName(), (float) ve.getType().getSoundVolume(), (float) 1.3);
 					} catch (Error | Exception e4) {
-						event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), "carskid", 0.7f,
+						player.getWorld().playSound(player.getLocation(), "carskid", 0.7f,
 								(float) (2.3));
 					}
 				}

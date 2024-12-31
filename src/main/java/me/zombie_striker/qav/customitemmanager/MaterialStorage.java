@@ -1,9 +1,8 @@
 package me.zombie_striker.qav.customitemmanager;
 
-
+import me.zombie_striker.qav.util.HeadUtil;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.handlers.MultiVersionLookup;
-import me.zombie_striker.qg.handlers.SkullHandler;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -87,8 +86,9 @@ public class MaterialStorage {
 		String extraData = is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner()
 				: null;
 		String temp = null;
-		if (extraData != null)
-			temp = SkullHandler.getURL64(is);
+		if (extraData != null) {
+			temp = HeadUtil.getTexture(is);
+		}
 		try {
 			return getMS(is.getType(), is.getItemMeta().hasCustomModelData() ? is.getItemMeta().getCustomModelData() : 0, variant,
 					is.getType() == MultiVersionLookup.getSkull() ? ((SkullMeta) is.getItemMeta()).getOwner() : null, temp);

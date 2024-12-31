@@ -1,46 +1,38 @@
 package me.zombie_striker.qav;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
 import com.cryptomorin.xseries.reflection.XReflection;
 import com.google.common.io.Files;
+import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.command.QAVCommand;
+import me.zombie_striker.qav.config.VehicleLoader;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
 import me.zombie_striker.qav.customitemmanager.CustomItemManager;
 import me.zombie_striker.qav.customitemmanager.qav.versions.V1_13.CustomVehicleItem;
-import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import me.zombie_striker.qav.api.events.PlayerExitQAVehicleEvent;
-import me.zombie_striker.qav.config.VehicleLoader;
 import me.zombie_striker.qav.debugmanager.DebugManager;
-import me.zombie_striker.qav.finput.*;
+import me.zombie_striker.qav.finput.FInputManager;
 import me.zombie_striker.qav.finput.inputs.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.fuel.RepairItemStack;
+import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.QualityArmoryListener;
+import me.zombie_striker.qav.hooks.QuickShopHook;
 import me.zombie_striker.qav.hooks.implementation.WorldGuardHook;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
-import me.zombie_striker.qav.hooks.ProtectionHandler;
-import me.zombie_striker.qav.hooks.QuickShopHook;
+import me.zombie_striker.qav.input.LegacyInputListener;
+import me.zombie_striker.qav.input.ModernInputListener;
 import me.zombie_striker.qav.nms.NMSUtil;
 import me.zombie_striker.qav.premium.PremiumHandler;
 import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
 import me.zombie_striker.qav.util.ForksUtil;
-import me.zombie_striker.qav.util.VehicleUtils;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -72,7 +64,6 @@ public class Main extends JavaPlugin {
 	public static boolean enableGarageCallback=false;
 	public static boolean useChatForMessage=false;
 	public static String VEHICLEPREFIX = "(QAV)";
-	public ProtocolManager protocolManager;
 	public static File carData;
 	public static final double YOFFSET = Math.PI * 3 / 2;// Math.PI*3/2;//Math.PI * 69 / 64;
 
@@ -236,16 +227,11 @@ public class Main extends JavaPlugin {
 			this.getLogger().info("Successfully loaded " + vehicles.size() + " spawned vehicles.");
 		}
 
-
-		protocolManager = ProtocolLibrary.getProtocolManager();
-
-		Main main = this;
-
 		new BukkitRunnable(){
 			public void run(){
 				for(VehicleEntity ve : new ArrayList<>(vehicles)){
 					if(ve!=null && ve.getDriverSeat()!=null)
-					ve.tick();
+						ve.tick();
 				}
 			}
 		}.runTaskTimer(this,1,1);
@@ -258,62 +244,14 @@ public class Main extends JavaPlugin {
 			ModelEngineHook.init();
 		}
 
-		protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.STEER_VEHICLE) {
-
-			@Override
-			public void onPacketReceiving(final PacketEvent event) {
-				final Player player = event.getPlayer();
-				try {
-					event.getPlayer().getVehicle();
-				} catch (UnsupportedOperationException e) {
-					DEBUG("The method getVehicle is not supported for temporary players.");
-					return;
-				}
-				if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE
-						&& player.getVehicle() != null) {
-
-					VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
-					if (ve == null)
-						return;
-
-					if (!ve.getDriverSeat().equals(player.getVehicle())) return;
-
-					new BukkitRunnable() {
-						public void run() {
-							if (event.getPacket().getFloat().read(0) < 0)
-								ve.getType().handleTurnLeft(ve, event);
-							if (event.getPacket().getFloat().read(0) > 0)
-								ve.getType().handleTurnRight(ve, event);
-							if (event.getPacket().getFloat().read(1) < 0)
-								ve.getType().handleSpeedDecrease(ve, event);
-							if (event.getPacket().getFloat().read(1) > 0)
-								ve.getType().handleSpeedIncrease(ve, event);
-							if (event.getPacket().getBooleans().read(0))
-								ve.getType().handleSpace(ve, event);
-							if (event.getPacket().getBooleans().read(1)) {
-								//Shift
-								PlayerExitQAVehicleEvent event = new PlayerExitQAVehicleEvent(ve,player);
-								Bukkit.getPluginManager().callEvent(event);
-
-								if (antiCheatHook) {
-									Location location = player.getVehicle().getLocation();
-									player.teleport(location);
-								}
-
-								if (removeVehicleOnDismount) {
-									VehicleUtils.callback(ve, player, "Dismount");
-								}
-							}
-
-						}
-					}.runTaskLater(main, 0);
-				}
-			}
-		});
+		if (XReflection.supports(21,2)) new ModernInputListener().register();
+		else new LegacyInputListener().register();
 	}
 
 	@Override
 	public void onDisable() {
+		ModernInputListener.unregister();
+
 		FileConfiguration yaml = YamlConfiguration.loadConfiguration(vehicledatayml);
 		yaml.set("data",vehicles);
 		try {
