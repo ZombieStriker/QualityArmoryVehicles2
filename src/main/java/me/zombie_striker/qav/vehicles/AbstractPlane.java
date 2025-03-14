@@ -57,6 +57,9 @@ public class AbstractPlane extends AbstractVehicle {
 		if (!this.handleFuel(ve,player)) {
 			return;
 		}
+		
+		// Both pitch up AND reduce speed when S is pressed
+		// Original behavior - adjust pitch
 		double pitch = ve.getModelEntity().getHeadPose().getX();
 		pitch += AbstractVehicle.pitchIncrement;
 		if (pitch > AbstractVehicle.maxAngle) {
@@ -68,12 +71,17 @@ public class AbstractPlane extends AbstractVehicle {
 		}
 		ve.getModelEntity()
 				.setHeadPose(new EulerAngle(pitch, ve.getModelEntity().getHeadPose().getY(), 0));
+		
+		// Added behavior - reduce speed
+		ve.setSpeed(Math.max(0, ve.getSpeed() - 0.05));
 	}
 
 	@Override
 	public void handleSpace(VehicleEntity ve, Player player) {
+		if (!this.handleFuel(ve,player)) {
+			return;
+		}
 		ve.setSpeed(Math.min(ve.getSpeed() + 0.1, ve.getType().getMaxSpeed()));
-
 	}
 
 	@Override

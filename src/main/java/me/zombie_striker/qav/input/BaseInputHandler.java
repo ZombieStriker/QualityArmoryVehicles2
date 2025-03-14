@@ -46,8 +46,12 @@ public abstract class BaseInputHandler extends PacketAdapter {
             ve.getType().handleTurnLeft(ve, player);
         if (left)
             ve.getType().handleTurnRight(ve, player);
-        if (backward)
+        if (backward) {
+            ve.setBackwardMovement(true);
             ve.getType().handleSpeedDecrease(ve, player);
+        } else {
+            ve.setBackwardMovement(false);
+        }
         if (forward)
             ve.getType().handleSpeedIncrease(ve, player);
         if (space)

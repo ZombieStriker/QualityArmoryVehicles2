@@ -346,10 +346,23 @@ public abstract class AbstractVehicle {
 
 		if (vehicleEntity.getSpeed() > 0) {
 			if(planeFlying){
-				if(vehicleEntity.getDirectionYheight()<0){
+				// Apply air resistance - planes should always gradually slow down unless actively accelerating
+				// The deceleration rate depends on the pitch:
+				if(vehicleEntity.getDirectionYheight() < -0.15) {
+					// When diving steeply (negative Y), slight acceleration due to gravity
 					vehicleEntity.setSpeed(vehicleEntity.getSpeed() + 0.01);
-				}else{
-					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.01);
+				} else if(vehicleEntity.getDirectionYheight() > 0.15) {
+					// When climbing steeply (positive Y), strong deceleration against gravity
+					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.02);
+				} else {
+					// When level flying (Y near 0), apply moderate air resistance
+					// This prevents the exponential speed increase in level flight
+					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.005);
+				}
+				
+				// When S key is pressed, the plane should slow down regardless of pitch/dive
+				if (vehicleEntity.isBackwardMovement()) {
+					vehicleEntity.setSpeed(Math.max(0, vehicleEntity.getSpeed() - 0.03));
 				}
 
 				if (Main.modernPlaneMovements && vehicleEntity.getDriverSeat().getPassenger() instanceof Player) {
@@ -368,8 +381,17 @@ public abstract class AbstractVehicle {
 			vehicleEntity.setSpeed(vehicleEntity.getSpeed() + 0.01);
 		}
 
+		// Handle minimum speed thresholds
 		if (vehicleEntity.getSpeed() > 0.0 && vehicleEntity.getSpeed() < 0.09) {
-			vehicleEntity.setSpeed(0.0);
+			if (!planeFlying || vehicleEntity.isOnGround()) {
+				// For ground vehicles or landed planes, allow complete stop
+				vehicleEntity.setSpeed(0.0);
+			} else {
+				// NEVER let airborne planes have zero speed to prevent freezing in mid-air
+				// Our gravity code will handle the falling when speed is this low
+				// This is a failsafe to ensure planes always have some velocity
+				vehicleEntity.setSpeed(0.05);
+			}
 		}
 
 		Vector velocity = vehicleEntity.getDirection().clone();
@@ -377,14 +399,31 @@ public abstract class AbstractVehicle {
 
 		if (planeFlying) {
 			double velDir = velocity.length();
+			
+			// Always apply gravity to planes
+			// The slower the plane, the stronger the gravity effect
+			double gravityFactor = 0.05;
+			if (vehicleEntity.getSpeed() < 0.3) {
+				gravityFactor = 0.1; // Stronger gravity when speed is very low
+			}
+			
 			velocity.setY(vehicleEntity.getDirectionYheight());
 			if (velocity.length() != 0.0) velocity.normalize();
 			velocity.multiply(velDir);
-
+			
+			// For slower speeds, apply gravity to make the plane fall instead of stopping mid-air
+			if (vehicleEntity.getSpeed() < 0.1) {
+				// Apply gravity to prevent stopping mid-air
+				velocity.setY(velocity.getY() - gravityFactor);
+			}
+			
+			// Handle aircraft nose pitch behavior
 			double pitch = vehicleEntity.getModelEntity().getHeadPose().getX();
-			if (vehicleEntity.getSpeed() <= 0.01 && !vehicleEntity.isOnGround()) {
+			
+			// When plane has minimal speed, tip the nose down (stall effect)
+			if (vehicleEntity.getSpeed() <= 0.2 && !vehicleEntity.isOnGround()) {
 				pitch = vehicleEntity.getModelEntity().getHeadPose().getX();
-				pitch += AbstractVehicle.pitchIncrement;
+				pitch += AbstractVehicle.pitchIncrement; // Tilt nose down
 				if (pitch > AbstractVehicle.maxAngle) {
 					pitch = AbstractVehicle.maxAngle;
 				}else  if (pitch < -AbstractVehicle.maxAngle) {
@@ -392,6 +431,25 @@ public abstract class AbstractVehicle {
 				}else {
 					vehicleEntity.setDirectionYHeight(vehicleEntity.getDirectionYheight() - 0.1);
 				}
+				vehicleEntity.getModelEntity()
+						.setHeadPose(new EulerAngle(pitch, vehicleEntity.getModelEntity().getHeadPose().getY(), 0));
+			}
+			// When plane is on the ground, gradually level the nose
+			else if (vehicleEntity.isOnGround()) {
+				// Calculate the adjustment needed to return to level (0 pitch)
+				double adjustment = 0.01; // Small incremental adjustment for smooth transition
+				
+				if (Math.abs(pitch) < adjustment) {
+					// If very close to level, just set to zero
+					pitch = 0;
+				} else if (pitch > 0) {
+					// If nose is up, bring it down
+					pitch -= adjustment;
+				} else if (pitch < 0) {
+					// If nose is down, bring it up
+					pitch += adjustment;
+				}
+				
 				vehicleEntity.getModelEntity()
 						.setHeadPose(new EulerAngle(pitch, vehicleEntity.getModelEntity().getHeadPose().getY(), 0));
 			}
