@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.Map;
 
 public abstract class AbstractVehicle {
 	protected static final double pitchIncrement = Math.PI / 60;
@@ -116,6 +117,59 @@ public abstract class AbstractVehicle {
 		}
 
 		return ve.getFuel() > 0;
+	}
+	
+	// Maps to track vehicle positions for stuck detection
+	private static final Map<UUID, Location> lastPositionMap = new HashMap<>();
+	private static final Map<UUID, Long> lastCheckedTimeMap = new HashMap<>();
+	
+	/**
+	 * Clean up vehicle tracking data
+	 */
+	public static void cleanupVehicleTrackingData(UUID vehicleId) {
+		if (vehicleId != null) {
+			lastPositionMap.remove(vehicleId);
+			lastCheckedTimeMap.remove(vehicleId);
+		}
+	}
+	
+	/**
+	 * Check if a vehicle is stuck (has speed but isn't moving)
+	 * This is called every tick as part of basicDirections
+	 */
+	private void checkIfVehicleStuck(VehicleEntity ve) {
+		UUID vehicleId = ve.getVehicleUUID();
+		double currentSpeed = ve.getSpeed();
+		
+		// We only need to check if the vehicle has some speed
+		if (Math.abs(currentSpeed) < 0.1) return;
+		
+		// Track last position to detect when vehicle is stuck
+		Location currentLoc = ve.getDriverSeat().getLocation();
+		
+		// Get the last position from our static map
+		if (!lastPositionMap.containsKey(vehicleId)) {
+			lastPositionMap.put(vehicleId, currentLoc.clone());
+			lastCheckedTimeMap.put(vehicleId, System.currentTimeMillis());
+			return;
+		}
+		
+		// Check if the vehicle is stuck (high speed but barely moving)
+		long currentTime = System.currentTimeMillis();
+		if (currentTime - lastCheckedTimeMap.get(vehicleId) > 500) { // Check every 500ms
+			Location lastLoc = lastPositionMap.get(vehicleId);
+			double distance = currentLoc.distance(lastLoc);
+			
+			// If speed is relatively high but we're barely moving, we're likely stuck
+			if (Math.abs(currentSpeed) > 0.3 && distance < 0.1) {
+				// Vehicle is stuck, reduce speed to near zero
+				ve.setSpeed(currentSpeed > 0 ? 0.1 : -0.1);
+			}
+			
+			// Update the last position and check time
+			lastPositionMap.put(vehicleId, currentLoc.clone());
+			lastCheckedTimeMap.put(vehicleId, currentTime);
+		}
 	}
 
 	public abstract void handleTurnLeft(VehicleEntity ve, Player player);
@@ -343,6 +397,9 @@ public abstract class AbstractVehicle {
 		if (Main.customSpeedModifier.containsKey(material)) {
 			vehicleEntity.setSpeed(vehicleEntity.getSpeed() * Main.customSpeedModifier.getOrDefault(material,1.0));
 		}
+		
+		// Check if the vehicle is stuck (high speed but not moving)
+		checkIfVehicleStuck(vehicleEntity);
 
 		if (vehicleEntity.getSpeed() > 0) {
 			if(planeFlying){

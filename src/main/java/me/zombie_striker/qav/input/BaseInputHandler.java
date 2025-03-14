@@ -23,8 +23,10 @@ public abstract class BaseInputHandler extends PacketAdapter {
     
     // Cleanup method to prevent memory leaks
     public static void cleanupStoppedVehicle(UUID vehicleUUID) {
-        if (vehicleStateMap != null && vehicleUUID != null) {
+        if (vehicleUUID != null) {
+            // Clean up vehicle state tracking
             vehicleStateMap.remove(vehicleUUID);
+            stoppedTimeMap.remove(vehicleUUID);
         }
     }
 
@@ -53,16 +55,16 @@ public abstract class BaseInputHandler extends PacketAdapter {
     public abstract void onInputReceived(Player player, PacketContainer packet);
 
     // Enum to track the vehicle's movement state for better control
-    private enum VehicleState {
+    public enum VehicleState {
         MOVING_FORWARD,    // Vehicle is moving forward (speed > 0)
         STOPPED,           // Vehicle is fully stopped (speed = 0)
         STOPPING,          // Vehicle is slowing down to stop (S pressed while moving forward)
-        READY_FOR_REVERSE, // Vehicle is stopped and S was released (ready to go in reverse)
         MOVING_BACKWARD    // Vehicle is moving backward (speed < 0)
     }
     
-    // Map to track the state of each vehicle
-    private static final Map<UUID, VehicleState> vehicleStateMap = new HashMap<>();
+    // Maps to track vehicle states for the S-key release/reverse functionality
+    public static final Map<UUID, VehicleState> vehicleStateMap = new HashMap<>();
+    public static final Map<UUID, Long> stoppedTimeMap = new HashMap<>(); // Track when vehicle reached zero speed
     
     public void handleInput(VehicleEntity ve, Player player, boolean forward, boolean backward, boolean left, boolean right, boolean space, boolean shift) {
         // A and D should turn left and right (fixed direction)
@@ -123,22 +125,39 @@ public abstract class BaseInputHandler extends PacketAdapter {
                         break;
                         
                     case STOPPED:
-                        // If stopped and S is pressed, do nothing - just stay at zero
-                        // This forces player to let go of S before being able to reverse
-                        ve.setSpeed(0);
-                        break;
+                        // If stopped and S is pressed, check if we've been stopped long enough
+                        ve.setSpeed(0); // Keep speed at zero
                         
-                    case READY_FOR_REVERSE:
-                        // S has been released and pressed again, start moving backward
-                        ve.setBackwardMovement(true);
-                        ve.getType().handleSpeedDecrease(ve, player);
-                        vehicleStateMap.put(vehicleId, VehicleState.MOVING_BACKWARD);
+                        // Record when we first stopped if not already recorded
+                        if (!stoppedTimeMap.containsKey(vehicleId)) {
+                            stoppedTimeMap.put(vehicleId, System.currentTimeMillis());
+                        }
+                        
+                        // Check if we've been stopped for 1 second
+                        long currentTime = System.currentTimeMillis();
+                        long stoppedTime = stoppedTimeMap.getOrDefault(vehicleId, currentTime);
+                        long timeElapsed = currentTime - stoppedTime;
+                        
+                        // After 1 second of being stopped, allow going into reverse
+                        if (timeElapsed >= 1000) {
+                            // Start moving backward
+                            ve.setBackwardMovement(true);
+                            ve.setSpeed(-0.15); // Set an initial backward speed
+                            vehicleStateMap.put(vehicleId, VehicleState.MOVING_BACKWARD);
+                            stoppedTimeMap.remove(vehicleId); // Clear the stopped time
+                        }
                         break;
                         
                     case MOVING_BACKWARD:
                         // Already moving backward, continue as normal
                         ve.setBackwardMovement(true);
                         ve.getType().handleSpeedDecrease(ve, player);
+                        
+                        // Make sure the speed is actually negative (backward)
+                        if (ve.getSpeed() >= 0) {
+                            // If somehow the speed became positive or zero, force it negative
+                            ve.setSpeed(-Math.max(0.15, Math.abs(ve.getSpeed())));
+                        }
                         break;
                 }
             }
@@ -152,8 +171,9 @@ public abstract class BaseInputHandler extends PacketAdapter {
                 ve.setSpeed(0);
                 vehicleStateMap.put(vehicleId, VehicleState.STOPPED);
             } else if (currentState == VehicleState.STOPPED) {
-                // If fully stopped and S is released, mark as ready for reverse
-                vehicleStateMap.put(vehicleId, VehicleState.READY_FOR_REVERSE);
+                // If S is released while stopped, simply keep the vehicle stopped
+                // but clear the stopped timer so we don't accidentally go into reverse later
+                stoppedTimeMap.remove(vehicleId);
             }
         }
         
@@ -161,6 +181,9 @@ public abstract class BaseInputHandler extends PacketAdapter {
             // Pressing W should always set vehicle to forward movement mode
             if (ve.getSpeed() >= 0 && !ve.getType().getName().contains("plane")) {
                 vehicleStateMap.put(vehicleId, VehicleState.MOVING_FORWARD);
+                
+                // Clear stopped time when pressing W
+                stoppedTimeMap.remove(vehicleId);
             }
             ve.getType().handleSpeedIncrease(ve, player);
         }

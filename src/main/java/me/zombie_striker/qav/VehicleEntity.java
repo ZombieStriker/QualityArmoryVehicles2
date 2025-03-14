@@ -354,8 +354,9 @@ public class VehicleEntity implements ConfigurationSerializable {
 			entity.remove();
 		}
 
-		// Clean up the vehicle's entry in the stopped vehicles map
+		// Clean up the vehicle's entry in all tracking maps
 		me.zombie_striker.qav.input.BaseInputHandler.cleanupStoppedVehicle(getVehicleUUID());
+		me.zombie_striker.qav.vehicles.AbstractVehicle.cleanupVehicleTrackingData(getVehicleUUID());
 		
 		passagers.clear();
 		modelParts.clear();
@@ -487,6 +488,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 		}
 		return false;
 	}
+	
 
 	public boolean isSubmerged() {
 		if (driverseat == null)
