@@ -350,7 +350,9 @@ public abstract class AbstractVehicle {
 				// The deceleration rate depends on the pitch:
 				if(vehicleEntity.getDirectionYheight() < -0.15) {
 					// When diving steeply (negative Y), slight acceleration due to gravity
-					vehicleEntity.setSpeed(vehicleEntity.getSpeed() + 0.01);
+					// But cap the speed at maxSpeed * 2 to prevent excessive speeds
+					double newSpeed = vehicleEntity.getSpeed() + 0.01;
+					vehicleEntity.setSpeed(Math.min(newSpeed, vehicleEntity.getType().getMaxSpeed() * 2));
 				} else if(vehicleEntity.getDirectionYheight() > 0.15) {
 					// When climbing steeply (positive Y), strong deceleration against gravity
 					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.02);
@@ -452,6 +454,12 @@ public abstract class AbstractVehicle {
 				
 				vehicleEntity.getModelEntity()
 						.setHeadPose(new EulerAngle(pitch, vehicleEntity.getModelEntity().getHeadPose().getY(), 0));
+				
+				// If we're on the ground after gliding down (negative Y direction), reduce speed
+				if (vehicleEntity.getDirectionYheight() < 0) {
+					vehicleEntity.setSpeed(Math.max(0, vehicleEntity.getSpeed() - 0.03));
+					vehicleEntity.setDirectionYHeight(0); // Level out Y direction
+				}
 			}
 			if (pitch > maxAngle) {
 				pitch = maxAngle;

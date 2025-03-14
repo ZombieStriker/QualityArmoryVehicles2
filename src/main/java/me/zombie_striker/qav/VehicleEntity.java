@@ -354,6 +354,9 @@ public class VehicleEntity implements ConfigurationSerializable {
 			entity.remove();
 		}
 
+		// Clean up the vehicle's entry in the stopped vehicles map
+		me.zombie_striker.qav.input.BaseInputHandler.cleanupStoppedVehicle(getVehicleUUID());
+		
 		passagers.clear();
 		modelParts.clear();
 		if (!disabling) Main.vehicles.remove(this);

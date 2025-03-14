@@ -39,16 +39,46 @@ public class BoundingBox {
 	}
 
 	public boolean intersects(Location start, Vector direction, int reach) {
+		// Skip if in different worlds
 		if (location.getWorld() != null && !location.getWorld().equals(start.getWorld()))
 			return false;
 
-		Location loc = location.clone().add(centerOffset);
-		double distance = start.distance(loc);
-		if (distance > reach + width)
+		// Get center of vehicle with offset
+		Location vehicleCenter = location.clone().add(centerOffset);
+		
+		// Calculate direct distance to vehicle center
+		double directDistance = start.distance(vehicleCenter);
+		
+		// Quick check - if distance is too far, skip complex calculations
+		if (directDistance > reach + width)
 			return false;
-		Vector distanceVector = direction.clone();
-		distanceVector.normalize().multiply(distance);
-		return intersects(start,distanceVector);
+			
+		// Approach 1: Ray casting approach (more accurate)
+		// Normalize the direction vector
+		Vector ray = direction.clone().normalize();
+		
+		// Calculate the closest point along the ray to the vehicle center
+		// ray · (vehicleCenter - start) gives the projection length
+		Vector startToVehicle = vehicleCenter.toVector().subtract(start.toVector());
+		double projectionLength = ray.dot(startToVehicle);
+		
+		// If the projection is negative, the vehicle is behind the player
+		if (projectionLength < 0)
+			return directDistance <= width; // Only return true if player is inside vehicle
+		
+		// If the projection is beyond our reach, it's too far
+		if (projectionLength > reach)
+			return false;
+		
+		// Find the closest point on the ray to the vehicle center
+		Vector closestPointOnRay = start.toVector().add(ray.clone().multiply(projectionLength));
+		
+		// Calculate distance from closest point to vehicle center
+		double closestDistance = closestPointOnRay.distance(vehicleCenter.toVector());
+		
+		// Check if this point is within the vehicle's radius + some buffer for easier interaction
+		// Adding 0.5 to width makes interaction slightly easier
+		return closestDistance <= (width + 0.5);
 	}
 
 	public Location getLocation() {
