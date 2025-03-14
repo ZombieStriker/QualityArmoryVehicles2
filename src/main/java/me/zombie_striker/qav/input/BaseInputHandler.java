@@ -57,6 +57,7 @@ public abstract class BaseInputHandler extends PacketAdapter {
         MOVING_FORWARD,    // Vehicle is moving forward (speed > 0)
         STOPPED,           // Vehicle is fully stopped (speed = 0)
         STOPPING,          // Vehicle is slowing down to stop (S pressed while moving forward)
+        READY_FOR_REVERSE, // Vehicle is stopped and S was released (ready to go in reverse)
         MOVING_BACKWARD    // Vehicle is moving backward (speed < 0)
     }
     
@@ -122,8 +123,13 @@ public abstract class BaseInputHandler extends PacketAdapter {
                         break;
                         
                     case STOPPED:
-                        // Simplify reverse trigger - if we're fully stopped and S is pressed, go into reverse
-                        // This makes it easier to trigger reverse but still prevents accidental reverse
+                        // If stopped and S is pressed, do nothing - just stay at zero
+                        // This forces player to let go of S before being able to reverse
+                        ve.setSpeed(0);
+                        break;
+                        
+                    case READY_FOR_REVERSE:
+                        // S has been released and pressed again, start moving backward
                         ve.setBackwardMovement(true);
                         ve.getType().handleSpeedDecrease(ve, player);
                         vehicleStateMap.put(vehicleId, VehicleState.MOVING_BACKWARD);
@@ -145,6 +151,9 @@ public abstract class BaseInputHandler extends PacketAdapter {
                 // If we were stopping and now speed is zero
                 ve.setSpeed(0);
                 vehicleStateMap.put(vehicleId, VehicleState.STOPPED);
+            } else if (currentState == VehicleState.STOPPED) {
+                // If fully stopped and S is released, mark as ready for reverse
+                vehicleStateMap.put(vehicleId, VehicleState.READY_FOR_REVERSE);
             }
         }
         
