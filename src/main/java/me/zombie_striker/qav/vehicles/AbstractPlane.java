@@ -5,7 +5,6 @@ import me.zombie_striker.qav.api.events.VehicleTurnEvent;
 import me.zombie_striker.qav.util.HeadPoseUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.util.EulerAngle;
 
 public class AbstractPlane extends AbstractVehicle {
 	public AbstractPlane(String name, int id) {
@@ -37,8 +36,7 @@ public class AbstractPlane extends AbstractVehicle {
 		if (!this.handleFuel(ve,player)) {
 			return;
 		}
-		
-		// W should ONLY increase speed, no change in pitch
+
 		ve.setSpeed(Math.min(ve.getSpeed() + 0.1, ve.getType().getMaxSpeed()));
 	}
 
@@ -47,15 +45,13 @@ public class AbstractPlane extends AbstractVehicle {
 		if (!this.handleFuel(ve,player)) {
 			return;
 		}
-		
-		// S should ONLY decrease speed, no change in pitch
+
 		ve.setSpeed(Math.max(0, ve.getSpeed() - 0.05));
 	}
 
 	@Override
 	public void handleSpace(VehicleEntity ve, Player player) {
-		// Space bar should do nothing for planes
-		return;
+
 	}
 
 	@Override

@@ -45,33 +45,7 @@ public class QAVListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler
     public void onClickVehicle(PlayerInteractEvent e) {
-        // Handle players already in vehicles - check for shift+right click to exit
         if (e.getPlayer().getVehicle() != null) {
-            if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) && e.getPlayer().isSneaking()) {
-                Entity vehicle = e.getPlayer().getVehicle();
-                VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(vehicle);
-                
-                if (ve != null) {
-                    // This is our custom exit method (shift + right click)
-                    e.setCancelled(true);
-                    
-                    // Trigger the exit event
-                    PlayerExitQAVehicleEvent event = new PlayerExitQAVehicleEvent(ve, e.getPlayer());
-                    Bukkit.getPluginManager().callEvent(event);
-                    
-                    // Actually dismount the player
-                    vehicle.eject();
-                    
-                    if (Main.antiCheatHook) {
-                        Location location = vehicle.getLocation();
-                        e.getPlayer().teleport(location);
-                    }
-                    
-                    if (Main.removeVehicleOnDismount) {
-                        VehicleUtils.callback(ve, e.getPlayer(), "Dismount");
-                    }
-                }
-            }
             return;
         }
 
@@ -83,11 +57,13 @@ public class QAVListener implements Listener {
             }
 
             Main.DEBUG("Detected hitbox interaction.");
+
             e.setCancelled(true);
 
             ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
 
             if (e.getPlayer().hasPermission("qualityarmoryvehicles.repair") && Main.repairItem.isItem(item)) {
+
                 if (ve.getHealth() >= ve.getType().getMaxHealth()) {
                     return;
                 }
@@ -101,29 +77,22 @@ public class QAVListener implements Listener {
                 return;
             }
 
-            // If player is shift-clicking, open menu (only for authorized drivers)
             if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
                 new OverviewMenu(e.getPlayer(), ve).open();
                 return;
             }
 
-            // Improve right-click handling for ALL vehicle types
-            // Check if player has permission to drive this vehicle
             if (ve.allowUserDriver(e.getPlayer().getUniqueId())) {
-                // If driver seat is empty, let player enter as driver
                 if (ve.getDriverSeat().getPassenger() == null) {
                     ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
                     ve.getDriverSeat().setPassenger(e.getPlayer());
                     return;
-                } 
-                // If there's already a driver, try to add as passenger instead
-                else if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
-                    QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
-                    return;
                 }
-            } 
-            // If player isn't authorized to drive but is authorized as passenger
-            else if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+
+                if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+                    QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
+                }
+            } else if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
                 QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
             }
         }
@@ -172,31 +141,13 @@ public class QAVListener implements Listener {
 
             if (ve != null) {
                 e.setCancelled(true);
-                
-                // If player is shift-clicking, open menu (only for authorized drivers)
                 if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
                     new OverviewMenu(e.getPlayer(), ve).open();
-                    return;
-                }
-                
-                // Improve right-click handling for ALL vehicle types
-                // Check if player has permission to drive this vehicle
-                if (ve.allowUserDriver(e.getPlayer().getUniqueId())) {
-                    // If driver seat is empty, let player enter as driver
-                    if (ve.getDriverSeat().getPassenger() == null) {
+                } else {
+                    if (ve.allowUserDriver(e.getPlayer().getUniqueId()) && ve.getDriverSeat().getPassenger() == null) {
                         ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
                         ve.getDriverSeat().setPassenger(e.getPlayer());
-                        return;
-                    } 
-                    // If there's already a driver, try to add as passenger instead
-                    else if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
-                        QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
-                        return;
                     }
-                } 
-                // If player isn't authorized to drive but is authorized as passenger
-                else if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
-                    QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
                 }
             }
         }
@@ -223,55 +174,38 @@ public class QAVListener implements Listener {
         }
 
         e.setCancelled(true);
-        
-        // If player is shift-clicking, open menu (only for authorized drivers with permission)
-        if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
-            if (e.getPlayer().hasPermission(PermissionHandler.PERM_OPEN_VEHICLE_GUI)) {
-                new OverviewMenu(e.getPlayer(), ve).open();
+        if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+            if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
+                if (e.getPlayer().hasPermission(PermissionHandler.PERM_OPEN_VEHICLE_GUI)) {
+                    new OverviewMenu(e.getPlayer(), ve).open();
+                } else {
+                    e.getPlayer()
+                            .sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
+                }
             } else {
-                e.getPlayer().sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
+                if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
+                    QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(),
+                            ve.allowUserDriver(e.getPlayer().getUniqueId()));
+                } else {
+                    e.getPlayer()
+                            .sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
+                }
             }
-            return;
-        }
-        
-        // Check if player has permission to use vehicles at all
-        if (!e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
-            e.getPlayer().sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
-            return;
-        }
-        
-        // Handle standard entry logic - prioritize driver seat if empty
-        if (ve.allowUserDriver(e.getPlayer().getUniqueId())) {
-            // If driver seat is empty, let player enter as driver
+        } else if (e.getPlayer().hasPermission(PermissionHandler.PERM_OVERRIDE_WHITELIST) || VehicleUtils.isOverrideWhitelisted(e.getPlayer().getUniqueId())) {
             if (ve.getDriverSeat().getPassenger() == null) {
-                ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
-                ve.getDriverSeat().setPassenger(e.getPlayer());
-                return;
-            } 
-            // If there's already a driver, try to add as passenger
-            else if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
-                QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
+                if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
+                    ve.getDriverSeat().setPassenger(e.getPlayer());
+                } else {
+                    e.getPlayer().sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
+                }
+
                 return;
             }
-        } 
-        // If player isn't authorized to drive but is authorized as passenger
-        else if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
-            QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
-            return;
-        }
-        // Override whitelist handling as a fallback
-        else if (e.getPlayer().hasPermission(PermissionHandler.PERM_OVERRIDE_WHITELIST) || 
-                 VehicleUtils.isOverrideWhitelisted(e.getPlayer().getUniqueId())) {
-            
-            if (ve.getDriverSeat().getPassenger() == null) {
-                ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
-                ve.getDriverSeat().setPassenger(e.getPlayer());
-            } else {
-                QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
-            }
+
+            QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(),
+                    ve.allowUserDriver(e.getPlayer().getUniqueId()));
         }
     }
-
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {

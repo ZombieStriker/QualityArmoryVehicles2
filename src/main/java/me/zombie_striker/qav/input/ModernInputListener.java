@@ -31,7 +31,6 @@ public class ModernInputListener extends BaseInputHandler implements Listener, R
 
     @Override
     public void run() {
-        // Process player inputs
         new HashMap<>(lastInput).forEach((player, input) -> {
             if (player == null || !player.isOnline() || player.getVehicle() == null) {
                 lastInput.remove(player);

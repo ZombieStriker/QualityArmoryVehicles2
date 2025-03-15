@@ -136,61 +136,12 @@ public class QualityArmoryVehicles {
     }
 
     public static VehicleEntity getVehiclePlayerLookingAt(Player player) {
-        // Increase interaction distance from 6 to 10 blocks for better detection
-        double maxDistance = 10.0;
-        VehicleEntity closestVehicle = null;
-        double closestDistance = maxDistance;
-        
-        // First pass: Find the nearest vehicle that intersects the player's line of sight
         for (VehicleEntity ve : Main.vehicles) {
-            // Make sure we're checking for vehicles in the same world
-            if (!ve.getBoundingBox().getLocation().getWorld().equals(player.getWorld())) {
-                continue;
-            }
-            
-            // Distance check first for better performance
-            double distance = player.getLocation().distance(ve.getBoundingBox().getLocation());
-            if (distance > maxDistance) {
-                continue;
-            }
-            
-            // Check if the player's line of sight intersects the vehicle's bounding box
-            if (ve.getBoundingBox().intersects(player.getEyeLocation(), player.getLocation().getDirection(), (int)maxDistance)) {
-                // Only update if this vehicle is closer than previously found ones
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestVehicle = ve;
-                }
+            if (ve.getBoundingBox().intersects(player.getEyeLocation(), player.getLocation().getDirection(), 6)) {
+                return ve;
             }
         }
-        
-        // If we found a vehicle in the first pass, return it
-        if (closestVehicle != null) {
-            Main.DEBUG("Found vehicle by ray intersection at distance: " + closestDistance);
-            return closestVehicle;
-        }
-        
-        // Second pass: If we didn't find any intersection, check if player is standing very close to a vehicle
-        // This helps with up-close interactions where ray casting might fail
-        closestDistance = 3.0; // Closer proximity check (3 blocks)
-        
-        for (VehicleEntity ve : Main.vehicles) {
-            if (!ve.getBoundingBox().getLocation().getWorld().equals(player.getWorld())) {
-                continue;
-            }
-            
-            double distance = player.getLocation().distance(ve.getBoundingBox().getLocation());
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestVehicle = ve;
-            }
-        }
-        
-        if (closestVehicle != null) {
-            Main.DEBUG("Found vehicle by proximity at distance: " + closestDistance);
-        }
-        
-        return closestVehicle;
+        return null;
     }
 
 
