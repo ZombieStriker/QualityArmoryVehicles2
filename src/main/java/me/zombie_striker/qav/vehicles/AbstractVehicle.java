@@ -362,11 +362,6 @@ public abstract class AbstractVehicle {
 					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.005);
 				}
 
-				// When S key is pressed, the plane should slow down regardless of pitch/dive
-				if (vehicleEntity.isBackwardMovement()) {
-					vehicleEntity.setSpeed(Math.max(0, vehicleEntity.getSpeed() - 0.03));
-				}
-
 				if (Main.modernPlaneMovements && vehicleEntity.getDriverSeat().getPassenger() instanceof Player) {
 					Player player = (Player) vehicleEntity.getDriverSeat().getPassenger();
 					Vector direction = player.getEyeLocation().getDirection();

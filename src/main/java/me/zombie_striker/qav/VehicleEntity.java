@@ -34,7 +34,6 @@ public class VehicleEntity implements ConfigurationSerializable {
 	private BoundingBox boundingBox;
 	@ExposeDebug private double speed = 0;
 	@ExposeDebug private UUID vehicleUUID = UUID.randomUUID();
-	@ExposeDebug private boolean backwardMovement = false;
 
 	@ExposeDebug private UUID owner;
 
@@ -479,25 +478,13 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public boolean isOnGround() {
 		Location movingTo4 = getCenter().clone().subtract(0, 1, 0);
-		if (BlockCollisionUtil.isSolidAt(movingTo4)) {
-			return true;
-		}
-		return false;
-	}
-	
+        return BlockCollisionUtil.isSolidAt(movingTo4);
+    }
 
 	public boolean isSubmerged() {
 		if (driverseat == null)
 			return false;
 		return BlockCollisionUtil.getMaterial(driverseat.getLocation().add(0, 1.6, 0)) == Material.WATER;
-	}
-	
-	public void setBackwardMovement(boolean isMovingBackward) {
-		this.backwardMovement = isMovingBackward;
-	}
-	
-	public boolean isBackwardMovement() {
-		return backwardMovement;
 	}
 
 	@Override
