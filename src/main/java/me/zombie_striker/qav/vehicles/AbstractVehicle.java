@@ -346,19 +346,12 @@ public abstract class AbstractVehicle {
 
 		if (vehicleEntity.getSpeed() > 0) {
 			if(planeFlying){
-				// Apply air resistance - planes should always gradually slow down unless actively accelerating
-				// The deceleration rate depends on the pitch:
 				if(vehicleEntity.getDirectionYheight() < -0.15) {
-					// When diving steeply (negative Y), slight acceleration due to gravity
-					// But cap the speed at maxSpeed * 2 to prevent excessive speeds
 					double newSpeed = vehicleEntity.getSpeed() + 0.01;
 					vehicleEntity.setSpeed(Math.min(newSpeed, vehicleEntity.getType().getMaxSpeed() * 2));
 				} else if(vehicleEntity.getDirectionYheight() > 0.15) {
-					// When climbing steeply (positive Y), strong deceleration against gravity
 					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.02);
 				} else {
-					// When level flying (Y near 0), apply moderate air resistance
-					// This prevents the exponential speed increase in level flight
 					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.005);
 				}
 
