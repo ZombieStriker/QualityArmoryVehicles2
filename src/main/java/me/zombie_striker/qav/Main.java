@@ -7,6 +7,8 @@ import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.config.VehicleLoader;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
 import me.zombie_striker.qav.customitemmanager.CustomItemManager;
+import me.zombie_striker.qav.customitemmanager.pack.MultiVersionPackProvider;
+import me.zombie_striker.qav.customitemmanager.pack.StaticPackProvider;
 import me.zombie_striker.qav.customitemmanager.qav.versions.V1_13.CustomVehicleItem;
 import me.zombie_striker.qav.debugmanager.DebugManager;
 import me.zombie_striker.qav.finput.FInputManager;
@@ -30,6 +32,7 @@ import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -190,14 +193,30 @@ public class Main extends JavaPlugin {
 			CustomItemManager.registerItemType("vehicles", item);
 			item.initItems(getDataFolder());
 		}
+
 		if (!QAMini.overrideURL) {
-			String message = (String) a("QAMini.resourcepackurl", CustomItemManager.getResourcepack());
-			if (message != null && !message.equals(CustomItemManager.getResourcepack())) {
-				this.getConfig().set("QAMini.resourcepackurl", CustomItemManager.getResourcepack());
-				this.saveConfig();
-			}
+			this.getConfig().set("QAMini.resourcepackurl", CustomItemManager.getResourcepackProvider().serialize());
+			this.saveConfig();
 		} else {
-			CustomItemManager.setResourcepack((String) a("QAMini.resourcepackurl", CustomItemManager.getResourcepack()));
+			if (!getConfig().contains("QAMini.resourcepackurl")) {
+				getConfig().set("QAMini.resourcepackurl", CustomItemManager.getResourcepackProvider().serialize());
+				this.saveConfig();
+			} else {
+				if (getConfig().get("QAMini.resourcepackurl") instanceof String)
+					CustomItemManager.setResourcepack(new StaticPackProvider(getConfig().getString("QAMini.resourcepackurl")));
+				else {
+					ConfigurationSection packSection = getConfig().getConfigurationSection("QAMini.resourcepackurl");
+					if (packSection != null) {
+						if (packSection.contains("21")) {
+							packSection.set("21-4", packSection.getString("21"));
+							packSection.set("21", null);
+							this.saveConfig();
+						}
+
+						CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
+					}
+				}
+			}
 		}
 
 		NMSUtil.init();

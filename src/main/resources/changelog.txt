@@ -1,3 +1,8 @@
+2.4.1
+  Changelog:
+    - Fixed planes mechanics
+    - Fixed 1.21.4 resourcepack (thanks to QualityArmory's code)
+
 2.4
   Changelog:
     - Performance fixes

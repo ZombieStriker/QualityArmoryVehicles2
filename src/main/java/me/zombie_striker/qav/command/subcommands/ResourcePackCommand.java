@@ -7,6 +7,7 @@ import me.zombie_striker.qav.command.SubCommand;
 import me.zombie_striker.qav.customitemmanager.CustomItemManager;
 import me.zombie_striker.qav.util.ForksUtil;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +29,7 @@ public class ResourcePackCommand extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        ForksUtil.sendComponent(sender, Main.prefix + " " + MessagesConfig.COMMANDMESSAGES_TEXTURE, null, CustomItemManager.getResourcepack() == null ? "" : CustomItemManager.getResourcepack());
+        String resourcepack = CustomItemManager.getResourcepack(sender instanceof Player ? (Player) sender : null);
+        ForksUtil.sendComponent(sender, Main.prefix + " " + MessagesConfig.COMMANDMESSAGES_TEXTURE, null, resourcepack == null ? "" : resourcepack);
     }
 }

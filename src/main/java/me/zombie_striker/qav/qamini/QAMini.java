@@ -32,7 +32,6 @@ public class QAMini implements Listener {
 
 	private static final String CALCTEXT = ChatColor.BLACK + "qa:";
 	public static List<MaterialStorage> registeredItems = new ArrayList<>();
-	//public static String customResourcepack = "https://www.dropbox.com/s/i52dxtzop7j8oel/QualityArmoryvCarsOnly%20v1.0.zip?dl=1";
 	public static List<String> namesToBypass = new ArrayList<>();
 	public static List<UUID> resourcepackReq = new ArrayList<>();
 	public static HashMap<UUID, Long> sentResourcepack = new HashMap<>();
@@ -235,7 +234,7 @@ public class QAMini implements Listener {
 					@Override
 					public void run() {
 						try {
-							player.setResourcePack(CustomItemManager.getResourcepack());
+							player.setResourcePack(CustomItemManager.getResourcepack(player));
 							if (!isVersionHigherThan(1, 9)) {
 								resourcepackReq.add(player.getUniqueId());
 								sentResourcepack.put(player.getUniqueId(), System.currentTimeMillis());

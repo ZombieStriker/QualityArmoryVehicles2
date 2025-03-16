@@ -8,6 +8,7 @@ import me.zombie_striker.qav.VehicleTypes;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.config.VehicleYML;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
+import me.zombie_striker.qav.customitemmanager.pack.StaticPackProvider;
 import me.zombie_striker.qav.finput.FInputManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -43,8 +44,8 @@ public class CustomVehicleItem extends AbstractItem {
 	}
 
 	public void initItems(boolean b) {
-		if (CustomItemManager.getResourcepack() == null)
-			CustomItemManager.setResourcepack("https://www.dropbox.com/s/s57cq1df5ilol8h/QualityArmoryCarsOnlyV1.2.zip?dl=1");
+		if (CustomItemManager.getResourcepack(null) == null)
+			CustomItemManager.setResourcepack(new StaticPackProvider("https://www.dropbox.com/s/s57cq1df5ilol8h/QualityArmoryCarsOnlyV1.2.zip?dl=1"));
 		if (b) {
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "t50", 80).setDisplayname("T50")
 					.setCenter(new Vector(-1.5, 0, 0)).setFrontVectorOffset(4).setBackVectorOffset(4)

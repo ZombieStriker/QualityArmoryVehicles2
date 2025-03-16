@@ -9,6 +9,7 @@ softdepend:
   - Towny
   - ModelEngine
   - QuickShop
+  - ViaVersion
 depend: [ProtocolLib]
 commands:
   QualityArmoryVehicles:

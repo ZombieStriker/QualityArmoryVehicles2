@@ -8,12 +8,15 @@ import me.zombie_striker.qav.VehicleTypes;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.config.VehicleYML;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
+import me.zombie_striker.qav.customitemmanager.pack.MultiVersionPackProvider;
 import me.zombie_striker.qav.finput.FInputManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomVehicleItem extends AbstractItem {
 
@@ -42,8 +45,14 @@ public class CustomVehicleItem extends AbstractItem {
 	}
 
 	public void initItems(boolean b) {
-		if (CustomItemManager.getResourcepack() == null)
-			CustomItemManager.setResourcepack("https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/v2.1.9/QualityArmory.zip");
+		if (CustomItemManager.getResourcepackProvider() == null) {
+			Map<String, String> versions = new HashMap<>();
+			versions.put("0", "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory.zip");
+			versions.put("21-4", "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory-21.zip");
+
+			CustomItemManager.setResourcepack(new MultiVersionPackProvider(versions));
+		}
+
 		if (b) {
 
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "t50", 1).setDisplayname("T50")

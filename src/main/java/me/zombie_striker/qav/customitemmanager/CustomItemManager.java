@@ -1,41 +1,70 @@
 package me.zombie_striker.qav.customitemmanager;
 
+import me.zombie_striker.qav.customitemmanager.pack.ResourcepackProvider;
+import me.zombie_striker.qav.customitemmanager.pack.StaticPackProvider;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Set;
 
 public class CustomItemManager {
 
-	private static String resourcepack = null;
-	private static final HashMap<String, me.zombie_striker.qav.customitemmanager.AbstractItem> customItemTypes = new HashMap<>();
+    private static ResourcepackProvider resourcepackProvider = null;
+    private static HashMap<String, AbstractItem> customItemTypes = new HashMap<>();
 
-	public static String getResourcepack() {
-		return resourcepack;
-	}
-	public static void setResourcepack(String url){
-		resourcepack = url;
-	}
+    /**
+     * @deprecated Use {@link #getResourcepack(Player)} instead
+     * @return the resourcepack URL
+     */
+    @Deprecated
+    public static String getResourcepack() {
+        return resourcepackProvider.getFor(null);
+    }
 
-	public static Set<String> getCustomItemTypes(){return customItemTypes.keySet();}
+    /**
+     * @deprecated Use {@link #setResourcepack(ResourcepackProvider)} instead
+     * @param url the resourcepack URL
+     */
+    @Deprecated
+    public static void setResourcepack(String url) {
+        resourcepackProvider = new StaticPackProvider(url);
+    }
 
-	public static void registerItemType(String key, me.zombie_striker.qav.customitemmanager.AbstractItem item){
-		customItemTypes.put(key,item);
-	}
-	public static AbstractItem getItemType(String key){
-		return customItemTypes.get(key);
-	}
-	public static boolean isUsingCustomData(){
-		try{
-			new ItemStack(Material.DIAMOND_BLOCK).getItemMeta().hasCustomModelData();
-			return true;
-		}catch (Error | Exception ignored){
+    public static String getResourcepack(Player player) {
+        return resourcepackProvider.getFor(player);
+    }
 
-		}
-		return false;
-	}
+    public static void setResourcepack(ResourcepackProvider provider) {
+        resourcepackProvider = provider;
+    }
+
+    public static ResourcepackProvider getResourcepackProvider() {
+        return resourcepackProvider;
+    }
+
+    public static Set<String> getCustomItemTypes() {
+        return customItemTypes.keySet();
+    }
+
+    public static void registerItemType(String key, AbstractItem item) {
+        customItemTypes.put(key, item);
+    }
+
+    public static AbstractItem getItemType(String key) {
+        return customItemTypes.get(key);
+    }
+
+    public static boolean isUsingCustomData() {
+        try {
+            new ItemStack(Material.DIAMOND_BLOCK).getItemMeta().hasCustomModelData();
+            return true;
+        } catch (Error | Exception ignored) {
+
+        }
+        return false;
+    }
 
 
 }
