@@ -346,10 +346,13 @@ public abstract class AbstractVehicle {
 
 		if (vehicleEntity.getSpeed() > 0) {
 			if(planeFlying){
-				if(vehicleEntity.getDirectionYheight()<0){
-					vehicleEntity.setSpeed(vehicleEntity.getSpeed() + 0.01);
-				}else{
-					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.01);
+				if(vehicleEntity.getDirectionYheight() < -0.15) {
+					double newSpeed = vehicleEntity.getSpeed() + 0.01;
+					vehicleEntity.setSpeed(Math.min(newSpeed, vehicleEntity.getType().getMaxSpeed() * 2));
+				} else if(vehicleEntity.getDirectionYheight() > 0.15) {
+					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.02);
+				} else {
+					vehicleEntity.setSpeed(vehicleEntity.getSpeed() - 0.005);
 				}
 
 				if (Main.modernPlaneMovements && vehicleEntity.getDriverSeat().getPassenger() instanceof Player) {
@@ -377,12 +380,23 @@ public abstract class AbstractVehicle {
 
 		if (planeFlying) {
 			double velDir = velocity.length();
+
+			double gravityFactor = 0.05;
+			if (vehicleEntity.getSpeed() < 0.3) {
+				gravityFactor = 0.1;
+			}
+
 			velocity.setY(vehicleEntity.getDirectionYheight());
 			if (velocity.length() != 0.0) velocity.normalize();
 			velocity.multiply(velDir);
 
+			if (vehicleEntity.getSpeed() < 0.1) {
+				velocity.setY(velocity.getY() - gravityFactor);
+			}
+
 			double pitch = vehicleEntity.getModelEntity().getHeadPose().getX();
-			if (vehicleEntity.getSpeed() <= 0.01 && !vehicleEntity.isOnGround()) {
+
+			if (vehicleEntity.getSpeed() <= 0.2 && !vehicleEntity.isOnGround()) {
 				pitch = vehicleEntity.getModelEntity().getHeadPose().getX();
 				pitch += AbstractVehicle.pitchIncrement;
 				if (pitch > AbstractVehicle.maxAngle) {
@@ -394,6 +408,24 @@ public abstract class AbstractVehicle {
 				}
 				vehicleEntity.getModelEntity()
 						.setHeadPose(new EulerAngle(pitch, vehicleEntity.getModelEntity().getHeadPose().getY(), 0));
+			} else if (vehicleEntity.isOnGround()) {
+				double adjustment = 0.01;
+
+				if (Math.abs(pitch) < adjustment) {
+					pitch = 0;
+				} else if (pitch > 0) {
+					pitch -= adjustment;
+				} else if (pitch < 0) {
+					pitch += adjustment;
+				}
+
+				vehicleEntity.getModelEntity()
+						.setHeadPose(new EulerAngle(pitch, vehicleEntity.getModelEntity().getHeadPose().getY(), 0));
+
+				if (vehicleEntity.getDirectionYheight() < 0) {
+					vehicleEntity.setSpeed(Math.max(0, vehicleEntity.getSpeed() - 0.03));
+					vehicleEntity.setDirectionYHeight(0);
+				}
 			}
 			if (pitch > maxAngle) {
 				pitch = maxAngle;

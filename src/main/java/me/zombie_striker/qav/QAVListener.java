@@ -1,6 +1,7 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.api.events.PlayerExitQAVehicleEvent;
 import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
 import me.zombie_striker.qav.api.events.VehicleRepairEvent;
@@ -81,12 +82,20 @@ public class QAVListener implements Listener {
                 return;
             }
 
-            if (ve.allowUserDriver(e.getPlayer().getUniqueId()) && ve.getDriverSeat().getPassenger() == null) {
-                ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
-                ve.getDriverSeat().setPassenger(e.getPlayer());
+            if (ve.allowUserDriver(e.getPlayer().getUniqueId())) {
+                if (ve.getDriverSeat().getPassenger() == null) {
+                    ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
+                    ve.getDriverSeat().setPassenger(e.getPlayer());
+                    return;
+                }
+
+                if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+                    QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
+                }
+            } else if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+                QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
             }
         }
-
     }
 
     @EventHandler
@@ -197,7 +206,6 @@ public class QAVListener implements Listener {
                     ve.allowUserDriver(e.getPlayer().getUniqueId()));
         }
     }
-
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {

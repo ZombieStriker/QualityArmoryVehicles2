@@ -478,11 +478,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public boolean isOnGround() {
 		Location movingTo4 = getCenter().clone().subtract(0, 1, 0);
-		if (BlockCollisionUtil.isSolidAt(movingTo4)) {
-			return true;
-		}
-		return false;
-	}
+        return BlockCollisionUtil.isSolidAt(movingTo4);
+    }
 
 	public boolean isSubmerged() {
 		if (driverseat == null)
