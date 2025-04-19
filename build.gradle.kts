@@ -2,11 +2,11 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "8.3.5"
+    id("com.gradleup.shadow") version "8.3.6"
 }
 
 group = "me.zombie_striker"
-version = "2.4.1"
+version = "2.4.2-SNAPSHOT"
 description = "QualityArmoryVehicles"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
@@ -29,14 +29,14 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:13.1.0")
+    implementation("com.github.cryptomorin:XSeries:13.2.0")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.10")
     compileOnly("org.jetbrains:annotations:26.0.1")
 
     // API
-    compileOnly("net.kyori:adventure-api:4.18.0")
+    compileOnly("net.kyori:adventure-api:4.20.0")
     compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
 
     // Compatibilities
