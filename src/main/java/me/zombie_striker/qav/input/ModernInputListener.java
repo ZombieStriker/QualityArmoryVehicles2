@@ -3,18 +3,19 @@ package me.zombie_striker.qav.input;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
+import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModernInputListener extends BaseInputHandler implements Listener, Runnable {
-    private static BukkitTask task;
+    private static WrappedTask task;
     private final Map<Player, InternalStructure> lastInput = new HashMap<>();
 
     @Override
@@ -26,7 +27,7 @@ public class ModernInputListener extends BaseInputHandler implements Listener, R
     public void register() {
         ProtocolLibrary.getProtocolManager().addPacketListener(this);
         Bukkit.getPluginManager().registerEvents(this, QualityArmoryVehicles.getPlugin());
-        task = Bukkit.getScheduler().runTaskTimer(QualityArmoryVehicles.getPlugin(), this, 0, 1);
+        task = Main.foliaLib.getScheduler().runTimer(this, 0, 1);
     }
 
     @Override

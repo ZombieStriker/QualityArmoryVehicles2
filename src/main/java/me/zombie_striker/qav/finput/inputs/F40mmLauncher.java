@@ -1,7 +1,8 @@
 package me.zombie_striker.qav.finput.inputs;
 
+import com.tcoded.folialib.wrapper.task.WrappedTask;
+import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
-import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.finput.FInputManager;
 import me.zombie_striker.qav.qamini.ExplosionHandler;
@@ -14,13 +15,12 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class F40mmLauncher implements FInput {
 
@@ -80,12 +80,12 @@ public class F40mmLauncher implements FInput {
 			eyelocation.add(dir);
 			player.getWorld().playSound(eyelocation, "warheadlaunch", 10, 1.0f);
 			final Location s = eyelocation;
-			new BukkitRunnable() {
+			Main.foliaLib.getScheduler().runAtEntityTimer(ve.getModelEntity(), new Consumer<WrappedTask>() {
 				int distance = 100;
 				final int ticks = 3;
 
 				@Override
-				public void run() {
+				public void accept(WrappedTask task) {
 					dir.setY(dir.getY() - 0.05);
 					for (int tick = 0; tick < ticks; tick++) {
 						distance--;
@@ -116,13 +116,12 @@ public class F40mmLauncher implements FInput {
 								s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 								player.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 							}
-							cancel();
+							task.cancel();
 							return;
 						}
 					}
 				}
-			}.runTaskTimer(QualityArmoryVehicles.getPlugin(), 0, 1);
-
+			}, 0, 1);
 		}
 	}
 

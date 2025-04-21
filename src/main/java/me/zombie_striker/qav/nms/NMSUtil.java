@@ -3,7 +3,6 @@ package me.zombie_striker.qav.nms;
 import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -70,7 +69,7 @@ public final class NMSUtil {
         entity.teleport(to);
 
         if (rider != null) {
-            Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> entity.setPassenger(rider), 2L);
+            Main.foliaLib.getScheduler().runAtEntityLater(entity, () -> entity.setPassenger(rider), 2L);
         }
     }
 }
