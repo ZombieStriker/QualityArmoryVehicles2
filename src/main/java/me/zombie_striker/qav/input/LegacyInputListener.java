@@ -2,10 +2,10 @@ package me.zombie_striker.qav.input;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class LegacyInputListener extends BaseInputHandler {
 
@@ -21,11 +21,9 @@ public class LegacyInputListener extends BaseInputHandler {
         space = packet.getBooleans().read(0);
         shift = packet.getBooleans().read(1);
 
-        new BukkitRunnable() {
-            public void run() {
-                handleInput(ve, player, forward, backward, left, right, space, shift);
-            }
-        }.runTaskLater(QualityArmoryVehicles.getPlugin(), 0);
+        Main.foliaLib.getScheduler().runNextTick(task -> {
+            handleInput(ve, player, forward, backward, left, right, space, shift);
+        });
     }
 
     public void register() {

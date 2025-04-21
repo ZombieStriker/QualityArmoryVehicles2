@@ -62,7 +62,7 @@ public class RemoveCommand extends SubCommand {
         }
 
         if (target == null)
-            Bukkit.getScheduler().runTaskAsynchronously(QualityArmoryVehicles.getPlugin(), () -> {
+            Main.foliaLib.getScheduler().runAsync((task) -> {
                 List<File> files = QualityArmoryVehicles.getUnlockedVehiclesFiles();
                 for (File file : files) {
                     List<UnlockedVehicle> unlockedVehicles = QualityArmoryVehicles.parseUnlockedVehicles(file);
@@ -72,7 +72,7 @@ public class RemoveCommand extends SubCommand {
                 }
             });
         else {
-            Bukkit.getScheduler().runTaskAsynchronously(QualityArmoryVehicles.getPlugin(), () -> {
+            Main.foliaLib.getScheduler().runAsync((task) -> {
                 File file = QualityArmoryVehicles.getUnlockedVehiclesFile(target);
                 List<UnlockedVehicle> unlockedVehicles = QualityArmoryVehicles.parseUnlockedVehicles(file);
                 unlockedVehicles.removeIf(unlockedVehicle -> unlockedVehicle.getVehicleType().getName().equalsIgnoreCase(args[0]));

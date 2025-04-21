@@ -2,6 +2,7 @@ package me.zombie_striker.qav;
 
 import com.cryptomorin.xseries.reflection.XReflection;
 import com.google.common.io.Files;
+import com.tcoded.folialib.FoliaLib;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.config.VehicleLoader;
@@ -38,7 +39,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -49,6 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Main extends JavaPlugin {
+
+	public static FoliaLib foliaLib;
 
 	public static boolean debugWithCommand = false;
 	public static boolean debug = false;
@@ -144,6 +146,8 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		foliaLib = new FoliaLib(this);
+
 		ConfigurationSerialization.registerClass(UnlockedVehicle.class);
 		ConfigurationSerialization.registerClass(VehicleEntity.class);
 
@@ -243,14 +247,12 @@ public class Main extends JavaPlugin {
 			this.getLogger().info("Successfully loaded " + vehicles.size() + " spawned vehicles.");
 		}
 
-		new BukkitRunnable(){
-			public void run(){
-				for(VehicleEntity ve : new ArrayList<>(vehicles)){
-					if(ve!=null && ve.getDriverSeat()!=null)
-						ve.tick();
-				}
+		Main.foliaLib.getScheduler().runTimer(() -> {
+			for(VehicleEntity ve : new ArrayList<>(vehicles)){
+				if(ve!=null && ve.getDriverSeat()!=null)
+					ve.tick();
 			}
-		}.runTaskTimer(this,1,1);
+		}, 1, 1);
 
 		ProtectionHandler.init();
 		if (Bukkit.getPluginManager().isPluginEnabled("QuickShop")) {
