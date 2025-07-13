@@ -45,7 +45,7 @@ public class DumpVehicleCommand extends SubCommand {
             return;
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(QualityArmoryVehicles.getPlugin(), () -> {
+        Main.foliaLib.getScheduler().runAsync((task) -> {
             Player player = (Player) sender;
             VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
 
@@ -78,11 +78,11 @@ public class DumpVehicleCommand extends SubCommand {
                         try {
                             Object value = field.get(vehicle);
                             player.sendMessage(Main.prefix + " " + field.getName() + ": " + value);
-                        } catch (IllegalAccessException ignored) {}
+                        } catch (IllegalAccessException ignored) {
+                        }
                     }
                 }
             }
-
         });
 
     }

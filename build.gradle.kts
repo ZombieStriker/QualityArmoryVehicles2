@@ -33,6 +33,7 @@ dependencies {
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.10")
+    implementation("com.github.technicallycoded:FoliaLib:8b091d0e96")
     compileOnly("org.jetbrains:annotations:26.0.1")
 
     // API
@@ -41,7 +42,7 @@ dependencies {
 
     // Compatibilities
     compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
-    compileOnly("me.zombie_striker:QualityArmory:2.0.18")
+    compileOnly("me.zombie_striker:QualityArmory:2.0.19")
     compileOnly("com.palmergames.bukkit.towny:towny:0.101.0.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.ticxo.modelengine:api:R3.2.0")
@@ -64,6 +65,7 @@ tasks {
 
         relocate("com.cryptomorin.xseries", "me.zombie_striker.qav.util.xseries")
         relocate("net.jodah.expiringmap", "me.zombie_striker.qav.util.expiringmap")
+        relocate("com.tcoded.folialib", "me.zombie_striker.qav.util.folialib")
         relocate("org.codemc.worldguardwrapper", "me.zombie_striker.qav.hooks.worldguard")
         relocate("dev.triumphteam.gui", "me.zombie_striker.qav.gui")
     }

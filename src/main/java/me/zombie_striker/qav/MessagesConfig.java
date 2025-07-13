@@ -6,7 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -253,18 +252,16 @@ public class MessagesConfig {
 
 
 	public static void sendOutOfFuel(final Player player) {
-		new BukkitRunnable() {
-			public void run() {
-				if (!Main.useChatForMessage) {
-					try {
-						HotbarMessager.sendHotBarMessage(player, MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
-					} catch (Error | Exception r5) {
-					}
-				} else {
-					player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
-				}
-			}
-		}.runTaskLater(QualityArmoryVehicles.getPlugin(), 0);
+		Main.foliaLib.getScheduler().runNextTick((task) -> {
+            if (!Main.useChatForMessage) {
+                try {
+                    HotbarMessager.sendHotBarMessage(player, MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
+                } catch (Error | Exception r5) {
+                }
+            } else {
+                player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);
+            }
+		});
 	}
 
 	private static String a(String path, String o) {

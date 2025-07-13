@@ -23,7 +23,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -211,44 +210,38 @@ public class QAMini implements Listener {
 	public static void sendResourcepack(final Player player, final boolean warning) {
 		if (namesToBypass.contains(player.getName()) || resourcepackReq.contains(player.getUniqueId()))
 			return;
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				if (namesToBypass.contains(player.getName())) {
-					resourcepackReq.add(player.getUniqueId());
-					return;
-				}
-				if (warning)
-					try {
-						player.sendTitle(
-								MessagesConfig.RESOURCEPACK_TITLE,
-								MessagesConfig.RESOURCEPACK_SUBTITLE);
-					} catch (Error e2) {
-						player.sendMessage(MessagesConfig.RESOURCEPACK_TITLE);
-						player.sendMessage(MessagesConfig.RESOURCEPACK_SUBTITLE);
-					}
-				if (MessagesConfig.RESOURCEPACK_CRASH.length() > 2) {
-					player.sendMessage(Main.prefix + MessagesConfig.RESOURCEPACK_CRASH);
-				}
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						try {
-							player.setResourcePack(CustomItemManager.getResourcepack(player));
-							if (!isVersionHigherThan(1, 9)) {
-								resourcepackReq.add(player.getUniqueId());
-								sentResourcepack.put(player.getUniqueId(), System.currentTimeMillis());
-							}
-							resourcepackReq.add(player.getUniqueId());
-							// If the player is on 1.8, manually add them to the resource list.
-
-						} catch (Exception e) {
-
-						}
-					}
-				}.runTaskLater(QualityArmoryVehicles.getPlugin(), 20 * (warning ? 1 : 5));
+		Main.foliaLib.getScheduler().runNextTick(task -> {
+			if (namesToBypass.contains(player.getName())) {
+				resourcepackReq.add(player.getUniqueId());
+				return;
 			}
-		}.runTaskLater(QualityArmoryVehicles.getPlugin(), 0);
+			if (warning)
+				try {
+					player.sendTitle(
+							MessagesConfig.RESOURCEPACK_TITLE,
+							MessagesConfig.RESOURCEPACK_SUBTITLE);
+				} catch (Error e2) {
+					player.sendMessage(MessagesConfig.RESOURCEPACK_TITLE);
+					player.sendMessage(MessagesConfig.RESOURCEPACK_SUBTITLE);
+				}
+			if (MessagesConfig.RESOURCEPACK_CRASH.length() > 2) {
+				player.sendMessage(Main.prefix + MessagesConfig.RESOURCEPACK_CRASH);
+			}
+			Main.foliaLib.getScheduler().runLater(() -> {
+				try {
+					player.setResourcePack(CustomItemManager.getResourcepack(player));
+					if (!isVersionHigherThan(1, 9)) {
+						resourcepackReq.add(player.getUniqueId());
+						sentResourcepack.put(player.getUniqueId(), System.currentTimeMillis());
+					}
+					resourcepackReq.add(player.getUniqueId());
+					// If the player is on 1.8, manually add them to the resource list.
+
+				} catch (Exception e) {
+
+				}
+			}, 20 * (warning ? 1 : 5));
+		});
 	}
 
 	@SuppressWarnings("deprecation")
@@ -282,14 +275,9 @@ public class QAMini implements Listener {
 				} else {
 					t = removeCalculatedExtra(hand);
 				}
-				new BukkitRunnable() {
-
-					@Override
-					public void run() {
-						e.getPlayer().setItemInHand(t);
-					}
-				}.runTaskLater(QualityArmoryVehicles.getPlugin(), 1);
-
+				Main.foliaLib.getScheduler().runNextTick(task -> {
+					e.getPlayer().setItemInHand(t);
+				});
 			}
 		}
 	}
@@ -421,26 +409,22 @@ public class QAMini implements Listener {
 				}
 				final ItemStack temp2 = temp1;
 
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						if (origin.getDurability() != e.getPlayer().getItemInHand().getDurability()
-								&& slot == e.getPlayer().getInventory().getHeldItemSlot()
-								&& (e.getPlayer().getItemInHand() != null
-								&& e.getPlayer().getItemInHand().getType() == origin.getType())) {
-							try {
-								if (temp2 != null
-										&& temp2.getDurability() == e.getPlayer().getItemInHand().getDurability())
-									return;
-							} catch (Error | Exception re54) {
-							}
-							e.getPlayer().setItemInHand(origin);
-							DEBUG("The item in the player's hand changed! Origin " + origin.getDurability() + " New "
-									+ e.getPlayer().getItemInHand().getDurability());
+				Main.foliaLib.getScheduler().runNextTick(task -> {
+					if (origin.getDurability() != e.getPlayer().getItemInHand().getDurability()
+							&& slot == e.getPlayer().getInventory().getHeldItemSlot()
+							&& (e.getPlayer().getItemInHand() != null
+							&& e.getPlayer().getItemInHand().getType() == origin.getType())) {
+						try {
+							if (temp2 != null
+									&& temp2.getDurability() == e.getPlayer().getItemInHand().getDurability())
+								return;
+						} catch (Error | Exception re54) {
 						}
-
+						e.getPlayer().setItemInHand(origin);
+						DEBUG("The item in the player's hand changed! Origin " + origin.getDurability() + " New "
+								+ e.getPlayer().getItemInHand().getDurability());
 					}
-				}.runTaskLater(QualityArmoryVehicles.getPlugin(), 0);
+				});
 			}
 
 			// ItemStack usedItem = e.getPlayer().getItemInHand();
@@ -478,14 +462,9 @@ public class QAMini implements Listener {
 			for (ItemStack i : e.getPlayer().getInventory().getContents()) {
 				if (i != null && (QualityArmoryVehicles.isVehicleByItem(i))) {
 					if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
-						new BukkitRunnable() {
-
-							@Override
-							public void run() {
-								sendResourcepack(e.getPlayer(), false);
-							}
-
-						}.runTaskLater(QualityArmoryVehicles.getPlugin(), 0);
+						Main.foliaLib.getScheduler().runNextTick(task -> {
+							sendResourcepack(e.getPlayer(), false);
+						});
 					}
 					break;
 				}
