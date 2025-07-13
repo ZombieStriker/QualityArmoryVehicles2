@@ -461,7 +461,7 @@ public class QAMini implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerJoinEvent e) {
-		if (/* Bukkit.getVersion().contains("1.8") || */ Bukkit.getVersion().contains("1.7")) {
+		if (XReflection.MINOR_NUMBER == 7) {
 			Bukkit.broadcastMessage(Main.prefix
 					+ " QualityArmory does not support versions older than 1.9, and may crash clients");
 			Bukkit.broadcastMessage(
