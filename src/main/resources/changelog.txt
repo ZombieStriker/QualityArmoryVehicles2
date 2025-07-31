@@ -1,3 +1,8 @@
+2.4.2
+  Changelog:
+    - Added new SeatSize option to change the passenger seat size, this will default to ModelSize
+    - Fixed 1.21.7 support
+
 2.4.1
   Changelog:
     - Fixed planes mechanics

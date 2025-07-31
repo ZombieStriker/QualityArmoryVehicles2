@@ -56,6 +56,7 @@ public abstract class AbstractVehicle {
 	private List<String> lore;
 	private double acceleration = 0.1;
 	private ModelSize size = ModelSize.BABY_ARMORSTAND_HEAD;
+	private ModelSize seatsSize = ModelSize.BABY_ARMORSTAND_HEAD;
 	private boolean canJump = true;
 	private double maxhealth;
 	private int price;
@@ -247,6 +248,14 @@ public abstract class AbstractVehicle {
 
 	public void setModelSize(ModelSize adultArmorstandHead) {
 		this.size = adultArmorstandHead;
+	}
+
+	public ModelSize getSeatsSize() {
+		return seatsSize;
+	}
+
+	public void setSeatsSize(ModelSize seatsSize) {
+		this.seatsSize = seatsSize;
 	}
 
 	boolean canJump() {
@@ -717,6 +726,7 @@ public abstract class AbstractVehicle {
 				", lore=" + lore +
 				", acceleration=" + acceleration +
 				", size=" + size +
+				", seatsSize=" + seatsSize +
 				", canJump=" + canJump +
 				", maxhealth=" + maxhealth +
 				", price=" + price +

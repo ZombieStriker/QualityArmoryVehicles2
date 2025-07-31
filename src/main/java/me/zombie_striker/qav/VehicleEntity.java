@@ -39,7 +39,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	private List<ArmorStand> modelParts = new ArrayList<>();
 	private Entity driverseat;
-	@ExposeDebug private HashMap<Integer, Entity> passagers = new HashMap<Integer, Entity>();
+	@ExposeDebug private HashMap<Integer, Entity> passagers = new HashMap<>();
 	@ExposeDebug private HashMap<Integer, Entity> attachments = new HashMap<>();
 	private Inventory inventory;
 	private Inventory fuels;
@@ -454,7 +454,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 			giveEffects(((LivingEntity) used));
 		} else {
 			used = spawn.getWorld().spawnEntity(spawn, EntityType.ARMOR_STAND);
-			if (size < 2) {
+			if (size < 2 || vehicleType.getSeatsSize() == ModelSize.BABY_ARMORSTAND_HEAD) {
 				((ArmorStand) used).setSmall(true);
 			}
 			((ArmorStand) used).setVisible(false);

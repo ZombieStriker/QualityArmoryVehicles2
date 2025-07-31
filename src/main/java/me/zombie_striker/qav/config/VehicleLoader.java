@@ -133,7 +133,8 @@ public class VehicleLoader {
 			vehicle.setModelSize(ModelSize.valueOf(c.getString("model.ModelSize")));
 		}else if (c.contains("increaseSize"))
 			vehicle.setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD);
-
+		if(c.contains("model.SeatsSize")) vehicle.setSeatsSize(ModelSize.valueOf(c.getString("model.SeatsSize")));
+		else vehicle.setSeatsSize(vehicle.getModelType());
 		if (c.contains("baseAcceleration"))
 			vehicle.setAccerlationSpeed(c.getDouble("baseAcceleration"));
 		if (c.contains("maxAcceleration"))
