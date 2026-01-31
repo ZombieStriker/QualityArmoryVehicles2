@@ -2,7 +2,7 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "8.3.6"
+    id("com.gradleup.shadow") version "9.3.1"
 }
 
 group = "me.zombie_striker"
@@ -29,24 +29,24 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:13.3.3")
+    implementation("com.github.cryptomorin:XSeries:13.6.0")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.10")
     compileOnly("org.jetbrains:annotations:26.0.1")
 
     // API
-    compileOnly("net.kyori:adventure-api:4.24.0")
+    compileOnly("net.kyori:adventure-api:4.26.1")
     compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
 
     // Compatibilities
     compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
-    compileOnly("me.zombie_striker:QualityArmory:2.0.18")
+    compileOnly("me.zombie_striker:QualityArmory:2.1.1")
     compileOnly("com.palmergames.bukkit.towny:towny:0.101.0.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.ticxo.modelengine:api:R3.2.0")
     compileOnly("org.maxgamer:QuickShop:5.1.2.5")
-    compileOnly("com.viaversion:viaversion-api:5.2.1")
+    compileOnly("com.viaversion:viaversion-api:5.7.1")
 }
 
 tasks {
