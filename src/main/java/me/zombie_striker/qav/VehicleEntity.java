@@ -99,6 +99,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 			this.whitelist.add(UUID.fromString(string));
 		}
 
+		allowsPassagers = (boolean) data.getOrDefault("allowsPassagers", false);
 		rotation = (double) data.get("angle");
 
 		this.spawnOrFind(loc);
@@ -127,6 +128,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 			whitelist.add(uuid.toString());
 		}
 		data.put("whitelist", whitelist);
+		data.put("allowsPassagers", allowsPassagers);
 
 		return data;
 	}
