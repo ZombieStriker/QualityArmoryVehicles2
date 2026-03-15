@@ -1,10 +1,10 @@
 package me.zombie_striker.qav.api;
 
+import me.zombie_striker.qav.*;
+import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.api.events.VehicleSpawnEvent;
 import me.zombie_striker.qav.attachments.Attachment;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
-import me.zombie_striker.qav.*;
-import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.perms.PermissionHandler;
@@ -238,8 +238,16 @@ public class QualityArmoryVehicles {
         } else {
             if (ve.getPassagers().size() < ve.getType().getPassagerSpots().size()) {
                 int seatId = ve.getFirstSeat();
-                if (seatId < 0)
-                    return;
+                if (seatId < 0) {
+                    for (int i = 0; i < ve.getType().getPassagerSpots().size(); i++) {
+                        if (ve.getPassager(i) == null) {
+                            seatId = i;
+                            break;
+                        }
+                    }
+
+                    if (seatId < 0) return;
+                }
 
                 PlayerEnterQAVehicleEvent event = new PlayerEnterQAVehicleEvent(ve, player);
                 Bukkit.getPluginManager().callEvent(event);
