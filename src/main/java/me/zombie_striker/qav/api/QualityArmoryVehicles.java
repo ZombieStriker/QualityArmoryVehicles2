@@ -236,10 +236,11 @@ public class QualityArmoryVehicles {
             ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
             ve.getDriverSeat().setPassenger(player);
         } else {
-            if (ve.getPassagers().size() < ve.getType().getPassagerSpots().size()) {
+            int maxPassengers = ve.getType().getPassagerSpots().size();
+            if (ve.getPassagers().size() < maxPassengers) {
                 int seatId = ve.getFirstSeat();
                 if (seatId < 0) {
-                    for (int i = 0; i < ve.getType().getPassagerSpots().size(); i++) {
+                    for (int i = 0; i < maxPassengers; i++) {
                         if (ve.getPassager(i) == null) {
                             seatId = i;
                             break;
