@@ -219,7 +219,7 @@ public class TrackRuntimeController {
 
         TrackStop spawn = sorted.get(spawnStopIndex % sorted.size());
         Location base = spawn.getRailBlockLocation(w).clone().add(0, -1, 0);
-        return QualityArmoryVehicles.spawnVehicle(v, base, null);
+        return QualityArmoryVehicles.spawnVehicleSystem(v, base);
     }
 
     private void playStopSound(@NotNull Location loc, boolean arrival) {

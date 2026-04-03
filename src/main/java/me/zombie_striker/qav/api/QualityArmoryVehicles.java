@@ -191,13 +191,21 @@ public class QualityArmoryVehicles {
     }
 
     public static VehicleEntity spawnVehicle(AbstractVehicle ab, Location location, @Nullable Player player) {
+        return spawnVehicleInternal(ab, location, player, true);
+    }
+
+    public static VehicleEntity spawnVehicleSystem(AbstractVehicle ab, Location location) {
+        return spawnVehicleInternal(ab, location, null, false);
+    }
+
+    private static VehicleEntity spawnVehicleInternal(AbstractVehicle ab, Location location, @Nullable Player player, boolean checkProtectionHooks) {
         if (location.getWorld() != null && Main.blacklistedWorlds.contains(location.getWorld().getName())) {
             if (player != null)
                 player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_BLACKLIST_WORLD);
             return null;
         }
 
-        if (!ProtectionHandler.canPlace(player, location)) {
+        if (checkProtectionHooks && !ProtectionHandler.canPlace(player, location)) {
             if (player != null)
                 player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_BLACKLIST_PLACE);
             return null;
