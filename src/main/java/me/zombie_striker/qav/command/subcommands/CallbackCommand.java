@@ -38,20 +38,39 @@ public class CallbackCommand extends SubCommand {
             return;
         }
 
-        Location loc;
+        final Player player;
         if (sender instanceof Player) {
-            loc = ((Player) sender).getLocation();
+            player = (Player) sender;
         } else {
             sender.sendMessage("Only players can use this command");
             return;
         }
+        final Location loc = player.getLocation();
+        final int radiusSquared;
         int radius = 6;
         if (args.length >= 1) {
-            radius = Integer.parseInt(args[0]);
+            try {
+                radius = Integer.parseInt(args[0]);
+                if (radius <= 0) {
+                    sender.sendMessage(Main.prefix + MessagesConfig.colorize("&cRadius must be a positive number."));
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                sender.sendMessage(Main.prefix + MessagesConfig.colorize("&cInvalid radius. Please provide a number."));
+                return;
+            }
         }
+
+        radiusSquared = radius * radius;
         for (VehicleEntity ve : new ArrayList<>(Main.vehicles)) {
-            if (ve.getOwner() != null && ve.getOwner().equals(((Player) sender).getUniqueId()) && ve.getDriverSeat().getLocation().distanceSquared(loc) < radius * radius)
-                VehicleUtils.callback(ve, (Player) sender);
+            if (ve == null) continue;
+            if (ve.getOwner() == null) continue;
+            if (!ve.getOwner().equals(player.getUniqueId())) continue;
+            if (ve.getDriverSeat() == null) continue;
+
+            if (ve.getDriverSeat().getLocation().distanceSquared(loc) < radiusSquared) {
+                VehicleUtils.callback(ve, player);
+            }
         }
 
         sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGE_CALLBACK.replace("%radius%", String.valueOf(radius)));

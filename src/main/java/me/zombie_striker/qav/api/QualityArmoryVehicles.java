@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.api;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.api.events.VehicleSpawnEvent;
@@ -8,11 +9,15 @@ import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.perms.PermissionHandler;
+import me.zombie_striker.qav.util.BlockCollisionUtil;
+import me.zombie_striker.qav.vehicles.AbstractTrain;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,6 +27,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -197,7 +203,16 @@ public class QualityArmoryVehicles {
             return null;
         }
 
-        VehicleEntity vehicleEntity = new VehicleEntity(ab, location.getBlock().getRelative(BlockFace.UP).getLocation(), player != null ? player.getUniqueId() : null);
+        Block spawnBase = location.getBlock();
+        if (ab instanceof AbstractTrain) {
+            if (isRailMaterial(location)) {
+                spawnBase = spawnBase.getRelative(BlockFace.DOWN);
+            } else if (isRailMaterial(spawnBase.getRelative(BlockFace.DOWN).getType())) {
+                spawnBase = spawnBase.getRelative(BlockFace.DOWN);
+            }
+        }
+
+        VehicleEntity vehicleEntity = new VehicleEntity(ab, spawnBase.getRelative(BlockFace.UP).getLocation(), player != null ? player.getUniqueId() : null);
         VehicleSpawnEvent event = new VehicleSpawnEvent(player, vehicleEntity);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCanceled()) {
@@ -408,5 +423,15 @@ public class QualityArmoryVehicles {
             location.getWorld().dropItem(location, item);
         }
 
+    }
+
+    public static boolean isRailMaterial(@NotNull Location location) {
+        return isRailMaterial(BlockCollisionUtil.getMaterial(location));
+    }
+
+    public static boolean isRailMaterial(@NotNull Material mat) {
+        XMaterial material = XMaterial.matchXMaterial(mat);
+        return material.equals(XMaterial.RAIL) || material.equals(XMaterial.ACTIVATOR_RAIL) ||
+                material.equals(XMaterial.POWERED_RAIL) || material.equals(XMaterial.DETECTOR_RAIL);
     }
 }

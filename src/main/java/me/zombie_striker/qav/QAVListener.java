@@ -1,7 +1,6 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import me.zombie_striker.qav.api.events.PlayerExitQAVehicleEvent;
 import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
 import me.zombie_striker.qav.api.events.VehicleRepairEvent;
@@ -11,10 +10,7 @@ import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.util.ForksUtil;
 import me.zombie_striker.qav.util.VehicleUtils;
-import me.zombie_striker.qav.vehicles.AbstractCar;
-import me.zombie_striker.qav.vehicles.AbstractHelicopter;
-import me.zombie_striker.qav.vehicles.AbstractPlane;
-import me.zombie_striker.qav.vehicles.AbstractVehicle;
+import me.zombie_striker.qav.vehicles.*;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -107,7 +103,14 @@ public class QAVListener implements Listener {
 
             if (vehicle != null) {
                 e.setCancelled(true);
-                VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(vehicle, e.getClickedBlock().getRelative(BlockFace.UP).getLocation(), e.getPlayer());
+                Location spawnLocation = e.getClickedBlock().getRelative(BlockFace.UP).getLocation();
+
+                if (vehicle instanceof AbstractTrain) {
+                    // Train placement should use rail level; spawn routine handles its own offset.
+                    spawnLocation = e.getClickedBlock().getLocation();
+                }
+
+                VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(vehicle, spawnLocation, e.getPlayer());
 
                 if (ve == null) {
                     return;

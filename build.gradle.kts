@@ -1,15 +1,16 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     id("java")
     id("com.gradleup.shadow") version "9.3.1"
 }
 
 group = "me.zombie_striker"
-version = "2.4.2-SNAPSHOT"
+version = "2.5.0-SNAPSHOT"
 description = "QualityArmoryVehicles"
 
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 repositories {
     mavenCentral()
@@ -52,6 +53,7 @@ dependencies {
 tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
+        options.release.set(8)
     }
 
     jar {
@@ -77,11 +79,6 @@ tasks {
     }
 }
 
-val gitDescribe: String by lazy {
-    val stdout = ByteArrayOutputStream()
-    rootProject.exec {
-        commandLine("git", "rev-parse", "--short", "HEAD")
-        standardOutput = stdout
-    }
-    stdout.toString().trim()
-}
+val gitDescribe: Provider<String> = providers.exec {
+    commandLine("git", "rev-parse", "--short", "HEAD")
+}.standardOutput.asText.map { it.trim() }
