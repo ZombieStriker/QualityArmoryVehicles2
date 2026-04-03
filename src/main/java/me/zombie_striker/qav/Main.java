@@ -293,7 +293,9 @@ public class Main extends JavaPlugin {
 				ve.deconstruct(null, "Disabling", true);
 		}
 
-		trackRuntimeController.stop();
+		if (trackRuntimeController != null) {
+			trackRuntimeController.stop();
+		}
 		vehicles.clear();
 	}
 
