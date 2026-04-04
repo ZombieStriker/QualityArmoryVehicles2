@@ -160,6 +160,13 @@ public class TracksCommand extends SubCommand {
         if (track == null) return;
 
         Main.tracksManager.setRunning(track.getId(), running);
+        try {
+            Main.tracksManager.saveAll();
+        } catch (IOException e) {
+            sender.sendMessage(Main.prefix + MessagesConfig.MESSAGE_TRAM_SAVE_FAILED);
+            Main.getPlugin(Main.class).getLogger().log(java.util.logging.Level.SEVERE, "Failed to save tram tracks", e);
+            return;
+        }
         if (running) {
             sender.sendMessage(Main.prefix + MessagesConfig.COMMAND_TRAM_TRACK_STARTED.replace("%track%", track.getId()));
         } else {

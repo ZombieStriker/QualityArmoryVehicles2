@@ -55,6 +55,7 @@ public class TracksStorage {
 
             Track track = new Track(trackId, worldName);
             track.setLooping(t.getBoolean("looping", true));
+            track.setRunning(t.getBoolean("running", true));
 
             List<TrackStop> stops = new ArrayList<>();
             ConfigurationSection stopsSection = t.getConfigurationSection("stops");
@@ -94,6 +95,7 @@ public class TracksStorage {
             String base = "tracks." + track.getId();
             config.set(base + ".world", track.getWorldName());
             config.set(base + ".looping", track.isLooping());
+            config.set(base + ".running", track.isRunning());
 
             config.set(base + ".stops", null);
             for (TrackStop stop : track.getStops()) {

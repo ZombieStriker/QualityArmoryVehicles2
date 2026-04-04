@@ -1,7 +1,6 @@
 package me.zombie_striker.qav.tracks.editor;
 
-import me.zombie_striker.qav.Main;
-import me.zombie_striker.qav.vehicles.AbstractTrain;
+import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,13 +25,7 @@ public class TrackEditorListener implements Listener {
         if (clicked == null) return;
         if (editor.getSession(e.getPlayer()) == null) return;
 
-        AbstractTrain trainPrototype = Main.vehicleTypes.stream()
-                .filter(v -> v instanceof AbstractTrain)
-                .map(v -> (AbstractTrain) v)
-                .findFirst()
-                .orElse(null);
-        if (trainPrototype == null) return;
-        if (!trainPrototype.isRail(clicked.getLocation())) return;
+        if (!QualityArmoryVehicles.isRailMaterial(clicked.getType())) return;
         if (e.getPlayer().isConversing()) return;
 
         e.setCancelled(true);

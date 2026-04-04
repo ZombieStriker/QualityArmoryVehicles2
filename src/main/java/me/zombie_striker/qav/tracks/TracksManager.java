@@ -13,7 +13,6 @@ public class TracksManager {
 
     private final @NotNull TracksStorage storage;
     private final @NotNull Map<String, Track> tracks = new HashMap<>();
-    private final @NotNull Set<String> runningTracks = new HashSet<>();
 
     public TracksManager(@NotNull TracksStorage storage) {
         this.storage = storage;
@@ -22,8 +21,6 @@ public class TracksManager {
     public void loadAll() {
         tracks.clear();
         tracks.putAll(storage.loadAllTracks());
-        runningTracks.clear();
-        runningTracks.addAll(tracks.keySet());
     }
 
     public void saveAll() throws IOException {
@@ -47,18 +44,17 @@ public class TracksManager {
     }
 
     public boolean deleteTrack(@NotNull String id) {
-        runningTracks.remove(id.toLowerCase(Locale.ROOT));
         return tracks.remove(id.toLowerCase(Locale.ROOT)) != null;
     }
 
     public boolean isRunning(@NotNull String trackId) {
-        return runningTracks.contains(trackId.toLowerCase(Locale.ROOT));
+        Track t = tracks.get(trackId.toLowerCase(Locale.ROOT));
+        return t != null && t.isRunning();
     }
 
     public void setRunning(@NotNull String trackId, boolean running) {
-        String key = trackId.toLowerCase(Locale.ROOT);
-        if (running) runningTracks.add(key);
-        else runningTracks.remove(key);
+        Track t = tracks.get(trackId.toLowerCase(Locale.ROOT));
+        if (t != null) t.setRunning(running);
     }
 
     public @NotNull TrackStop addStop(@NotNull Track track, @NotNull String name, @NotNull Location railBlock, int dwellSeconds) {

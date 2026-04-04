@@ -14,6 +14,7 @@ public class Track {
     private final @NotNull String id;
     private @NotNull String worldName;
     private boolean looping = true;
+    private boolean running = false;
 
     private final @NotNull List<TrackStop> stops = new ArrayList<>();
     private final @NotNull List<TrackTrainAssignment> trainAssignments = new ArrayList<>();
@@ -45,6 +46,14 @@ public class Track {
 
     public void setLooping(boolean looping) {
         this.looping = looping;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 
     public @NotNull List<TrackStop> getStops() {
