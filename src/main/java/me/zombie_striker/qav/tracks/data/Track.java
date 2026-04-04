@@ -16,7 +16,7 @@ public class Track {
     private boolean looping = true;
 
     private final @NotNull List<TrackStop> stops = new ArrayList<>();
-    private final @NotNull List<String> trains = new ArrayList<>();
+    private final @NotNull List<TrackTrainAssignment> trainAssignments = new ArrayList<>();
 
     public Track(@NotNull String id, @NotNull String worldName) {
         this.id = id;
@@ -57,13 +57,13 @@ public class Track {
         this.stops.sort(Comparator.comparingInt(TrackStop::getOrder));
     }
 
-    public @NotNull List<String> getTrains() {
-        return Collections.unmodifiableList(trains);
+    public @NotNull List<TrackTrainAssignment> getTrainAssignments() {
+        return Collections.unmodifiableList(trainAssignments);
     }
 
-    public void setTrains(@NotNull List<String> newTrains) {
-        this.trains.clear();
-        this.trains.addAll(newTrains);
+    public void setTrainAssignments(@NotNull List<TrackTrainAssignment> assignments) {
+        this.trainAssignments.clear();
+        this.trainAssignments.addAll(assignments);
     }
 
     public void addStop(@NotNull TrackStop stop) {

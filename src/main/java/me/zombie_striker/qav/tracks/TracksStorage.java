@@ -3,6 +3,7 @@ package me.zombie_striker.qav.tracks;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.tracks.data.Track;
 import me.zombie_striker.qav.tracks.data.TrackStop;
+import me.zombie_striker.qav.tracks.data.TrackTrainAssignment;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -10,9 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class TracksStorage {
@@ -32,24 +30,9 @@ public class TracksStorage {
 
     public synchronized void save() throws IOException {
         File parent = file.getParentFile();
-        if (parent != null && !parent.exists()) {
-            parent.mkdirs();
-        }
+        if (parent != null && !parent.exists()) parent.mkdirs();
 
-        File tempFile = new File(file.getParentFile(), file.getName() + ".tmp");
-        config.save(tempFile);
-
-        // Rename may fail on some platforms when the destination already exists; use Files.move instead.
-        try {
-            Files.move(
-                    tempFile.toPath(),
-                    file.toPath(),
-                    StandardCopyOption.REPLACE_EXISTING,
-                    StandardCopyOption.ATOMIC_MOVE
-            );
-        } catch (AtomicMoveNotSupportedException ignored) {
-            Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
+        config.save(file);
     }
 
     public synchronized @NotNull Map<String, Track> loadAllTracks() {
@@ -97,7 +80,7 @@ public class TracksStorage {
                 }
             }
             track.setStops(stops);
-            track.setTrains(t.getStringList("trains"));
+            track.setTrainAssignments(loadTrainAssignments(t));
 
             tracks.put(trackId.toLowerCase(Locale.ROOT), track);
         }
@@ -123,9 +106,42 @@ public class TracksStorage {
                 config.set(sbase + ".dwellSeconds", stop.getDwellSeconds());
             }
 
-            config.set(base + ".trains", track.getTrains());
+            List<Map<String, Object>> trainMaps = new ArrayList<>();
+            for (TrackTrainAssignment a : track.getTrainAssignments()) {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("type", a.getVehicleTypeName());
+                m.put("spawnDelaySeconds", a.getSpawnDelaySeconds());
+                m.put("spawnDirection", a.getSpawnDirection());
+                trainMaps.add(m);
+            }
+            config.set(base + ".trains", trainMaps);
         }
 
         save();
+    }
+
+    private static @NotNull List<TrackTrainAssignment> loadTrainAssignments(@NotNull ConfigurationSection t) {
+        List<TrackTrainAssignment> out = new ArrayList<>();
+
+        for (Map<?, ?> m : t.getMapList("trains")) {
+            Object typeObj = m.get("type");
+            if (!(typeObj instanceof String)) continue;
+
+            String type = (String) typeObj;
+            if (type.isEmpty()) continue;
+            int delay = 0;
+
+            Object d = m.get("spawnDelaySeconds");
+            if (d instanceof Number) delay = ((Number) d).intValue();
+
+            int dir = 0;
+
+            Object dirObj = m.get("spawnDirection");
+            if (dirObj instanceof Number) dir = ((Number) dirObj).intValue();
+
+            out.add(new TrackTrainAssignment(type, delay, dir));
+        }
+
+        return out;
     }
 }

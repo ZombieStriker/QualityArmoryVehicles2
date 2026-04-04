@@ -78,6 +78,13 @@ public class QAVListener implements Listener {
                 return;
             }
 
+            if (ve.isTrackAutomatic() && ve.getType() instanceof AbstractTrain) {
+                if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+                    QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
+                }
+                return;
+            }
+
             if (ve.allowUserDriver(e.getPlayer().getUniqueId())) {
                 if (ve.getDriverSeat().getPassenger() == null) {
                     ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
@@ -146,6 +153,10 @@ public class QAVListener implements Listener {
                 e.setCancelled(true);
                 if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
                     new OverviewMenu(e.getPlayer(), ve).open();
+                } else if (ve.isTrackAutomatic() && ve.getType() instanceof AbstractTrain) {
+                    if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+                        QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
+                    }
                 } else {
                     if (ve.allowUserDriver(e.getPlayer().getUniqueId()) && ve.getDriverSeat().getPassenger() == null) {
                         ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
@@ -177,6 +188,7 @@ public class QAVListener implements Listener {
         }
 
         e.setCancelled(true);
+        boolean trackAuto = ve.isTrackAutomatic() && ve.getType() instanceof AbstractTrain;
         if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
             if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
                 if (e.getPlayer().hasPermission(PermissionHandler.PERM_OPEN_VEHICLE_GUI)) {
@@ -188,14 +200,14 @@ public class QAVListener implements Listener {
             } else {
                 if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
                     QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(),
-                            ve.allowUserDriver(e.getPlayer().getUniqueId()));
+                            !trackAuto && ve.allowUserDriver(e.getPlayer().getUniqueId()));
                 } else {
                     e.getPlayer()
                             .sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
                 }
             }
         } else if (e.getPlayer().hasPermission(PermissionHandler.PERM_OVERRIDE_WHITELIST) || VehicleUtils.isOverrideWhitelisted(e.getPlayer().getUniqueId())) {
-            if (ve.getDriverSeat().getPassenger() == null) {
+            if (!trackAuto && ve.getDriverSeat().getPassenger() == null) {
                 if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
                     ve.getDriverSeat().setPassenger(e.getPlayer());
                 } else {
@@ -206,7 +218,7 @@ public class QAVListener implements Listener {
             }
 
             QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(),
-                    ve.allowUserDriver(e.getPlayer().getUniqueId()));
+                    !trackAuto && ve.allowUserDriver(e.getPlayer().getUniqueId()));
         }
     }
 

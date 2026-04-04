@@ -2,7 +2,6 @@ package me.zombie_striker.qav;
 
 import com.cryptomorin.xseries.XPotion;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import me.zombie_striker.qav.attachments.Attachment;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
@@ -17,7 +16,6 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +25,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public AbstractVehicle vehicleType;
 	@ExposeDebug public boolean allowsPassagers = false;
+	private boolean displayOnly = false;
+	private boolean trackAutomatic = false;
 
 	@ExposeDebug private double rotation = 0;
 	@ExposeDebug private Vector direction = new Vector(0, 0, 1);
@@ -54,7 +54,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 		boundingBox = new BoundingBox(location, vehicleType.getWidthRadius(), vehicleType.getHeight());
 
 		this.owner = Main.onlyPublicVehicles ? null : owner;
-		this.whitelist.add(owner);
+		if (owner != null)
+			this.whitelist.add(owner);
 
 		health = vehicleType.getMaxHealth();
 
@@ -377,6 +378,22 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public void setAllowsPassagers(boolean b) {
 		this.allowsPassagers = b;
+	}
+
+	public boolean isDisplayOnly() {
+		return displayOnly;
+	}
+
+	public void setDisplayOnly(boolean displayOnly) {
+		this.displayOnly = displayOnly;
+	}
+
+	public boolean isTrackAutomatic() {
+		return trackAutomatic;
+	}
+
+	public void setTrackAutomatic(boolean trackAutomatic) {
+		this.trackAutomatic = trackAutomatic;
 	}
 
 	public double getHealth() {

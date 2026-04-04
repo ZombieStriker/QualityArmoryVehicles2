@@ -22,6 +22,8 @@ public class TracksManager {
     public void loadAll() {
         tracks.clear();
         tracks.putAll(storage.loadAllTracks());
+        runningTracks.clear();
+        runningTracks.addAll(tracks.keySet());
     }
 
     public void saveAll() throws IOException {
@@ -37,9 +39,8 @@ public class TracksManager {
     }
 
     public @NotNull Track createTrack(@NotNull String id, @NotNull String worldName) {
-        if (id.contains(".")) {
-            throw new IllegalArgumentException("Track id may not contain '.' characters: " + id);
-        }
+        if (id.contains(".")) throw new IllegalArgumentException("Track id may not contain '.' characters: " + id);
+
         Track track = new Track(id, worldName);
         tracks.put(id.toLowerCase(Locale.ROOT), track);
         return track;

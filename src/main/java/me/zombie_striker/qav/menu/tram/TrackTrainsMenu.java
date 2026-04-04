@@ -7,6 +7,7 @@ import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.menu.Menu;
 import me.zombie_striker.qav.tracks.data.Track;
+import me.zombie_striker.qav.tracks.data.TrackTrainAssignment;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +16,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TrackTrainsMenu extends Menu {
+
+    private static @NotNull String tramFacingLabel(int direction) {
+        int d = direction % 4;
+        if (d < 0) d += 4;
+
+        switch (d) {
+            case 0:
+                return MessagesConfig.MESSAGE_TRAM_DIR_SOUTH;
+            case 1:
+                return MessagesConfig.MESSAGE_TRAM_DIR_EAST;
+            case 2:
+                return MessagesConfig.MESSAGE_TRAM_DIR_NORTH;
+            case 3:
+                return MessagesConfig.MESSAGE_TRAM_DIR_WEST;
+            default:
+                return String.valueOf(d);
+        }
+    }
 
     private final @NotNull String trackId;
     private final @Nullable Menu back;
@@ -37,19 +56,30 @@ public class TrackTrainsMenu extends Menu {
         this.clearPageItems();
         this.setPageButtons();
 
-        List<String> trains = new ArrayList<>(track.getTrains());
+        List<TrackTrainAssignment> trains = new ArrayList<>(track.getTrainAssignments());
         for (int i = 0; i < trains.size(); i++) {
-            String train = trains.get(i);
+            TrackTrainAssignment slot = trains.get(i);
+            String train = slot.getVehicleTypeName();
             int index = i;
+            String stationName = Main.trackRuntimeController.getCurrentStationNameForTrain(track, index);
+            String stationLine = MessagesConfig.colorize(MessagesConfig.MENU_TRAM_TRAIN_STATION.replace("%station%",
+                    stationName != null ? stationName : MessagesConfig.MENU_TRAM_TRAIN_STATION_UNKNOWN));
+            String delayLine = MessagesConfig.colorize(MessagesConfig.MENU_TRAM_TRAIN_SPAWN_DELAY
+                    .replace("%delay%", String.valueOf(slot.getSpawnDelaySeconds())));
+            String facingLine = MessagesConfig.colorize(MessagesConfig.MENU_TRAM_TRAIN_FACING
+                    .replace("%dir%", tramFacingLabel(slot.getSpawnDirection())));
             this.addItem(new GuiItem(ItemFact.a(XMaterial.MINECART.parseMaterial(),
-                    "&6" + train,
+                    MessagesConfig.colorize("&6" + train),
+                    stationLine,
+                    delayLine,
+                    facingLine,
                     "",
                     MessagesConfig.MENU_TRAM_REMOVE_HINT), (e) -> {
                 if (e.isRightClick()) {
-                    List<String> newList = new ArrayList<>(track.getTrains());
+                    List<TrackTrainAssignment> newList = new ArrayList<>(track.getTrainAssignments());
                     if (index < newList.size()) {
                         newList.remove(index);
-                        track.setTrains(newList);
+                        track.setTrainAssignments(newList);
                         try {
                             Main.tracksManager.saveAll();
                         } catch (Exception ex) {
@@ -75,4 +105,3 @@ public class TrackTrainsMenu extends Menu {
         }
     }
 }
-

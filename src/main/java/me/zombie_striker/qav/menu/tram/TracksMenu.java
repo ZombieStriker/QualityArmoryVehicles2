@@ -34,7 +34,7 @@ public class TracksMenu extends Menu {
                     MessagesConfig.MENU_TRAM_TRACK_ID.replace("%id%", track.getId()),
                     MessagesConfig.MENU_TRAM_TRACK_WORLD.replace("%world%", track.getWorldName()),
                     MessagesConfig.MENU_TRAM_TRACK_STOPS.replace("%count%", String.valueOf(track.getStops().size())),
-                    MessagesConfig.MENU_TRAM_TRACK_TRAINS.replace("%count%", String.valueOf(track.getTrains().size())),
+                    MessagesConfig.MENU_TRAM_TRACK_TRAINS.replace("%count%", String.valueOf(track.getTrainAssignments().size())),
                     "",
                     MessagesConfig.MENU_TRAM_EDIT_HINT
             };

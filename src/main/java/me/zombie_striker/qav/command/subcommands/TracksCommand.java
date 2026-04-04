@@ -2,14 +2,15 @@ package me.zombie_striker.qav.command.subcommands;
 
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
-import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
 import me.zombie_striker.qav.menu.tram.TrackEditMenu;
 import me.zombie_striker.qav.menu.tram.TracksMenu;
 import me.zombie_striker.qav.tracks.data.Track;
+import me.zombie_striker.qav.tracks.data.TrackTrainAssignment;
 import me.zombie_striker.qav.vehicles.AbstractTrain;
+import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -186,7 +187,7 @@ public class TracksCommand extends SubCommand {
             sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_ONLY_PLAYERs);
             return;
         }
-        if (args.length < 2) {
+        if (args.length < 3) {
             sender.sendMessage(Main.prefix + MessagesConfig.COMMAND_TRAM_USAGE_ASSIGNTRAIN);
             return;
         }
@@ -194,39 +195,35 @@ public class TracksCommand extends SubCommand {
         if (track == null) return;
 
         Player p = (Player) sender;
-        VehicleEntity ve = null;
-        if (p.getVehicle() != null) {
-            ve = QualityArmoryVehicles.getVehicleEntityByEntity(p.getVehicle());
-        }
-        if (ve == null) {
-            ve = QualityArmoryVehicles.getVehiclePlayerLookingAt(p);
-        }
+        AbstractVehicle ve = QualityArmoryVehicles.getVehicle(args[2]);
         if (ve == null) {
             sender.sendMessage(Main.prefix + MessagesConfig.COMMAND_TRAM_NO_VEHICLE_FOUND);
             return;
         }
-        if (!(ve.getType() instanceof AbstractTrain)) {
+        if (!(ve instanceof AbstractTrain)) {
             sender.sendMessage(Main.prefix + MessagesConfig.COMMAND_TRAM_VEHICLE_NOT_TRAIN);
             return;
         }
 
-        List<String> newTrains = new ArrayList<>(track.getTrains());
-        String trainTypeName = ve.getType().getName();
-        boolean alreadyAssigned = newTrains.stream().anyMatch(t -> t.equalsIgnoreCase(trainTypeName));
-        if (!alreadyAssigned) {
-            newTrains.add(trainTypeName);
+        int spawnDelaySeconds = 0;
+        if (args.length >= 4) {
+            try {
+                spawnDelaySeconds = Integer.parseInt(args[3]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage(Main.prefix + MessagesConfig.COMMAND_TRAM_ASSIGNTRAIN_INVALID_DELAY);
+                return;
+            }
+            if (spawnDelaySeconds < 0 || spawnDelaySeconds > TrackTrainAssignment.MAX_SPAWN_DELAY_SECONDS) {
+                sender.sendMessage(Main.prefix + MessagesConfig.COMMAND_TRAM_ASSIGNTRAIN_INVALID_DELAY);
+                return;
+            }
         }
-        track.setTrains(newTrains);
-        try {
-            Main.tracksManager.saveAll();
-        } catch (IOException e) {
-            sender.sendMessage(Main.prefix + MessagesConfig.MESSAGE_TRAM_SAVE_FAILED);
-            Main.getPlugin(Main.class).getLogger().log(java.util.logging.Level.SEVERE, "Failed to save tram tracks", e);
+
+        if (Main.trainAssignController.matchesPendingSession(p, track.getId(), ve.getName(), spawnDelaySeconds)) {
+            Main.trainAssignController.confirm(p);
             return;
         }
-        sender.sendMessage(Main.prefix + MessagesConfig.COMMAND_TRAM_TRAIN_ASSIGNED
-                .replace("%train%", ve.getType().getName())
-                .replace("%track%", track.getId()));
+        Main.trainAssignController.begin(p, track, ve, spawnDelaySeconds);
     }
 
     private void handleCancel(CommandSender sender) {
@@ -237,6 +234,7 @@ public class TracksCommand extends SubCommand {
 
         Player p = (Player) sender;
         Main.trackEditorController.stopEditing(p);
+        Main.trainAssignController.discardSessionQuietly(p);
         sender.sendMessage(Main.prefix + MessagesConfig.COMMAND_TRAM_CANCEL);
     }
 
@@ -259,6 +257,14 @@ public class TracksCommand extends SubCommand {
         if (args.length == 2 && TRACK_ID_SUBCOMMANDS.contains(args[0].toLowerCase())) {
             for (Track t : Main.tracksManager.getTracks()) {
                 out.add(t.getId());
+            }
+        }
+        if (args.length == 3 && "assigntrain".equalsIgnoreCase(args[0])) {
+            String prefix = args[2].toLowerCase();
+            for (AbstractVehicle v : Main.vehicleTypes) {
+                if (v instanceof AbstractTrain && v.getName().toLowerCase().startsWith(prefix)) {
+                    out.add(v.getName());
+                }
             }
         }
         return out;

@@ -1,11 +1,13 @@
 package me.zombie_striker.qav.tracks.runtime;
 
 import me.zombie_striker.qav.Main;
-import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.MessagesConfig;
+import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.tracks.data.Track;
 import me.zombie_striker.qav.tracks.data.TrackStop;
+import me.zombie_striker.qav.tracks.data.TrackTrainAssignment;
+import me.zombie_striker.qav.util.HeadPoseUtil;
 import me.zombie_striker.qav.vehicles.AbstractTrain;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
@@ -18,8 +20,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.logging.Level;
 import java.util.*;
+import java.util.logging.Level;
 
 public class TrackRuntimeController {
 
@@ -47,7 +49,36 @@ public class TrackRuntimeController {
             task.cancel();
             task = null;
         }
+
+        for (List<RuntimeTrain> trains : runtime.values()) {
+            destroyRuntimeTrains(trains, "Runtime controller stopped");
+        }
+
         runtime.clear();
+    }
+
+    public @Nullable String getCurrentStationNameForTrain(@NotNull Track track, int trainIndex) {
+        if (!Main.tracksManager.isRunning(track.getId())) return null;
+
+        String key = track.getId().toLowerCase(Locale.ROOT);
+        List<RuntimeTrain> trains = runtime.get(key);
+        if (trains == null || trainIndex < 0 || trainIndex >= trains.size())
+            return null;
+
+        RuntimeTrain rt = trains.get(trainIndex);
+        VehicleEntity ve = rt.vehicle;
+        if (ve == null || ve.isInvalid() || ve.getDriverSeat() == null)
+            return null;
+
+        Location driverLoc = ve.getDriverSeat().getLocation();
+        List<TrackStop> sorted = new ArrayList<>(track.getStops());
+        sorted.sort(Comparator.comparingInt(TrackStop::getOrder));
+
+        for (TrackStop stop : sorted)
+            if (stop.isSameRailBlock(driverLoc))
+                return stop.getName();
+
+        return null;
     }
 
     private void tick() {
@@ -63,7 +94,7 @@ public class TrackRuntimeController {
             }
 
             List<TrackStop> sorted = sortedStops(track);
-            if (sorted.isEmpty() || track.getTrains().isEmpty()) {
+            if (sorted.isEmpty() || track.getTrainAssignments().isEmpty()) {
                 destroyRuntimeTrains(runtime.remove(key), "Track missing stops/trains");
                 continue;
             }
@@ -80,7 +111,15 @@ public class TrackRuntimeController {
                 if (rt.targetStopOrdinal >= n) rt.targetStopOrdinal = rt.targetStopOrdinal % n;
 
                 if (rt.vehicle == null || rt.vehicle.isInvalid()) {
-                    rt.vehicle = spawnTrainForTrack(track, sorted, rt.vehicleTypeName, rt.spawnStopOrdinal);
+                    if (rt.vehicle != null)
+                        rt.vehicle = null;
+
+                    if (rt.spawnDelayTicksRemaining > 0) {
+                        rt.spawnDelayTicksRemaining--;
+                        continue;
+                    }
+
+                    rt.vehicle = spawnTrainForTrack(track, sorted, rt.vehicleTypeName, rt.spawnStopOrdinal, rt.spawnDirection);
                     if (rt.vehicle == null) continue;
                 }
 
@@ -178,14 +217,17 @@ public class TrackRuntimeController {
     private boolean needsRebuild(@NotNull Track track, @Nullable List<RuntimeTrain> trains, int stopCount) {
         if (trains == null) return true;
 
-        List<String> assignedTrainTypes = track.getTrains();
-        if (trains.size() != assignedTrainTypes.size()) return true;
+        List<TrackTrainAssignment> assigned = track.getTrainAssignments();
+        if (trains.size() != assigned.size()) return true;
         if (trains.isEmpty()) return true;
 
         for (int i = 0; i < trains.size(); i++) {
             RuntimeTrain rt = trains.get(i);
+            TrackTrainAssignment slot = assigned.get(i);
             if (rt.builtForStopCount != stopCount) return true;
-            if (!rt.vehicleTypeName.equalsIgnoreCase(assignedTrainTypes.get(i))) return true;
+            if (!rt.vehicleTypeName.equalsIgnoreCase(slot.getVehicleTypeName())) return true;
+            if (rt.spawnDelaySeconds != slot.getSpawnDelaySeconds()) return true;
+            if (rt.spawnDirection != slot.getSpawnDirection()) return true;
         }
 
         return false;
@@ -200,17 +242,21 @@ public class TrackRuntimeController {
     private @NotNull List<RuntimeTrain> buildRuntimeTrains(@NotNull Track track, @NotNull List<TrackStop> sorted) {
         List<RuntimeTrain> out = new ArrayList<>();
         int n = sorted.size();
-        List<String> assigned = new ArrayList<>(track.getTrains());
-        for (int i = 0; i < assigned.size(); i++) {
-            int spawnIdx = i % n;
-            int targetIdx = n == 1 ? 0 : (spawnIdx + 1) % n;
-            out.add(new RuntimeTrain(assigned.get(i), spawnIdx, targetIdx, n));
+        List<TrackTrainAssignment> assigned = new ArrayList<>(track.getTrainAssignments());
+        for (TrackTrainAssignment slot : assigned) {
+            int spawnIdx = 0;
+            int targetIdx = n == 1 ? 0 : 1;
+            int delayTicks = slot.getSpawnDelaySeconds() * 20;
+            out.add(new RuntimeTrain(slot.getVehicleTypeName(), spawnIdx, targetIdx, n,
+                    slot.getSpawnDelaySeconds(), delayTicks, slot.getSpawnDirection()));
         }
+
         return out;
     }
 
     private @Nullable VehicleEntity spawnTrainForTrack(@NotNull Track track, @NotNull List<TrackStop> sorted,
-                                                       @NotNull String vehicleTypeName, int spawnStopIndex) {
+                                                       @NotNull String vehicleTypeName, int spawnStopIndex,
+                                                       int spawnDirection) {
         AbstractVehicle v = QualityArmoryVehicles.getVehicle(vehicleTypeName);
         if (!(v instanceof AbstractTrain)) return null;
 
@@ -219,7 +265,19 @@ public class TrackRuntimeController {
 
         TrackStop spawn = sorted.get(spawnStopIndex % sorted.size());
         Location base = spawn.getRailBlockLocation(w).clone().add(0, -1, 0);
-        return QualityArmoryVehicles.spawnVehicleSystem(v, base);
+        VehicleEntity ve = QualityArmoryVehicles.spawnVehicleSystem(v, base);
+        if (ve != null) {
+            ve.setTrackAutomatic(true);
+            ve.setAllowsPassagers(true);
+
+            int dir = spawnDirection % 4;
+            if (dir < 0) dir += 4;
+
+            ve.setSpeed(0);
+            ve.setAngle(AbstractTrain.getAngleFromDirection(dir));
+            HeadPoseUtil.setHeadPoseUsingReflection(ve);
+        }
+        return ve;
     }
 
     private void playStopSound(@NotNull Location loc, boolean arrival) {
@@ -245,19 +303,17 @@ public class TrackRuntimeController {
             nextStop = sorted.get(nextIdx);
         } else {
             int nextIdx = rt.targetStopOrdinal + 1;
-            if (nextIdx < n) {
-                nextStop = sorted.get(nextIdx);
-            }
+            if (nextIdx < n) nextStop = sorted.get(nextIdx);
         }
 
         String title = MessagesConfig.colorize(
                 MessagesConfig.MESSAGE_TRAM_TITLE_CURRENT_STOP.replace("%current%", currentStop.getName()));
         String subtitleRaw;
-        if (nextStop != null) {
+
+        if (nextStop != null)
             subtitleRaw = MessagesConfig.MESSAGE_TRAM_TITLE_NEXT_STOP.replace("%next%", nextStop.getName());
-        } else {
-            subtitleRaw = MessagesConfig.MESSAGE_TRAM_TITLE_LAST_STOP;
-        }
+        else subtitleRaw = MessagesConfig.MESSAGE_TRAM_TITLE_LAST_STOP;
+
         String subtitle = MessagesConfig.colorize(subtitleRaw);
 
         sendTitleToVehicle(ve, title, subtitle);
@@ -292,6 +348,9 @@ public class TrackRuntimeController {
         private final int spawnStopOrdinal;
         private int targetStopOrdinal;
         private final int builtForStopCount;
+        private final int spawnDelaySeconds;
+        private final int spawnDirection;
+        private int spawnDelayTicksRemaining;
         private int dwellTicks = 0;
         private boolean inDwell = false;
         private boolean finished = false;
@@ -299,11 +358,16 @@ public class TrackRuntimeController {
         private @Nullable VehicleEntity vehicle;
 
         private RuntimeTrain(@NotNull String vehicleTypeName, int spawnStopOrdinal,
-                             int targetStopOrdinal, int builtForStopCount) {
+                             int targetStopOrdinal, int builtForStopCount,
+                             int spawnDelaySeconds, int spawnDelayTicksRemaining, int spawnDirection) {
             this.vehicleTypeName = vehicleTypeName;
             this.spawnStopOrdinal = spawnStopOrdinal;
             this.targetStopOrdinal = targetStopOrdinal;
             this.builtForStopCount = builtForStopCount;
+            this.spawnDelaySeconds = spawnDelaySeconds;
+            this.spawnDelayTicksRemaining = spawnDelayTicksRemaining;
+            int d = spawnDirection % 4;
+            this.spawnDirection = d < 0 ? d + 4 : d;
         }
     }
 }

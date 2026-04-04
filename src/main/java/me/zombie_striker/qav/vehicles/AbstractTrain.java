@@ -60,12 +60,19 @@ public class AbstractTrain extends AbstractVehicle {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void tick(VehicleEntity ve) {
+		if (ve.isDisplayOnly()) return;
+
 		Location loc = ve.getDriverSeat().getLocation();
 		double priorVy = ve.getDriverSeat().getVelocity().getY();
 		Block railBlock = findRailBlock(loc);
 		Block block = railBlock != null ? railBlock : loc.getBlock();
 
-		int direction = getDirectionFromRail(ve,block);
+		Vector travelMotion = horizontalTravelMotion(ve);
+		Vector railMotion = travelMotion.clone();
+		if (ve.getSpeed() < 0)
+			railMotion.multiply(-1);
+
+		int direction = getDirectionFromRail(ve, block, railMotion);
 		int directionVeh = getDirectionInternalID(ve);
 
 		if (direction != directionVeh) {
@@ -115,9 +122,7 @@ public class AbstractTrain extends AbstractVehicle {
 	                                   double priorVy) {
 		if (!(railBlock.getBlockData() instanceof Rail)) return;
 
-		if (priorVy > 0.1) {
-			return;
-		}
+		if (priorVy > 0.1) return;
 
 		Vector seat = ve.getType().getDriverSeat();
 		double seatY = seat != null ? seat.getY() : 1.0;
@@ -130,9 +135,8 @@ public class AbstractTrain extends AbstractVehicle {
 
 		double dy = targetY - currentY;
 		double correction = Math.max(-0.55, dy * 0.45);
-		if (correction >= -0.001) {
-			return;
-		}
+		if (correction >= -0.001) return;
+
 		velocity.setY(velocity.getY() + correction);
 	}
 
@@ -165,8 +169,30 @@ public class AbstractTrain extends AbstractVehicle {
 		velocity.setY(slopeY * slopeAmount * travelSign);
 	}
 
+	private static @NotNull Vector horizontalTravelMotion(@NotNull VehicleEntity ve) {
+		Vector facing = ve.getDirection().clone();
+		facing.setY(0);
+
+		if (facing.lengthSquared() < 1e-8) facing = new Vector(0, 0, 1);
+		else facing.normalize();
+
+		double sp = ve.getSpeed();
+		double sig = sp > 0 ? 1.0 : sp < 0 ? -1.0 : 1.0;
+		Vector intended = facing.clone().multiply(sig);
+
+		Vector vel = ve.getDriverSeat().getVelocity().clone();
+		vel.setY(0);
+
+		if (vel.lengthSquared() > 0.0025) {
+			Vector vn = vel.clone().normalize();
+			if (vn.dot(intended) >= -0.25) return vn;
+		}
+
+		return intended;
+	}
+
 	@SuppressWarnings("deprecation")
-	private int getDirectionFromRail(VehicleEntity ve, Block b) {
+	private int getDirectionFromRail(@NotNull VehicleEntity ve, @NotNull Block b, @NotNull Vector motion) {
 		int shape = -1;
 		int direction = getDirectionInternalID(ve);
 
@@ -191,50 +217,52 @@ public class AbstractTrain extends AbstractVehicle {
 					return direction;
 				break;
 			case 1:
-				if (ve.getAngleRotation() >= Math.PI / 2 && ve.getAngleRotation() < Math.PI * 3 / 2) {
-					return 1;
-				} else {
-					return 3;
-				}
-			case 0:
-				if (ve.getAngleRotation() < Math.PI / 2 || ve.getAngleRotation() > Math.PI * 3 / 2) {
-					return 0;
-				} else {
-					return 2;
-				}
-			case 9:
-				if (direction == 0) {
-					return 3;
-				}
-				if (direction == 1) {
-					return 2;
-				}
-				return direction;
-			case 7:
-				if (direction == 2) {
-					return 1;
-				}
-				if (direction == 3) {
-					return 0;
-				}
-				return direction;
+				if (motion.getX() * motion.getX() + motion.getZ() * motion.getZ() < 1e-8) {
+					if (ve.getAngleRotation() >= Math.PI / 2 && ve.getAngleRotation() < Math.PI * 3 / 2)
+						return 1;
 
-			case 8:
-				if (direction == 0) {
-					return 1;
-				}
-				if (direction == 3) {
-					return 2;
-				}
-				return direction;
-			case 6:
-				if (direction == 2) {
 					return 3;
 				}
-				if (direction == 1) {
+				return motion.getX() <= 0 ? 1 : 3;
+			case 0:
+				if (motion.getX() * motion.getX() + motion.getZ() * motion.getZ() < 1e-8) {
+					if (ve.getAngleRotation() < Math.PI / 2 || ve.getAngleRotation() > Math.PI * 3 / 2)
+						return 0;
+
 					return 2;
 				}
-				return direction;
+				return motion.getZ() >= 0 ? 0 : 2;
+			case 9: {
+				double fromSouth = motion.dot(new Vector(0, 0, 1));
+				double fromEast = motion.dot(new Vector(-1, 0, 0));
+				if (fromSouth >= fromEast) return 3;
+
+				return 2;
+				}
+			case 7: {
+				double fromSouthArm = motion.dot(new Vector(0, 0, -1));
+				double fromWestArm = motion.dot(new Vector(1, 0, 0));
+				if (fromSouthArm >= fromWestArm)
+					return 1;
+
+				return 0;
+				}
+			case 8: {
+				double fromSouth = motion.dot(new Vector(0, 0, 1));
+				double fromWestArm = motion.dot(new Vector(1, 0, 0));
+				if (fromSouth >= fromWestArm)
+					return 1;
+
+				return 2;
+				}
+			case 6: {
+				double fromSouthArm = motion.dot(new Vector(0, 0, -1));
+				double fromEastArm = motion.dot(new Vector(-1, 0, 0));
+				if (fromSouthArm >= fromEastArm)
+					return 3;
+
+				return 0;
+				}
 			default:
 				break;
 		}
@@ -293,10 +321,6 @@ public class AbstractTrain extends AbstractVehicle {
 		return 0;
 	}
 
-	public boolean isOnRail(@NotNull VehicleEntity entity) {
-		return findRailBlock(entity.getDriverSeat().getLocation()) != null;
-	}
-
 	public boolean isRail(@NotNull Location location) {
 		return findRailBlock(location) != null;
 	}
@@ -311,9 +335,8 @@ public class AbstractTrain extends AbstractVehicle {
 
 		for (int dy = 0; dy <= 6; dy++) {
 			Block b = world.getBlockAt(x, y - dy, z);
-			if (QualityArmoryVehicles.isRailMaterial(b.getLocation())) {
+			if (QualityArmoryVehicles.isRailMaterial(b.getLocation()))
 				return b;
-			}
 		}
 
 		Block above = world.getBlockAt(x, y + 1, z);

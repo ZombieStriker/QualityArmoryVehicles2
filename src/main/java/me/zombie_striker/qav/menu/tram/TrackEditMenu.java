@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.logging.Level;
+
 public class TrackEditMenu extends Menu {
 
     private final @NotNull String trackId;
@@ -42,7 +44,7 @@ public class TrackEditMenu extends Menu {
         this.setItem(13, new GuiItem(ItemFact.a(XMaterial.MINECART.parseMaterial(),
                 MessagesConfig.MENU_TRAM_LABEL_TRAINS,
                 MessagesConfig.MENU_TRAM_LORE_TRAINS_DESCRIPTION,
-                MessagesConfig.MENU_TRAM_LORE_CURRENT.replace("%value%", String.valueOf(track.getTrains().size()))), (e) ->
+                MessagesConfig.MENU_TRAM_LORE_CURRENT.replace("%value%", String.valueOf(track.getTrainAssignments().size()))), (e) ->
                 new TrackTrainsMenu((Player) e.getWhoClicked(), trackId, this).open()));
 
         String loopState = track.isLooping() ? MessagesConfig.MENU_TRAM_LOOP_ENABLED : MessagesConfig.MENU_TRAM_LOOP_DISABLED;
@@ -56,7 +58,7 @@ public class TrackEditMenu extends Menu {
             try {
                 Main.tracksManager.saveAll();
             } catch (Exception ex) {
-                Main.getPlugin(Main.class).getLogger().log(java.util.logging.Level.SEVERE, "Failed to save tram tracks", ex);
+                Main.getPlugin(Main.class).getLogger().log(Level.SEVERE, "Failed to save tram tracks", ex);
                 e.getWhoClicked().sendMessage(Main.prefix + MessagesConfig.MESSAGE_TRAM_SAVE_FAILED);
             }
 
