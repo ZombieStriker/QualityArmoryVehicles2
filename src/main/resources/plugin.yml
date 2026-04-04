@@ -44,6 +44,11 @@ permissions:
       qualityarmoryvehicles.removebugged: true
       qualityarmoryvehicles.garage.other: true
       qualityarmoryvehicles.repair: true
+      qualityarmoryvehicles.tracks.admin: true
+
+  qualityarmoryvehicles.tracks.admin:
+    description: Allows admins to configure tram/underground tracks
+    default: op
 
   qualityarmoryvehicles.default:
     default: true

@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.api;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.api.events.VehicleSpawnEvent;
@@ -8,11 +9,15 @@ import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.perms.PermissionHandler;
+import me.zombie_striker.qav.util.BlockCollisionUtil;
+import me.zombie_striker.qav.vehicles.AbstractTrain;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,6 +27,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -185,19 +191,36 @@ public class QualityArmoryVehicles {
     }
 
     public static VehicleEntity spawnVehicle(AbstractVehicle ab, Location location, @Nullable Player player) {
+        return spawnVehicleInternal(ab, location, player, true);
+    }
+
+    public static VehicleEntity spawnVehicleSystem(AbstractVehicle ab, Location location) {
+        return spawnVehicleInternal(ab, location, null, false);
+    }
+
+    private static VehicleEntity spawnVehicleInternal(AbstractVehicle ab, Location location, @Nullable Player player, boolean checkProtectionHooks) {
         if (location.getWorld() != null && Main.blacklistedWorlds.contains(location.getWorld().getName())) {
             if (player != null)
                 player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_BLACKLIST_WORLD);
             return null;
         }
 
-        if (!ProtectionHandler.canPlace(player, location)) {
+        if (checkProtectionHooks && !ProtectionHandler.canPlace(player, location)) {
             if (player != null)
                 player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_BLACKLIST_PLACE);
             return null;
         }
 
-        VehicleEntity vehicleEntity = new VehicleEntity(ab, location.getBlock().getRelative(BlockFace.UP).getLocation(), player != null ? player.getUniqueId() : null);
+        Block spawnBase = location.getBlock();
+        if (ab instanceof AbstractTrain) {
+            if (isRailMaterial(location)) {
+                spawnBase = spawnBase.getRelative(BlockFace.DOWN);
+            } else if (isRailMaterial(spawnBase.getRelative(BlockFace.DOWN).getType())) {
+                spawnBase = spawnBase.getRelative(BlockFace.DOWN);
+            }
+        }
+
+        VehicleEntity vehicleEntity = new VehicleEntity(ab, spawnBase.getRelative(BlockFace.UP).getLocation(), player != null ? player.getUniqueId() : null);
         VehicleSpawnEvent event = new VehicleSpawnEvent(player, vehicleEntity);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCanceled()) {
@@ -408,5 +431,15 @@ public class QualityArmoryVehicles {
             location.getWorld().dropItem(location, item);
         }
 
+    }
+
+    public static boolean isRailMaterial(@NotNull Location location) {
+        return isRailMaterial(BlockCollisionUtil.getMaterial(location));
+    }
+
+    public static boolean isRailMaterial(@NotNull Material mat) {
+        XMaterial material = XMaterial.matchXMaterial(mat);
+        return material.equals(XMaterial.RAIL) || material.equals(XMaterial.ACTIVATOR_RAIL) ||
+                material.equals(XMaterial.POWERED_RAIL) || material.equals(XMaterial.DETECTOR_RAIL);
     }
 }

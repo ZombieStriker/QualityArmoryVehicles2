@@ -27,6 +27,13 @@ import me.zombie_striker.qav.premium.PremiumHandler;
 import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
+import me.zombie_striker.qav.tracks.TracksManager;
+import me.zombie_striker.qav.tracks.TracksStorage;
+import me.zombie_striker.qav.tracks.assign.TrainAssignController;
+import me.zombie_striker.qav.tracks.assign.TrainAssignListener;
+import me.zombie_striker.qav.tracks.editor.TrackEditorController;
+import me.zombie_striker.qav.tracks.editor.TrackEditorListener;
+import me.zombie_striker.qav.tracks.runtime.TrackRuntimeController;
 import me.zombie_striker.qav.util.ForksUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
@@ -113,12 +120,13 @@ public class Main extends JavaPlugin {
 	public static boolean separateModelAndDriver = false;
 	public static boolean modernPlaneMovements = true;
 
-
-
-
-
 	public static List<AbstractVehicle> vehicleTypes = new ArrayList<>();
 	public static List<VehicleEntity> vehicles = new ArrayList<>();
+
+	public static TracksManager tracksManager;
+	public static TrackEditorController trackEditorController;
+	public static TrainAssignController trainAssignController;
+	public static TrackRuntimeController trackRuntimeController;
 
 	public static void DEBUG(String message) {
 		DebugManager.sendDebugMessages(message);
@@ -224,6 +232,13 @@ public class Main extends JavaPlugin {
 		loadComplexParts(false);
 		loadVehicles(false);
 
+		tracksManager = new TracksManager(new TracksStorage());
+		tracksManager.loadAll();
+		trackEditorController = new TrackEditorController(this);
+		trainAssignController = new TrainAssignController(this);
+		trackRuntimeController = new TrackRuntimeController(this);
+		trackRuntimeController.start();
+
 		QAVCommand command = new QAVCommand();
 		getCommand("QualityArmoryVehicles").setExecutor(command);
 		getCommand("QualityArmoryVehicles").setTabCompleter(command);
@@ -231,6 +246,8 @@ public class Main extends JavaPlugin {
 			getCommand("garage").setExecutor(new GarageCommand());
 
 		Bukkit.getPluginManager().registerEvents(new QAVListener(this), this);
+		Bukkit.getPluginManager().registerEvents(new TrackEditorListener(trackEditorController), this);
+		Bukkit.getPluginManager().registerEvents(new TrainAssignListener(trainAssignController), this);
 
 		FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
 
@@ -267,6 +284,14 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		ModernInputListener.unregister();
+
+		if (trackRuntimeController != null) {
+			trackRuntimeController.stop();
+		}
+
+		if (trainAssignController != null) {
+			trainAssignController.shutdown();
+		}
 
 		FileConfiguration yaml = new YamlConfiguration();
 		yaml.set("data",vehicles);

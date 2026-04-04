@@ -29,6 +29,7 @@ public class QAVCommand implements TabExecutor {
         subcommands.add(new GiveCommand(this));
         subcommands.add(new LicenseCommand(this));
         subcommands.add(new ListCommand(this));
+        subcommands.add(new TracksCommand(this));
         subcommands.add(new ReloadCommand(this));
         subcommands.add(new RemoveBuggedCommand(this));
         subcommands.add(new RemoveCommand(this));
@@ -45,15 +46,23 @@ public class QAVCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
-        if (args.length > 0) {
-            if (subcommands.containsKey(args[0].toLowerCase())) {
-                subcommands.get(args[0].toLowerCase()).perform(sender, Arrays.copyOfRange(args, 1, args.length));
-                return true;
+        try {
+            if (args.length > 0) {
+                SubCommand sub = subcommands.get(args[0].toLowerCase());
+                if (sub != null) {
+                    sub.perform(sender, Arrays.copyOfRange(args, 1, args.length));
+                    return true;
+                }
             }
-        }
 
-        sendHelp(sender);
-        return true;
+            sendHelp(sender);
+            return true;
+        } catch (Throwable t) {
+            Main.getPlugin(Main.class).getLogger().severe("An error occurred while executing /" + label + " " + String.join(" ", args) + " for " + sender.getName());
+            Main.getPlugin(Main.class).getLogger().log(java.util.logging.Level.SEVERE, "Command execution failed", t);
+            sender.sendMessage(Main.prefix + ChatColor.RED + " An internal error occurred while executing this command. Please check the server console for details.");
+            return true;
+        }
     }
     
     public void sendHelp(@NotNull CommandSender player) {
