@@ -67,7 +67,7 @@ public class MessagesConfig {
 	public static String MESSAGE_TRAM_STOP_ADDED = " &aAdded stop &f%name%&a (%seconds%s).";
 	public static String MESSAGE_TRAM_TRACK_NOT_FOUND = "&c Track not found: &f%track%";
 	public static String MESSAGE_TRAM_TRACK_NOT_FOUND_GENERIC = "&c Track not found.";
-	public static String MESSAGE_TRAM_SAVE_FAILED = "&c Failed to save tram-tracks.yml. Check console.";
+	public static String MESSAGE_TRAM_SAVE_FAILED = "&c Failed to save tracks.yml. Check console.";
 	public static String MESSAGE_TRAM_DWELL_RANGE = "&c Please enter a number between 0 and 3600.";
 	public static String MESSAGE_TRAM_DWELL_INVALID = "&c Please enter a valid integer.";
 	public static String MESSAGE_TRAM_PLAYERS_ONLY = "&c Players only.";

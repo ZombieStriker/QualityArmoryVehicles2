@@ -1,5 +1,6 @@
 package me.zombie_striker.qav.tracks.runtime;
 
+import com.cryptomorin.xseries.XSound;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.VehicleEntity;
@@ -282,7 +283,7 @@ public class TrackRuntimeController {
 
     private void playStopSound(@NotNull Location loc, boolean arrival) {
         try {
-            Sound s = arrival ? Sound.BLOCK_NOTE_BLOCK_BELL : Sound.BLOCK_NOTE_BLOCK_CHIME;
+            Sound s = arrival ? XSound.BLOCK_NOTE_BLOCK_BELL.get() : XSound.BLOCK_NOTE_BLOCK_CHIME.get();
             loc.getWorld().playSound(loc, s, 0.9f, arrival ? 0.8f : 1.1f);
         } catch (IllegalArgumentException ignored) {
         }

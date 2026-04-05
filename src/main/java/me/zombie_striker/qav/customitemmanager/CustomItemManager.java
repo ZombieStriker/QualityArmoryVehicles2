@@ -33,7 +33,7 @@ public class CustomItemManager {
     }
 
     public static String getResourcepack(Player player) {
-        return resourcepackProvider.getFor(player);
+        return resourcepackProvider == null ? null : resourcepackProvider.getFor(player);
     }
 
     public static void setResourcepack(ResourcepackProvider provider) {

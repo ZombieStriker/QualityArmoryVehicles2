@@ -10,10 +10,13 @@ import me.zombie_striker.qav.util.HeadPoseUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Rail;
 import org.bukkit.block.data.Rail.Shape;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 import org.bukkit.material.PoweredRail;
+import org.bukkit.material.Rails;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -91,13 +94,8 @@ public class AbstractTrain extends AbstractVehicle {
 		applyAscendingRailLift(ve, railBlock, velocity);
 		applyRailVerticalSnap(ve, railBlock, velocity, priorVy);
 
-		if (BlockCollisionUtil.getMaterial(railBlock.getLocation()).equals(XMaterial.POWERED_RAIL.parseMaterial())) {
-			if (XReflection.supports(13)) {
-				if (!XBlock.isPowered(railBlock)) velocity = new Vector(0, 0, 0);
-			} else {
-				PoweredRail rail = new PoweredRail(BlockCollisionUtil.getMaterial(railBlock.getLocation()), railBlock.getData());
-				if (!rail.isPowered()) velocity = new Vector(0, 0, 0);
-			}
+		if (isUnpoweredPoweredRail(railBlock)) {
+			velocity = new Vector(0, 0, 0);
 		}
 
 		if (priorVy > 0.1) {
@@ -107,6 +105,26 @@ public class AbstractTrain extends AbstractVehicle {
 
 		ve.getDriverSeat().setVelocity(velocity);
 		handleOtherStands(ve, velocity);
+	}
+
+	@SuppressWarnings("deprecation")
+	private static boolean isUnpoweredPoweredRail(@NotNull Block railBlock) {
+		if (!BlockCollisionUtil.getMaterial(railBlock.getLocation()).equals(XMaterial.POWERED_RAIL.parseMaterial())) {
+			return false;
+		}
+		if (XReflection.supports(13)) {
+			return !XBlock.isPowered(railBlock);
+		}
+		PoweredRail rail = new PoweredRail(BlockCollisionUtil.getMaterial(railBlock.getLocation()), railBlock.getData());
+		return !rail.isPowered();
+	}
+
+	@SuppressWarnings("deprecation")
+	private static boolean isRailBlock(@NotNull Block railBlock) {
+		if (XReflection.supports(13)) {
+			return railBlock.getBlockData() instanceof Rail;
+		}
+		return railBlock.getState().getData() instanceof Rails;
 	}
 
 	private void applyOffRailGravity(@NotNull VehicleEntity ve) {
@@ -120,7 +138,7 @@ public class AbstractTrain extends AbstractVehicle {
 
 	private void applyRailVerticalSnap(@NotNull VehicleEntity ve, @NotNull Block railBlock, @NotNull Vector velocity,
 	                                   double priorVy) {
-		if (!(railBlock.getBlockData() instanceof Rail)) return;
+		if (!isRailBlock(railBlock)) return;
 
 		if (priorVy > 0.1) return;
 
@@ -140,24 +158,18 @@ public class AbstractTrain extends AbstractVehicle {
 		velocity.setY(velocity.getY() + correction);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void applyAscendingRailLift(@NotNull VehicleEntity ve, @NotNull Block railBlock, @NotNull Vector velocity) {
-		if (!(railBlock.getBlockData() instanceof Rail)) return;
+		if (!isRailBlock(railBlock)) return;
 
-		Shape shape = ((Rail) railBlock.getBlockData()).getShape();
 		int direction = getDirectionInternalID(ve);
-		double slopeY = 0.0;
-		if (shape == Shape.ASCENDING_EAST) {
-			if (direction == 1) slopeY = 1.0;
-			else if (direction == 3) slopeY = -1.0;
-		} else if (shape == Shape.ASCENDING_WEST) {
-			if (direction == 3) slopeY = 1.0;
-			else if (direction == 1) slopeY = -1.0;
-		} else if (shape == Shape.ASCENDING_NORTH) {
-			if (direction == 2) slopeY = 1.0;
-			else if (direction == 0) slopeY = -1.0;
-		} else if (shape == Shape.ASCENDING_SOUTH) {
-			if (direction == 0) slopeY = 1.0;
-			else if (direction == 2) slopeY = -1.0;
+		double slopeY;
+		if (XReflection.supports(13)) {
+			Shape shape = ((Rail) railBlock.getBlockData()).getShape();
+			slopeY = slopeYForRailShape(shape, direction);
+		} else {
+			MaterialData md = railBlock.getState().getData();
+			slopeY = slopeYForLegacyRails((Rails) md, direction);
 		}
 		if (slopeY == 0.0) return;
 
@@ -167,6 +179,37 @@ public class AbstractTrain extends AbstractVehicle {
 		if (travelSign == 0.0) return;
 
 		velocity.setY(slopeY * slopeAmount * travelSign);
+	}
+
+	private static double slopeYForRailShape(@NotNull Shape shape, int direction) {
+		if (shape == Shape.ASCENDING_EAST) return slopeSignForAscending(direction, 1, 3);
+		if (shape == Shape.ASCENDING_WEST) return slopeSignForAscending(direction, 3, 1);
+		if (shape == Shape.ASCENDING_NORTH) return slopeSignForAscending(direction, 2, 0);
+		if (shape == Shape.ASCENDING_SOUTH) return slopeSignForAscending(direction, 0, 2);
+		return 0.0;
+	}
+
+	private static double slopeYForLegacyRails(@NotNull Rails rails, int direction) {
+		if (!rails.isOnSlope()) return 0.0;
+		BlockFace face = rails.getDirection();
+		switch (face) {
+			case EAST:
+				return slopeSignForAscending(direction, 1, 3);
+			case WEST:
+				return slopeSignForAscending(direction, 3, 1);
+			case NORTH:
+				return slopeSignForAscending(direction, 2, 0);
+			case SOUTH:
+				return slopeSignForAscending(direction, 0, 2);
+			default:
+				return 0.0;
+		}
+	}
+
+	private static double slopeSignForAscending(int direction, int uphillDir, int downhillDir) {
+		if (direction == uphillDir) return 1.0;
+		if (direction == downhillDir) return -1.0;
+		return 0.0;
 	}
 
 	private static @NotNull Vector horizontalTravelMotion(@NotNull VehicleEntity ve) {
@@ -191,17 +234,26 @@ public class AbstractTrain extends AbstractVehicle {
 		return intended;
 	}
 
+	private static double horizontalMotionLengthSq(@NotNull Vector motion) {
+		return motion.getX() * motion.getX() + motion.getZ() * motion.getZ();
+	}
+
+	private static int directionFromMotionComparison(@NotNull Vector motion, @NotNull Vector v1, @NotNull Vector v2,
+	                                                 int ifFirstGreaterOrEqual, int ifSecondGreater) {
+		return motion.dot(v1) >= motion.dot(v2) ? ifFirstGreaterOrEqual : ifSecondGreater;
+	}
+
 	@SuppressWarnings("deprecation")
 	private int getDirectionFromRail(@NotNull VehicleEntity ve, @NotNull Block b, @NotNull Vector motion) {
 		int shape = -1;
 		int direction = getDirectionInternalID(ve);
 
-		try {
+		if (XReflection.supports(13)) {
 			if (b.getBlockData() instanceof org.bukkit.block.data.Rail) {
 				Rail rail = (Rail) b.getBlockData();
 				shape = getDirectionID(rail.getShape().name());
 			}
-		} catch (Throwable ignored) {
+		} else {
 			shape = b.getData();
 		}
 
@@ -217,7 +269,7 @@ public class AbstractTrain extends AbstractVehicle {
 					return direction;
 				break;
 			case 1:
-				if (motion.getX() * motion.getX() + motion.getZ() * motion.getZ() < 1e-8) {
+				if (horizontalMotionLengthSq(motion) < 1e-8) {
 					if (ve.getAngleRotation() >= Math.PI / 2 && ve.getAngleRotation() < Math.PI * 3 / 2)
 						return 1;
 
@@ -225,44 +277,21 @@ public class AbstractTrain extends AbstractVehicle {
 				}
 				return motion.getX() <= 0 ? 1 : 3;
 			case 0:
-				if (motion.getX() * motion.getX() + motion.getZ() * motion.getZ() < 1e-8) {
+				if (horizontalMotionLengthSq(motion) < 1e-8) {
 					if (ve.getAngleRotation() < Math.PI / 2 || ve.getAngleRotation() > Math.PI * 3 / 2)
 						return 0;
 
 					return 2;
 				}
 				return motion.getZ() >= 0 ? 0 : 2;
-			case 9: {
-				double fromSouth = motion.dot(new Vector(0, 0, 1));
-				double fromEast = motion.dot(new Vector(-1, 0, 0));
-				if (fromSouth >= fromEast) return 3;
-
-				return 2;
-				}
-			case 7: {
-				double fromSouthArm = motion.dot(new Vector(0, 0, -1));
-				double fromWestArm = motion.dot(new Vector(1, 0, 0));
-				if (fromSouthArm >= fromWestArm)
-					return 1;
-
-				return 0;
-				}
-			case 8: {
-				double fromSouth = motion.dot(new Vector(0, 0, 1));
-				double fromWestArm = motion.dot(new Vector(1, 0, 0));
-				if (fromSouth >= fromWestArm)
-					return 1;
-
-				return 2;
-				}
-			case 6: {
-				double fromSouthArm = motion.dot(new Vector(0, 0, -1));
-				double fromEastArm = motion.dot(new Vector(-1, 0, 0));
-				if (fromSouthArm >= fromEastArm)
-					return 3;
-
-				return 0;
-				}
+			case 9:
+				return directionFromMotionComparison(motion, new Vector(0, 0, 1), new Vector(-1, 0, 0), 3, 2);
+			case 7:
+				return directionFromMotionComparison(motion, new Vector(0, 0, -1), new Vector(1, 0, 0), 1, 0);
+			case 8:
+				return directionFromMotionComparison(motion, new Vector(0, 0, 1), new Vector(1, 0, 0), 1, 2);
+			case 6:
+				return directionFromMotionComparison(motion, new Vector(0, 0, -1), new Vector(-1, 0, 0), 3, 0);
 			default:
 				break;
 		}

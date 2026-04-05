@@ -20,7 +20,7 @@ public class TracksStorage {
 
     public TracksStorage() {
         File dataFolder = QualityArmoryVehicles.getPlugin().getDataFolder();
-        this.file = new File(dataFolder, "tram-tracks.yml");
+        this.file = new File(dataFolder, "tracks.yml");
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
