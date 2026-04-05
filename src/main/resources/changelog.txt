@@ -4,6 +4,7 @@
     - Fixed 1.21.7 support
     - Fixed allows passengers handling
     - Implemented tram/underground system
+    - Fixed trains movement
 
 2.4.1
   Changelog:

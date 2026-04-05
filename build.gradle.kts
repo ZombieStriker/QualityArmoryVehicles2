@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "me.zombie_striker"
-version = "2.5.0-SNAPSHOT"
+version = "2.5.0"
 description = "QualityArmoryVehicles"
 
 java {
