@@ -47,7 +47,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.ticxo.modelengine:api:R3.2.0")
     compileOnly("org.maxgamer:QuickShop:5.1.2.5")
-    compileOnly("com.viaversion:viaversion-api:5.7.1")
+    compileOnly("com.viaversion:viaversion-api:5.9.0")
 }
 
 tasks {
