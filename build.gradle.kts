@@ -33,7 +33,7 @@ dependencies {
     implementation("com.github.cryptomorin:XSeries:13.6.0")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
-    implementation("dev.triumphteam:triumph-gui:3.1.10")
+    implementation("dev.triumphteam:triumph-gui:3.1.13")
     compileOnly("org.jetbrains:annotations:26.0.1")
 
     // API
