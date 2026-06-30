@@ -1,3 +1,7 @@
+2.5.1
+  Changelog:
+    - Fixed 26.x support
+
 2.5
   Changelog:
     - Added new SeatSize option to change the passenger seat size, this will default to ModelSize
