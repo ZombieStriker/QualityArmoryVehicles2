@@ -48,7 +48,7 @@ public class CustomVehicleItem extends AbstractItem {
 		if (CustomItemManager.getResourcepackProvider() == null) {
 			Map<String, String> versions = new HashMap<>();
 			versions.put("0", "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory.zip");
-			versions.put("21-4", "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory-21.zip");
+			versions.put("1-21-4", "https://github.com/ZombieStriker/QualityArmory-Resourcepack/releases/download/latest/QualityArmory-21.zip");
 
 			CustomItemManager.setResourcepack(new MultiVersionPackProvider(versions));
 		}

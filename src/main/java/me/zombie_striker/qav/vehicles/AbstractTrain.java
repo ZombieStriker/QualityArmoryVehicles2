@@ -112,7 +112,7 @@ public class AbstractTrain extends AbstractVehicle {
 		if (!BlockCollisionUtil.getMaterial(railBlock.getLocation()).equals(XMaterial.POWERED_RAIL.parseMaterial())) {
 			return false;
 		}
-		if (XReflection.supports(13)) {
+		if (XReflection.supports(1, 13, 0)) {
 			return !XBlock.isPowered(railBlock);
 		}
 		PoweredRail rail = new PoweredRail(BlockCollisionUtil.getMaterial(railBlock.getLocation()), railBlock.getData());
@@ -121,7 +121,7 @@ public class AbstractTrain extends AbstractVehicle {
 
 	@SuppressWarnings("deprecation")
 	private static boolean isRailBlock(@NotNull Block railBlock) {
-		if (XReflection.supports(13)) {
+		if (XReflection.supports(1, 13, 0)) {
 			return railBlock.getBlockData() instanceof Rail;
 		}
 		return railBlock.getState().getData() instanceof Rails;
@@ -164,7 +164,7 @@ public class AbstractTrain extends AbstractVehicle {
 
 		int direction = getDirectionInternalID(ve);
 		double slopeY;
-		if (XReflection.supports(13)) {
+		if (XReflection.supports(1, 13, 0)) {
 			Shape shape = ((Rail) railBlock.getBlockData()).getShape();
 			slopeY = slopeYForRailShape(shape, direction);
 		} else {
@@ -248,7 +248,7 @@ public class AbstractTrain extends AbstractVehicle {
 		int shape = -1;
 		int direction = getDirectionInternalID(ve);
 
-		if (XReflection.supports(13)) {
+		if (XReflection.supports(1, 13, 0)) {
 			if (b.getBlockData() instanceof org.bukkit.block.data.Rail) {
 				Rail rail = (Rail) b.getBlockData();
 				shape = getDirectionID(rail.getShape().name());

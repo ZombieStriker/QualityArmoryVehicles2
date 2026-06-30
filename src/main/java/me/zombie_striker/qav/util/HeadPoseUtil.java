@@ -99,7 +99,7 @@ public class HeadPoseUtil {
     public static void setYaw(@NotNull VehicleEntity entity, float yaw) {
         Main.DEBUG("Setting yaw to " + yaw);
 
-        if (XReflection.supports(13)) {
+        if (XReflection.supports(1, 13, 0)) {
             entity.getDriverSeat().setRotation(yaw, entity.getDriverSeat().getLocation().getPitch());
         } else {
             final EulerAngle headPose = ((ArmorStand) entity.getDriverSeat()).getHeadPose();

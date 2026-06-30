@@ -228,7 +228,7 @@ public class VehicleYML {
 		verify("TurnSpeedInRadians", Math.PI / 80);
 		verify("useStaticTurning", true);
 		verify("activation_radius", 2);
-		verify("vehicle_texture_material", XReflection.supports(14) ? Material.RABBIT_HIDE.name() : Material.DIAMOND_AXE.name());
+		verify("vehicle_texture_material", XReflection.supports(1, 14, 0) ? Material.RABBIT_HIDE.name() : Material.DIAMOND_AXE.name());
 		verify("RequiresFuel", false);
 		verify("trunksize", 9);
 		verify("widthOffset", 1.5);

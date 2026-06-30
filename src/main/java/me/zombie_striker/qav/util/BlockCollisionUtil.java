@@ -45,7 +45,7 @@ public class BlockCollisionUtil {
         Material type = getMaterial(b.getLocation());
         if (type == null) return 0;
         if (type.name().contains("SLAB") || type.name().contains("STEP")) {
-            boolean modernCheck = XReflection.supports(13);
+            boolean modernCheck = XReflection.supports(1, 13, 0);
 
             if (modernCheck) {
                 try {

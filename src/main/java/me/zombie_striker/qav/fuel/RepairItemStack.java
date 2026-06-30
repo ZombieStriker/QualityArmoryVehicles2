@@ -66,7 +66,7 @@ public class RepairItemStack {
         FileConfiguration configuration = YamlConfiguration.loadConfiguration(repairYML);
 
         update(configuration,"name", "&6Repair Vehicle");
-        update(configuration,"material", XReflection.supports(14) ? Material.RABBIT_HIDE.name() : Material.DIAMOND_AXE.name());
+        update(configuration, "material", XReflection.supports(1, 14, 0) ? Material.RABBIT_HIDE.name() : Material.DIAMOND_AXE.name());
         update(configuration,"lore", Collections.singletonList("&7Use this item to repair your vehicle"));
         update(configuration,"data", 0);
         update(configuration,"shouldBeInShop", true);

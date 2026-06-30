@@ -15,7 +15,7 @@ public final class NMSUtil {
 
     @SuppressWarnings("deprecation")
     public static void init() {
-        if (!XReflection.supports(18)) {
+        if (!XReflection.supports(1, 18, 0)) {
             QualityArmoryVehicles.getPlugin().getLogger().info("[NMS] Legacy NMS support loaded.");
             return;
         }

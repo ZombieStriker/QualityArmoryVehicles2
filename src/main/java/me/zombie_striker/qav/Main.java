@@ -50,10 +50,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Main extends JavaPlugin {
 
@@ -177,7 +174,7 @@ public class Main extends JavaPlugin {
 		initVals();
 
 		ParticleHandlers.initValues();
-		if (XReflection.supports(9)) {
+		if (XReflection.supports(1, 9, 0)) {
 			FInputManager.init(this);
 			new FMininukeBomber();
 			new FCarHonk();
@@ -215,11 +212,31 @@ public class Main extends JavaPlugin {
 				else {
 					ConfigurationSection packSection = getConfig().getConfigurationSection("QAMini.resourcepackurl");
 					if (packSection != null) {
+						boolean saveConfig = false;
+
+						// Migrate old 21 format because the default one on v2.0.18 was broken
 						if (packSection.contains("21")) {
 							packSection.set("21-4", packSection.getString("21"));
 							packSection.set("21", null);
-							this.saveConfig();
+							saveConfig = true;
 						}
+
+						// Migrate existing keys to support major version changes
+						for (String key : new HashSet<>(packSection.getKeys(false))) {
+							try {
+								String[] split = key.split("-");
+								int first = Integer.parseInt(split[0]);
+
+								if (first < 25 && first > 1) {
+									packSection.set("1-" + key, packSection.getString(key));
+									packSection.set(key, null);
+									saveConfig = true;
+								}
+							} catch (NumberFormatException ignored) {
+							}
+						}
+
+						if (saveConfig) this.saveConfig();
 
 						CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
 					}
@@ -277,7 +294,7 @@ public class Main extends JavaPlugin {
 			ModelEngineHook.init();
 		}
 
-		if (XReflection.supports(21,2)) new ModernInputListener().register();
+		if (XReflection.supports(1, 21, 2)) new ModernInputListener().register();
 		else new LegacyInputListener().register();
 	}
 
