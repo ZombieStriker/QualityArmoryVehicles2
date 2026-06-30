@@ -43,7 +43,7 @@ dependencies {
     // Compatibilities
     compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
     compileOnly("me.zombie_striker:QualityArmory:2.1.3")
-    compileOnly("com.palmergames.bukkit.towny:towny:0.103.0.0")
+    compileOnly("com.palmergames.bukkit.towny:towny:0.103.0.5")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.ticxo.modelengine:api:R3.2.0")
     compileOnly("org.maxgamer:QuickShop:5.1.2.5")
