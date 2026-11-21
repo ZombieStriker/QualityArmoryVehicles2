@@ -1,3 +1,7 @@
+2.6
+  Changelog:
+    - Added Horse-drawn carriages with manual hitching
+
 2.5.1
   Changelog:
     - Fixed 26.x support
