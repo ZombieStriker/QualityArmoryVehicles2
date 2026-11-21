@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -152,9 +153,12 @@ public class VehicleLoader {
 			@SuppressWarnings("unchecked")
 			List<Vector> list = (List<Vector>) c.getList("passagers", new ArrayList<>());
 
-			HashMap<Vector,Integer> sizes = new HashMap<>();
+			// Keep the config order so seat indexes match the order of the passagers list
+			HashMap<Vector,Integer> sizes = new LinkedHashMap<>();
 			for(Vector v3 : list){
-				double size = Math.min(2,v3.getY());
+				// Legacy format: the whole part of y (0-2) is the old seat size and does not move the seat,
+				// the rest is the vertical offset (e.g. 1 -> 0, 1.5 -> +0.5, 3 -> +1, -0.5 -> -0.5)
+				int size = (int) Math.max(0, Math.min(2, Math.floor(v3.getY())));
 				double offset = v3.getY()-size;
 				Vector v2 = v3.clone();
 				v2.setY(offset);
