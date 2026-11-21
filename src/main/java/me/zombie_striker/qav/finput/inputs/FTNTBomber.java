@@ -1,12 +1,11 @@
 package me.zombie_striker.qav.finput.inputs;
 
-import com.tcoded.folialib.wrapper.task.WrappedTask;
-import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.finput.FInputManager;
 import me.zombie_striker.qav.qamini.ExplosionHandler;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import org.bukkit.Effect;
@@ -20,7 +19,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BooleanSupplier;
 
 @SuppressWarnings("deprecation")
 public class FTNTBomber implements FInput {
@@ -70,15 +69,25 @@ public class FTNTBomber implements FInput {
 			final Player player = (Player) ve.getDriverSeat().getPassenger();
 			final Vector dir = new Vector(0, -0.1, 0);
 			// final Vector dir
-			Main.foliaLib.getScheduler().runAtEntityTimer(ve.getModelEntity(), new Consumer<WrappedTask>() {
+			// The projectile is handled by the region owning its current position
+			SchedulerUtil.runAtMovingLocationTimer(s, new BooleanSupplier() {
+				boolean resume = false;
 				int distance = 300;
 
 				@Override
-				public void accept(WrappedTask task) {
+				public boolean getAsBoolean() {
 					dir.setY(dir.getY() - 0.05);
 					for (int tick = 0; tick < Math.abs(dir.getY()); tick++) {
-						distance--;
-						s.add(dir);
+						if (!resume) {
+							distance--;
+							s.add(dir);
+						}
+						resume = false;
+						if (!SchedulerUtil.isOwned(s)) {
+							// Moved into another region: continue from there on the next tick
+							resume = true;
+							return true;
+						}
 						ParticleHandlers.spawnParticle(1, 1, 1, s);// .spawnGunParticles(g, s);
 						boolean entityNear = false;
 						try {
@@ -96,7 +105,7 @@ public class FTNTBomber implements FInput {
 							issolid = BlockCollisionUtil.isSolid(s);
 						}
 						if (issolid || entityNear || distance < 0) {
-							ExplosionHandler.handleAOEExplosion(player, s, 100, 8);
+							ExplosionHandler.handleAOEExplosion(player != null && SchedulerUtil.isOwned(player) ? player : null, s, 100, 8);
 							ParticleHandlers.spawnExplosion(s);
 							try {
 								ve.getDriverSeat().getWorld().playSound(s, "warheadexplode", 10, 1.5f);
@@ -105,12 +114,12 @@ public class FTNTBomber implements FInput {
 								s.getWorld().playEffect(s, Effect.valueOf("CLOUD"), 0);
 								s.getWorld().playSound(s, Sound.valueOf("EXPLODE"), 8, 0.7f);
 							}
-							task.cancel();
-							return;
+							return false;
 						}
 					}
+					return true;
 				}
-			}, 0, 1);
+			});
 		}
 	}
 

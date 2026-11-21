@@ -37,6 +37,7 @@ import me.zombie_striker.qav.tracks.assign.TrainAssignListener;
 import me.zombie_striker.qav.tracks.editor.TrackEditorController;
 import me.zombie_striker.qav.tracks.editor.TrackEditorListener;
 import me.zombie_striker.qav.tracks.runtime.TrackRuntimeController;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import me.zombie_striker.qav.util.ForksUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
@@ -44,6 +45,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.Plugin;
@@ -53,6 +55,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Main extends JavaPlugin {
 
@@ -122,7 +125,7 @@ public class Main extends JavaPlugin {
 	public static boolean modernPlaneMovements = true;
 
 	public static List<AbstractVehicle> vehicleTypes = new ArrayList<>();
-	public static List<VehicleEntity> vehicles = new ArrayList<>();
+	public static List<VehicleEntity> vehicles = new CopyOnWriteArrayList<>();
 
 	public static TracksManager tracksManager;
 	public static TrackEditorController trackEditorController;
@@ -277,18 +280,48 @@ public class Main extends JavaPlugin {
 		FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
 
 		if(dataconfig.contains("data")) {
-			for (VehicleEntity ve : ((List<VehicleEntity>) dataconfig.get("data"))) {
-				if (ve != null && ve.getDriverSeat() != null)
-					vehicles.add(ve);
-			}
+			if (SchedulerUtil.isFolia()) {
+				// On Folia the entities are spawned/found on the owning region by the vehicle itself (see VehicleEntity#spawnOrFind)
+				int scheduled = 0;
+				for (VehicleEntity ve : ((List<VehicleEntity>) dataconfig.get("data"))) {
+					if (ve != null && ve.getType() != null)
+						scheduled++;
+				}
 
-			this.getLogger().info("Successfully loaded " + vehicles.size() + " spawned vehicles.");
+				this.getLogger().info("Scheduled loading of " + scheduled + " spawned vehicles.");
+			} else {
+				for (VehicleEntity ve : ((List<VehicleEntity>) dataconfig.get("data"))) {
+					if (ve != null && ve.getDriverSeat() != null)
+						vehicles.add(ve);
+				}
+
+				this.getLogger().info("Successfully loaded " + vehicles.size() + " spawned vehicles.");
+			}
 		}
 
+		final long[] globalTicks = {0};
 		Main.foliaLib.getScheduler().runTimer(() -> {
-			for(VehicleEntity ve : new ArrayList<>(vehicles)){
-				if(ve!=null && ve.getDriverSeat()!=null)
+			long now = globalTicks[0]++;
+			for(VehicleEntity ve : vehicles){
+				if (ve == null) continue;
+
+				Entity seat = ve.getDriverSeat();
+				if (seat == null) continue;
+
+				if (!SchedulerUtil.isFolia()) {
 					ve.tick();
+					continue;
+				}
+
+				// Each vehicle is ticked by the region owning it. Skip if the previous tick is still queued (lagging region).
+				if (!ve.markTickScheduled(now)) continue;
+				Main.foliaLib.getScheduler().runAtEntityWithFallback(seat, task -> {
+					ve.markTickDone();
+					if (!seat.equals(ve.getDriverSeat())) return;
+
+					ve.tick();
+					ModernInputListener.handleDriverInput(ve);
+				}, ve::markTickDone);
 			}
 		}, 1, 1);
 
@@ -330,6 +363,9 @@ public class Main extends JavaPlugin {
 		}
 
 		vehicles.clear();
+
+		if (foliaLib != null)
+			foliaLib.getScheduler().cancelAllTasks();
 	}
 
 	public void initVals() {

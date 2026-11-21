@@ -3,6 +3,8 @@ package me.zombie_striker.qav.hitch;
 import com.cryptomorin.xseries.XAttribute;
 import com.cryptomorin.xseries.XMaterial;
 import me.zombie_striker.qav.Main;
+import me.zombie_striker.qav.nms.NMSUtil;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
@@ -22,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles hitching animals (horses, donkeys, mules...) to {@link AbstractCarriage carriages}.
@@ -39,7 +42,7 @@ public final class HitchManager {
     private static final boolean SUPPORTED = isClassPresent("org.bukkit.entity.AbstractHorse");
 
     private static final long INTERACT_COOLDOWN = 250;
-    private static final Map<UUID, Long> lastInteract = new HashMap<>();
+    private static final Map<UUID, Long> lastInteract = new ConcurrentHashMap<>();
 
     private HitchManager() {
     }
@@ -182,11 +185,18 @@ public final class HitchManager {
             if (!(entity instanceof LivingEntity) || !entity.isValid()) continue;
 
             LivingEntity animal = (LivingEntity) entity;
-            if (!disabling) {
-                Bukkit.getPluginManager().callEvent(new VehicleUnhitchEvent(ve, animal, null, entry.getKey()));
-                dropLead(animal.getLocation());
-            }
-            release(animal);
+            final int slot = entry.getKey();
+            Runnable releaseTask = () -> {
+                if (!disabling) {
+                    Bukkit.getPluginManager().callEvent(new VehicleUnhitchEvent(ve, animal, null, slot));
+                    dropLead(animal.getLocation());
+                }
+                release(animal);
+            };
+
+            // Folia: the animal may be owned by another region
+            if (disabling) releaseTask.run();
+            else SchedulerUtil.runAtEntity(animal, releaseTask);
         }
 
         ve.getHitchedAnimalCache().clear();
@@ -235,8 +245,8 @@ public final class HitchManager {
                 continue;
             }
 
-            if (!entity.isValid()) {
-                // Unloaded, try again later
+            if (!entity.isValid() || !SchedulerUtil.isOwned(entity)) {
+                // Unloaded (or owned by another region on Folia), try again later
                 ve.getHitchedAnimalCache().remove(slot);
                 continue;
             }
@@ -247,7 +257,8 @@ public final class HitchManager {
             Vector direction = ve.getDirection().clone().setY(0);
             if (direction.lengthSquared() > 0) target.setDirection(direction);
             target.setPitch(0);
-            entity.teleport(target);
+            if (SchedulerUtil.isFolia()) NMSUtil.teleport(entity, target); // Entity#teleport is not supported on Folia
+            else entity.teleport(target);
         }
     }
 
@@ -407,6 +418,8 @@ public final class HitchManager {
         }
 
         Entity found = findEntity(uuid, ve.getDriverSeat() == null ? null : ve.getCenter());
+        // Folia: entities owned by another region can't be accessed
+        if (found != null && !SchedulerUtil.isOwned(found)) return null;
         if (found != null) {
             ve.getHitchedAnimalCache().put(slot, found);
             if (found instanceof LivingEntity && found.isValid()) {

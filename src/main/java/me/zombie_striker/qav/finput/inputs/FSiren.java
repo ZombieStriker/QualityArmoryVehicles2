@@ -6,11 +6,12 @@ import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.finput.FInputManager;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FSiren implements FInput {
 
-    HashMap<VehicleEntity, WrappedTask> storedSirens = new HashMap<>();
+    Map<VehicleEntity, WrappedTask> storedSirens = new ConcurrentHashMap<>();
 
     public FSiren() {
         FInputManager.add(this);
@@ -36,7 +37,7 @@ public class FSiren implements FInput {
                             "siren", 2, (float) 1);
 
                 }
-            }, 0, 20));
+            }, () -> storedSirens.remove(ve), 1, 20));
         }
     }
 

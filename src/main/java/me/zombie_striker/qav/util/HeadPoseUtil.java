@@ -15,7 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HeadPoseUtil {
     private static final Method GET_HANDLE;
@@ -38,7 +39,7 @@ public class HeadPoseUtil {
         YAW = yaw;
     }
 
-    static HashMap<VehicleEntity, Float> chaningPos = new HashMap<>();
+    static Map<VehicleEntity, Float> chaningPos = new ConcurrentHashMap<>();
 
     public static void setHeadPoseUsingReflection(VehicleEntity ve) {
         setHeadPoseUsingReflection(ve, ve.getModelEntity());
@@ -61,7 +62,7 @@ public class HeadPoseUtil {
             }
             updateArmorstandPart(ve, a, a.getHeadPose().getX(), ve.getAngleRotation() - chaningPos.get(ve), a.getHeadPose().getZ());
         }
-        Main.foliaLib.getScheduler().runNextTick(task -> {
+        SchedulerUtil.runAtEntityNextTick(a, () -> {
             ArmorStand e = (ArmorStand) a.getWorld().spawnEntity(a.getLocation(), EntityType.ARMOR_STAND);
             e.setVisible(false);
             e.setSmall(a.isSmall());
@@ -75,7 +76,7 @@ public class HeadPoseUtil {
             temp.setYaw((float) ve.getAngleRotation());
             Vector to = new Vector(-Math.sin(ve.getAngleRotation()), 0, Math.cos(ve.getAngleRotation()));
             temp.setDirection(to);
-            ve.getDriverSeat().teleport(temp);
+            SchedulerUtil.teleport(ve.getDriverSeat(), temp);
             a.setPassenger(tempL);
             ve.getDriverSeat().setVelocity(e.getVelocity());
             e.remove();

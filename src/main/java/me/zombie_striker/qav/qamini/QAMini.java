@@ -2,6 +2,7 @@ package me.zombie_striker.qav.qamini;
 
 import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qav.Main;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
@@ -25,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("deprecation")
 public class QAMini implements Listener {
@@ -32,8 +34,8 @@ public class QAMini implements Listener {
 	private static final String CALCTEXT = ChatColor.BLACK + "qa:";
 	public static List<MaterialStorage> registeredItems = new ArrayList<>();
 	public static List<String> namesToBypass = new ArrayList<>();
-	public static List<UUID> resourcepackReq = new ArrayList<>();
-	public static HashMap<UUID, Long> sentResourcepack = new HashMap<>();
+	public static List<UUID> resourcepackReq = Collections.synchronizedList(new ArrayList<>());
+	public static Map<UUID, Long> sentResourcepack = new ConcurrentHashMap<>();
 	public static boolean sendOnJoin = true;
 	public static boolean sendTitleOnJoin = true;
 	public static boolean shouldSend = true;
@@ -210,7 +212,7 @@ public class QAMini implements Listener {
 	public static void sendResourcepack(final Player player, final boolean warning) {
 		if (namesToBypass.contains(player.getName()) || resourcepackReq.contains(player.getUniqueId()))
 			return;
-		Main.foliaLib.getScheduler().runNextTick(task -> {
+		SchedulerUtil.runAtEntityNextTick(player, () -> {
 			if (namesToBypass.contains(player.getName())) {
 				resourcepackReq.add(player.getUniqueId());
 				return;
@@ -227,7 +229,7 @@ public class QAMini implements Listener {
 			if (MessagesConfig.RESOURCEPACK_CRASH.length() > 2) {
 				player.sendMessage(Main.prefix + MessagesConfig.RESOURCEPACK_CRASH);
 			}
-			Main.foliaLib.getScheduler().runLater(() -> {
+			Main.foliaLib.getScheduler().runAtEntityLater(player, () -> {
 				try {
 					player.setResourcePack(CustomItemManager.getResourcepack(player));
 					if (!isVersionHigherThan(1, 9)) {
@@ -275,7 +277,7 @@ public class QAMini implements Listener {
 				} else {
 					t = removeCalculatedExtra(hand);
 				}
-				Main.foliaLib.getScheduler().runNextTick(task -> {
+				SchedulerUtil.runAtEntityNextTick(e.getPlayer(), () -> {
 					e.getPlayer().setItemInHand(t);
 				});
 			}
@@ -409,7 +411,7 @@ public class QAMini implements Listener {
 				}
 				final ItemStack temp2 = temp1;
 
-				Main.foliaLib.getScheduler().runNextTick(task -> {
+				SchedulerUtil.runAtEntityNextTick(e.getPlayer(), () -> {
 					if (origin.getDurability() != e.getPlayer().getItemInHand().getDurability()
 							&& slot == e.getPlayer().getInventory().getHeldItemSlot()
 							&& (e.getPlayer().getItemInHand() != null
@@ -462,7 +464,7 @@ public class QAMini implements Listener {
 			for (ItemStack i : e.getPlayer().getInventory().getContents()) {
 				if (i != null && (QualityArmoryVehicles.isVehicleByItem(i))) {
 					if (shouldSend && !resourcepackReq.contains(e.getPlayer().getUniqueId())) {
-						Main.foliaLib.getScheduler().runNextTick(task -> {
+						SchedulerUtil.runAtEntityNextTick(e.getPlayer(), () -> {
 							sendResourcepack(e.getPlayer(), false);
 						});
 					}

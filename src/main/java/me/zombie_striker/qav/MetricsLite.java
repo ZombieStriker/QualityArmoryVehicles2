@@ -87,7 +87,7 @@ public class MetricsLite {
                         enabled,
                         this::appendPlatformData,
                         this::appendServiceData,
-                        submitDataTask -> Main.foliaLib.getScheduler().runAsync((task) -> submitDataTask.run()),
+                        submitDataTask -> Main.foliaLib.getScheduler().runNextTick((task) -> submitDataTask.run()),
                         plugin::isEnabled,
                         (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
                         (message) -> this.plugin.getLogger().log(Level.INFO, message),

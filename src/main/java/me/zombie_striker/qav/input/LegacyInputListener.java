@@ -21,7 +21,8 @@ public class LegacyInputListener extends BaseInputHandler {
         space = packet.getBooleans().read(0);
         shift = packet.getBooleans().read(1);
 
-        Main.foliaLib.getScheduler().runNextTick(task -> {
+        // Packets are received asynchronously: handle the input on the thread owning the player
+        Main.foliaLib.getScheduler().runAtEntity(player, task -> {
             handleInput(ve, player, forward, backward, left, right, space, shift);
         });
     }

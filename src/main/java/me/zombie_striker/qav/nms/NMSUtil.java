@@ -3,10 +3,13 @@ package me.zombie_striker.qav.nms;
 import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.util.SchedulerUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.CompletableFuture;
 
 public final class NMSUtil {
     private static Method teleport;
@@ -34,7 +37,9 @@ public final class NMSUtil {
                 try {
                     teleport = entity.getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
                 } catch (Exception | Error ignored2) {
-                    Main.DEBUG("[NMS] Unable to find teleport method. This may cause bugs. Please report this error.");
+                    teleport = SchedulerUtil.isFolia() ? findMojangTeleport(entity) : null;
+                    if (teleport == null)
+                        Main.DEBUG("[NMS] Unable to find teleport method. This may cause bugs. Please report this error.");
                 }
             }
 
@@ -44,7 +49,26 @@ public final class NMSUtil {
         }
     }
 
+    /**
+     * Folia runs on Mojang mappings and does not support {@link Entity#teleport(Location)}, so the position is set directly.
+     */
+    private static Method findMojangTeleport(Class<?> entity) {
+        for (String name : new String[]{"absSnapTo", "absMoveTo"}) {
+            try {
+                return entity.getMethod(name, double.class, double.class, double.class, float.class, float.class);
+            } catch (Exception | Error ignored) {
+            }
+        }
+        return null;
+    }
+
     public static void teleport(Entity entity, Location to) {
+        if (SchedulerUtil.isFolia() && (!SchedulerUtil.isOwned(entity) || !SchedulerUtil.isOwned(to) || !entity.getWorld().equals(to.getWorld()))) {
+            // Moving the entity directly is only safe within the current region
+            fallbackTeleport(entity, to);
+            return;
+        }
+
         if (getHandle == null || teleport == null) {
             Main.DEBUG(getHandle == null ? "getHandle is null" : "teleport is null");
             fallbackTeleport(entity, to);
@@ -65,11 +89,28 @@ public final class NMSUtil {
         Main.DEBUG("Falling back to legacy teleport.");
         final Entity rider = entity.getPassenger();
         entity.eject();
+
+        if (SchedulerUtil.isFolia()) {
+            CompletableFuture<Boolean> riderTeleport = rider != null
+                    ? SchedulerUtil.scheduler().teleportAsync(rider, to)
+                    : CompletableFuture.completedFuture(true);
+            CompletableFuture<Boolean> entityTeleport = SchedulerUtil.scheduler().teleportAsync(entity, to);
+
+            if (rider != null) {
+                CompletableFuture.allOf(riderTeleport, entityTeleport).whenComplete((ignored, error) ->
+                        SchedulerUtil.scheduler().runAtEntityLater(entity, () -> {
+                            if (rider.isValid() && SchedulerUtil.isOwned(rider))
+                                entity.setPassenger(rider);
+                        }, 2L));
+            }
+            return;
+        }
+
         if (rider != null) rider.teleport(to);
         entity.teleport(to);
 
         if (rider != null) {
-            Main.foliaLib.getScheduler().runAtEntityLater(entity, () -> entity.setPassenger(rider), 2L);
+            Bukkit.getScheduler().runTaskLater(QualityArmoryVehicles.getPlugin(), () -> entity.setPassenger(rider), 2L);
         }
     }
 }

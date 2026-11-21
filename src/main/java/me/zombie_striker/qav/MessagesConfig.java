@@ -2,6 +2,7 @@ package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.util.HotbarMessager;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -444,7 +445,7 @@ public class MessagesConfig {
 
 
 	public static void sendOutOfFuel(final Player player) {
-		Main.foliaLib.getScheduler().runNextTick((task) -> {
+		SchedulerUtil.runAtEntityNextTick(player, () -> {
             if (!Main.useChatForMessage) {
                 try {
                     HotbarMessager.sendHotBarMessage(player, MessagesConfig.MESSAGE_HOTBAR_OUTOFFUEL);

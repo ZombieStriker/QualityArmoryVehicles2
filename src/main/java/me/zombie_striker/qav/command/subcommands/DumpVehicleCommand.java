@@ -45,9 +45,11 @@ public class DumpVehicleCommand extends SubCommand {
             return;
         }
 
+        final Player player = (Player) sender;
+        // Read the entity state on the thread owning the player, then dump it asynchronously
+        final VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
+
         Main.foliaLib.getScheduler().runAsync((task) -> {
-            Player player = (Player) sender;
-            VehicleEntity vehicle = QualityArmoryVehicles.getVehicleEntityByEntity(player.getVehicle());
 
             if (vehicle == null) {
                 sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_NO_VEHICLE);

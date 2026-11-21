@@ -6,6 +6,7 @@ import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.api.events.PlayerExitQAVehicleEvent;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import me.zombie_striker.qav.util.VehicleUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -58,7 +59,7 @@ public abstract class BaseInputHandler extends PacketAdapter {
 
             if (Main.antiCheatHook) {
                 Location location = player.getVehicle().getLocation();
-                player.teleport(location);
+                SchedulerUtil.teleport(player, location);
             }
 
             if (Main.removeVehicleOnDismount) {
