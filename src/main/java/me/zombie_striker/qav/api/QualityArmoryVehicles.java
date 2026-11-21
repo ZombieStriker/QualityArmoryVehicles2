@@ -6,6 +6,7 @@ import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.api.events.VehicleSpawnEvent;
 import me.zombie_striker.qav.attachments.Attachment;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
+import me.zombie_striker.qav.hitch.HitchManager;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.perms.PermissionHandler;
@@ -23,6 +24,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -45,6 +47,20 @@ public class QualityArmoryVehicles {
 
     public static Main getPlugin() {
         return main;
+    }
+
+    /**
+     * @return the loaded animals currently pulling the vehicle (empty if it is not a carriage)
+     */
+    public static @NotNull List<LivingEntity> getHitchedAnimals(@NotNull VehicleEntity vehicle) {
+        return HitchManager.getHitchedAnimals(vehicle);
+    }
+
+    /**
+     * @return the vehicle the given animal is hitched to, or null
+     */
+    public static @Nullable VehicleEntity getVehicleByHitchedAnimal(@NotNull Entity animal) {
+        return HitchManager.getVehicleByAnimal(animal);
     }
 
     public static VehicleEntity getVehicleEntityByEntity(Entity entity) {

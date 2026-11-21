@@ -258,6 +258,13 @@ public abstract class AbstractVehicle {
 		this.seatsSize = seatsSize;
 	}
 
+	/**
+	 * @return the vertical velocity applied when this vehicle jumps onto a block
+	 */
+	protected double getJumpHeight(VehicleEntity vehicleEntity) {
+		return jumphiehgt;
+	}
+
 	boolean canJump() {
 		return canJump;
 	}
@@ -478,7 +485,7 @@ public abstract class AbstractVehicle {
 			boolean goingUp = false;
 			if (BlockCollisionUtil.isSolidAt(movingTo)) {
 				if (!BlockCollisionUtil.isSolidAt(movingTo.clone().add(0, 1, 0))) {
-					velocity.setY(jumphiehgt);
+					velocity.setY(getJumpHeight(vehicleEntity));
 					goingUp = true;
 				}
 			}
@@ -486,7 +493,7 @@ public abstract class AbstractVehicle {
 				Location movingTo2 = vehicleEntity.getCenter().clone().add(vehicleEntity.getDirection().clone());
 				if (BlockCollisionUtil.isSolidAt(movingTo2)) {
 					if (!BlockCollisionUtil.isSolidAt(movingTo2.clone().add(0, 1, 0))) {
-						velocity.setY(jumphiehgt);
+						velocity.setY(getJumpHeight(vehicleEntity));
 						goingUp = true;
 					}
 				}
@@ -495,7 +502,7 @@ public abstract class AbstractVehicle {
 				Location movingTo3 = vehicleEntity.getCenter().clone().subtract(vehicleEntity.getDirection().clone().multiply(vehicleEntity.getBoundingBox().getWidth()));
 				if (BlockCollisionUtil.isSolidAt(movingTo3)) {
 					if (!BlockCollisionUtil.isSolidAt(movingTo3.clone().add(0, 1, 0))) {
-						velocity.setY(jumphiehgt);
+						velocity.setY(getJumpHeight(vehicleEntity));
 						goingUp = true;
 					}
 				}
@@ -504,7 +511,7 @@ public abstract class AbstractVehicle {
 				Location movingTo4 = vehicleEntity.getCenter().clone().subtract(vehicleEntity.getDirection().clone());
 				if (BlockCollisionUtil.isSolidAt(movingTo4)) {
 					if (!BlockCollisionUtil.isSolidAt(movingTo4.clone().add(0, 1, 0))) {
-						velocity.setY(jumphiehgt);
+						velocity.setY(getJumpHeight(vehicleEntity));
 					}
 				}
 			}

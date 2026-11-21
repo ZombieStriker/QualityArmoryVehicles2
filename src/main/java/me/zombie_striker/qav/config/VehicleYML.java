@@ -260,6 +260,13 @@ public class VehicleYML {
 		} else {
 			verify("sound", "null");
 		}
+		if (get("vehicle_type").equals(VehicleTypes.CARRIAGE.getName())) {
+			verify("hitch.points", java.util.Collections.singletonList(new Vector(2, 0, 0)));
+			verify("hitch.radius", 6.0);
+			verify("hitch.speedMultiplier", 2.0);
+			verify("hitch.jumpMultiplier", 0.5);
+			verify("hitch.allowedAnimals", java.util.Arrays.asList("HORSE", "DONKEY", "MULE"));
+		}
 		verify("soundVolume", 1);
 		verify("driverseat.UseOffsetSeatFromModel", false);
 		verify("driverseat.Offset", new Vector(0, 1, 0));
@@ -334,6 +341,14 @@ public class VehicleYML {
 
 	public VehicleYML setBackVectorOffset(double offset) {
 		set("back_vector_offset", offset);
+		return this;
+	}
+
+	/**
+	 * Sets where hitched animals stand, relative to the driver seat (+x is forward, +z is to the right).
+	 */
+	public VehicleYML setHitchPoints(Vector... points) {
+		set("hitch.points", java.util.Arrays.asList(points));
 		return this;
 	}
 

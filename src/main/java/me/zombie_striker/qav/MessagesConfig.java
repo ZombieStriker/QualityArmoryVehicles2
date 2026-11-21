@@ -61,6 +61,20 @@ public class MessagesConfig {
 	public static String MESSAGE_CannotPickupWhileInVehicle = "&c You cannot pickup vehicles that are being driven.";
 	public static String MESSAGE_HOTBAR_OUTOFFUEL = " Your vehicle is out of fuel. Find coal and Shift-click the car";
 	public static String MESSAGE_REPAIR = " Your vehicle has been repaired successfully.";
+	public static String MESSAGE_HITCH_NO_ANIMAL = "&c This carriage has no animal hitched. Lead a horse next to it and right-click the carriage.";
+	public static String MESSAGE_HITCH_HITCHED = " Hitched &6%amount%&7 animal(s) to the carriage (&6%total%&7/&6%max%&7).";
+	public static String MESSAGE_HITCH_UNHITCHED = " Unhitched &6%amount%&7 animal(s) from the carriage.";
+	public static String MESSAGE_HITCH_NONE_NEARBY = "&c Lead a horse close to the carriage and right-click it to hitch the horse.";
+	public static String MESSAGE_HITCH_NOT_TAMED = "&c Only tamed animals can be hitched.";
+	public static String MESSAGE_HITCH_NOT_OWNER = "&c You can only hitch animals you have tamed.";
+	public static String MESSAGE_HITCH_FULL = "&c There is no free hitch point on this carriage.";
+	public static String MESSAGE_HITCH_NOT_ALLOWED = "&c You are not allowed to hitch animals to this carriage.";
+	public static String MESSAGE_HITCH_NO_PERMISSION = "&c You do not have permission to hitch animals.";
+	public static String MESSAGE_HITCH_UNSUPPORTED = "&c Hitching animals is not supported on this server version.";
+	public static String MESSAGE_HITCH_ANIMAL_LOST = "&c One of the animals pulling your carriage has been lost!";
+	public static String MESSAGE_HITCH_CANNOT_INTERACT = "&c This animal is hitched to a carriage. Unhitch it first.";
+	public static String ICON_UNHITCH = "&7Unhitch animals";
+	public static String ICONLORE_UNHITCH = "&7Hitched animals: &6%total%&7/&6%max%";
 	public static String MESSAGE_ACTIOBAR_MOVE = "&6Vehicle: &f%type% | &6Fuel: &f%fuel% | &6Speed: &f%speed%km/h";
 	public static String MESSAGE_TRAM_SELECT_STOP = " &7Left-click a rail block to add the next station. Type &f/qav tracks cancel&7 to exit.";
 	public static String MESSAGE_TRAM_STOP_PROMPT = " &7Enter dwell time (seconds):";
@@ -305,6 +319,20 @@ public class MessagesConfig {
 				a("Messages.callback", COMMANDMESSAGE_CALLBACK));
 		MESSAGE_REPAIR = (
 				a("Messages.repair", MESSAGE_REPAIR));
+		MESSAGE_HITCH_NO_ANIMAL = a("Messages.Hitch.NoAnimal", MESSAGE_HITCH_NO_ANIMAL);
+		MESSAGE_HITCH_HITCHED = a("Messages.Hitch.Hitched", MESSAGE_HITCH_HITCHED);
+		MESSAGE_HITCH_UNHITCHED = a("Messages.Hitch.Unhitched", MESSAGE_HITCH_UNHITCHED);
+		MESSAGE_HITCH_NONE_NEARBY = a("Messages.Hitch.NoneNearby", MESSAGE_HITCH_NONE_NEARBY);
+		MESSAGE_HITCH_NOT_TAMED = a("Messages.Hitch.NotTamed", MESSAGE_HITCH_NOT_TAMED);
+		MESSAGE_HITCH_NOT_OWNER = a("Messages.Hitch.NotOwner", MESSAGE_HITCH_NOT_OWNER);
+		MESSAGE_HITCH_FULL = a("Messages.Hitch.Full", MESSAGE_HITCH_FULL);
+		MESSAGE_HITCH_NOT_ALLOWED = a("Messages.Hitch.NotAllowed", MESSAGE_HITCH_NOT_ALLOWED);
+		MESSAGE_HITCH_NO_PERMISSION = a("Messages.Hitch.NoPermission", MESSAGE_HITCH_NO_PERMISSION);
+		MESSAGE_HITCH_UNSUPPORTED = a("Messages.Hitch.Unsupported", MESSAGE_HITCH_UNSUPPORTED);
+		MESSAGE_HITCH_ANIMAL_LOST = a("Messages.Hitch.AnimalLost", MESSAGE_HITCH_ANIMAL_LOST);
+		MESSAGE_HITCH_CANNOT_INTERACT = a("Messages.Hitch.CannotInteract", MESSAGE_HITCH_CANNOT_INTERACT);
+		ICON_UNHITCH = a("Messages.Hitch.UnhitchIcon", ICON_UNHITCH);
+		ICONLORE_UNHITCH = a("Messages.Hitch.UnhitchLore", ICONLORE_UNHITCH);
 		MESSAGE_ACTIOBAR_MOVE = (
 				a("Messages.actionBar", MESSAGE_ACTIOBAR_MOVE));
 		COMMANDMESSAGES_RELOAD =

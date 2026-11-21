@@ -4,6 +4,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
 import me.zombie_striker.qav.api.events.VehicleRepairEvent;
+import me.zombie_striker.qav.hitch.HitchManager;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.menu.OverviewMenu;
 import me.zombie_striker.qav.perms.PermissionHandler;
@@ -70,6 +71,10 @@ public class QAVListener implements Listener {
 
                 ve.setHealth(ve.getType().getMaxHealth());
                 e.getPlayer().sendMessage(Main.prefix + MessagesConfig.MESSAGE_REPAIR);
+                return;
+            }
+
+            if (tryHitch(e.getPlayer(), e.getHand(), ve)) {
                 return;
             }
 
@@ -151,6 +156,9 @@ public class QAVListener implements Listener {
 
             if (ve != null) {
                 e.setCancelled(true);
+                if (tryHitch(e.getPlayer(), e.getHand(), ve)) {
+                    return;
+                }
                 if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
                     new OverviewMenu(e.getPlayer(), ve).open();
                 } else if (ve.isTrackAutomatic() && ve.getType() instanceof AbstractTrain) {
@@ -188,6 +196,9 @@ public class QAVListener implements Listener {
         }
 
         e.setCancelled(true);
+        if (tryHitch(e.getPlayer(), e.getHand(), ve)) {
+            return;
+        }
         boolean trackAuto = ve.isTrackAutomatic() && ve.getType() instanceof AbstractTrain;
         if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
             if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
@@ -220,6 +231,15 @@ public class QAVListener implements Listener {
             QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(),
                     !trackAuto && ve.allowUserDriver(e.getPlayer().getUniqueId()));
         }
+    }
+
+    /**
+     * Lets players hitch/unhitch animals by right-clicking a carriage (not sneaking, so the overview menu still opens).
+     */
+    private boolean tryHitch(Player player, EquipmentSlot hand, VehicleEntity ve) {
+        if (!(ve.getType() instanceof AbstractCarriage) || player.isSneaking()) return false;
+        if (hand == EquipmentSlot.OFF_HAND) return false;
+        return HitchManager.handleInteract(player, ve);
     }
 
     @EventHandler
