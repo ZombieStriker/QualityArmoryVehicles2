@@ -58,6 +58,7 @@ permissions:
       qualityarmoryvehicles.callback: true
       qualityarmoryvehicles.craft: true
       qualityarmoryvehicles.shop: true
+      qualityarmoryvehicles.hitch: true
       qualityarmoryvehicles.garage: true
       qualityarmoryvehicles.use: true
       qualityarmoryvehicles.usevehiclegui: true

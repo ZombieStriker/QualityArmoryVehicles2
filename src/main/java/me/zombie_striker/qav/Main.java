@@ -15,6 +15,8 @@ import me.zombie_striker.qav.finput.FInputManager;
 import me.zombie_striker.qav.finput.inputs.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.fuel.RepairItemStack;
+import me.zombie_striker.qav.hitch.HitchListener;
+import me.zombie_striker.qav.hitch.HitchManager;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.QualityArmoryListener;
 import me.zombie_striker.qav.hooks.QuickShopHook;
@@ -263,6 +265,8 @@ public class Main extends JavaPlugin {
 			getCommand("garage").setExecutor(new GarageCommand());
 
 		Bukkit.getPluginManager().registerEvents(new QAVListener(this), this);
+		if (HitchManager.isSupported())
+			Bukkit.getPluginManager().registerEvents(new HitchListener(), this);
 		Bukkit.getPluginManager().registerEvents(new TrackEditorListener(trackEditorController), this);
 		Bukkit.getPluginManager().registerEvents(new TrainAssignListener(trainAssignController), this);
 

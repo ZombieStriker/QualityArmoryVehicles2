@@ -78,6 +78,9 @@ public class VehicleLoader {
 			case TRACTOR:
 				vehicle = new AbstractTractor(name,id);
 				break;
+			case CARRIAGE:
+				vehicle = new AbstractCarriage(name,id);
+				break;
 			default:
 				throw new InvalidVehicleException("Vehicle type does not exist.");
 		}
@@ -197,6 +200,9 @@ public class VehicleLoader {
 					}
 				}
 			});
+		}
+		if (vehicle instanceof AbstractCarriage) {
+			((AbstractCarriage) vehicle).loadHitchSettings(c);
 		}
 		registerInput(vehicle, FInput.ClickType.RIGHT, c);
 		registerInput(vehicle, FInput.ClickType.F, c);

@@ -260,6 +260,13 @@ public class VehicleYML {
 		} else {
 			verify("sound", "null");
 		}
+		if (get("vehicle_type").equals(VehicleTypes.CARRIAGE.getName())) {
+			verify("hitch.points", java.util.Collections.singletonList(new Vector(0, 0, 3)));
+			verify("hitch.radius", 6.0);
+			verify("hitch.speedMultiplier", 2.0);
+			verify("hitch.jumpMultiplier", 0.5);
+			verify("hitch.allowedAnimals", java.util.Arrays.asList("HORSE", "DONKEY", "MULE"));
+		}
 		verify("soundVolume", 1);
 		verify("driverseat.UseOffsetSeatFromModel", false);
 		verify("driverseat.Offset", new Vector(0, 1, 0));
