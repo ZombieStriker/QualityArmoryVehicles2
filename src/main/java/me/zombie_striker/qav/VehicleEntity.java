@@ -2,7 +2,7 @@ package me.zombie_striker.qav;
 
 import com.cryptomorin.xseries.XPotion;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import me.zombie_striker.qav.attachments.Attachment;
+import me.zombie_striker.qav.hitch.HitchManager;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
@@ -17,7 +17,6 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +26,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public AbstractVehicle vehicleType;
 	@ExposeDebug public boolean allowsPassagers = false;
+	private boolean displayOnly = false;
+	private boolean trackAutomatic = false;
 
 	@ExposeDebug private double rotation = 0;
 	@ExposeDebug private Vector direction = new Vector(0, 0, 1);
@@ -39,7 +40,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	private List<ArmorStand> modelParts = new ArrayList<>();
 	private Entity driverseat;
-	@ExposeDebug private HashMap<Integer, Entity> passagers = new HashMap<Integer, Entity>();
+	@ExposeDebug private HashMap<Integer, Entity> passagers = new HashMap<>();
 	@ExposeDebug private HashMap<Integer, Entity> attachments = new HashMap<>();
 	private Inventory inventory;
 	private Inventory fuels;
@@ -47,6 +48,9 @@ public class VehicleEntity implements ConfigurationSerializable {
 	@ExposeDebug private double yheight = 0;
 	@ExposeDebug private List<UUID> whitelist = new ArrayList<>();
 	@ExposeDebug private double health;
+	@ExposeDebug private final Map<Integer, UUID> hitchedAnimals = new HashMap<>();
+	private final Map<Integer, Entity> hitchedAnimalCache = new HashMap<>();
+	private final Map<Integer, Integer> hitchedMissingTicks = new HashMap<>();
 
 	public VehicleEntity(AbstractVehicle vehicleType, Location location, UUID owner) {
 		this.vehicleType = vehicleType;
@@ -54,7 +58,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 		boundingBox = new BoundingBox(location, vehicleType.getWidthRadius(), vehicleType.getHeight());
 
 		this.owner = Main.onlyPublicVehicles ? null : owner;
-		this.whitelist.add(owner);
+		if (owner != null)
+			this.whitelist.add(owner);
 
 		health = vehicleType.getMaxHealth();
 
@@ -99,7 +104,19 @@ public class VehicleEntity implements ConfigurationSerializable {
 			this.whitelist.add(UUID.fromString(string));
 		}
 
+		allowsPassagers = (boolean) data.getOrDefault("allowsPassagers", false);
 		rotation = (double) data.get("angle");
+
+		if (data.containsKey("hitched")) {
+			for (String entry : (List<String>) data.get("hitched")) {
+				String[] split = entry.split(":", 2);
+				if (split.length != 2) continue;
+				try {
+					hitchedAnimals.put(Integer.parseInt(split[0]), UUID.fromString(split[1]));
+				} catch (IllegalArgumentException ignored) {
+				}
+			}
+		}
 
 		this.spawnOrFind(loc);
 	}
@@ -127,6 +144,15 @@ public class VehicleEntity implements ConfigurationSerializable {
 			whitelist.add(uuid.toString());
 		}
 		data.put("whitelist", whitelist);
+		data.put("allowsPassagers", allowsPassagers);
+
+		if (!hitchedAnimals.isEmpty()) {
+			List<String> hitched = new ArrayList<>();
+			for (Map.Entry<Integer, UUID> entry : hitchedAnimals.entrySet()) {
+				hitched.add(entry.getKey() + ":" + entry.getValue());
+			}
+			data.put("hitched", hitched);
+		}
 
 		return data;
 	}
@@ -341,6 +367,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public void deconstruct(Player player, String message, boolean disabling) {
 		vehicleType.playAnimation(this, Animation.AnimationType.DESPAWN);
+		HitchManager.releaseAll(this, disabling);
 		driverseat.remove();
 		driverseat = null;
 		for (ArmorStand stand : getModelEntities()) {
@@ -359,6 +386,21 @@ public class VehicleEntity implements ConfigurationSerializable {
 		Main.DEBUG(this.getVehicleUUID() + " removed: " + message);
 	}
 
+	/**
+	 * @return the UUIDs of the animals pulling this vehicle, keyed by hitch point index
+	 */
+	public Map<Integer, UUID> getHitchedAnimals() {
+		return hitchedAnimals;
+	}
+
+	public Map<Integer, Entity> getHitchedAnimalCache() {
+		return hitchedAnimalCache;
+	}
+
+	public Map<Integer, Integer> getHitchedMissingTicks() {
+		return hitchedMissingTicks;
+	}
+
 	public List<UUID> getWhiteList() {
 		return whitelist;
 	}
@@ -375,6 +417,22 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public void setAllowsPassagers(boolean b) {
 		this.allowsPassagers = b;
+	}
+
+	public boolean isDisplayOnly() {
+		return displayOnly;
+	}
+
+	public void setDisplayOnly(boolean displayOnly) {
+		this.displayOnly = displayOnly;
+	}
+
+	public boolean isTrackAutomatic() {
+		return trackAutomatic;
+	}
+
+	public void setTrackAutomatic(boolean trackAutomatic) {
+		this.trackAutomatic = trackAutomatic;
 	}
 
 	public double getHealth() {
@@ -454,7 +512,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 			giveEffects(((LivingEntity) used));
 		} else {
 			used = spawn.getWorld().spawnEntity(spawn, EntityType.ARMOR_STAND);
-			if (size < 2) {
+			if (size < 2 || vehicleType.getSeatsSize() == ModelSize.BABY_ARMORSTAND_HEAD) {
 				((ArmorStand) used).setSmall(true);
 			}
 			((ArmorStand) used).setVisible(false);

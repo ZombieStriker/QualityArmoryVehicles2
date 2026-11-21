@@ -16,6 +16,8 @@ import me.zombie_striker.qav.finput.FInputManager;
 import me.zombie_striker.qav.finput.inputs.*;
 import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.fuel.RepairItemStack;
+import me.zombie_striker.qav.hitch.HitchListener;
+import me.zombie_striker.qav.hitch.HitchManager;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.QualityArmoryListener;
 import me.zombie_striker.qav.hooks.QuickShopHook;
@@ -28,6 +30,13 @@ import me.zombie_striker.qav.premium.PremiumHandler;
 import me.zombie_striker.qav.qamini.EconHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.qamini.QAMini;
+import me.zombie_striker.qav.tracks.TracksManager;
+import me.zombie_striker.qav.tracks.TracksStorage;
+import me.zombie_striker.qav.tracks.assign.TrainAssignController;
+import me.zombie_striker.qav.tracks.assign.TrainAssignListener;
+import me.zombie_striker.qav.tracks.editor.TrackEditorController;
+import me.zombie_striker.qav.tracks.editor.TrackEditorListener;
+import me.zombie_striker.qav.tracks.runtime.TrackRuntimeController;
 import me.zombie_striker.qav.util.ForksUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
@@ -43,10 +52,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Main extends JavaPlugin {
 
@@ -115,12 +121,13 @@ public class Main extends JavaPlugin {
 	public static boolean separateModelAndDriver = false;
 	public static boolean modernPlaneMovements = true;
 
-
-
-
-
 	public static List<AbstractVehicle> vehicleTypes = new ArrayList<>();
 	public static List<VehicleEntity> vehicles = new ArrayList<>();
+
+	public static TracksManager tracksManager;
+	public static TrackEditorController trackEditorController;
+	public static TrainAssignController trainAssignController;
+	public static TrackRuntimeController trackRuntimeController;
 
 	public static void DEBUG(String message) {
 		DebugManager.sendDebugMessages(message);
@@ -173,7 +180,7 @@ public class Main extends JavaPlugin {
 		initVals();
 
 		ParticleHandlers.initValues();
-		if (XReflection.supports(9)) {
+		if (XReflection.supports(1, 9, 0)) {
 			FInputManager.init(this);
 			new FMininukeBomber();
 			new FCarHonk();
@@ -211,11 +218,31 @@ public class Main extends JavaPlugin {
 				else {
 					ConfigurationSection packSection = getConfig().getConfigurationSection("QAMini.resourcepackurl");
 					if (packSection != null) {
+						boolean saveConfig = false;
+
+						// Migrate old 21 format because the default one on v2.0.18 was broken
 						if (packSection.contains("21")) {
 							packSection.set("21-4", packSection.getString("21"));
 							packSection.set("21", null);
-							this.saveConfig();
+							saveConfig = true;
 						}
+
+						// Migrate existing keys to support major version changes
+						for (String key : new HashSet<>(packSection.getKeys(false))) {
+							try {
+								String[] split = key.split("-");
+								int first = Integer.parseInt(split[0]);
+
+								if (first < 25 && first > 1) {
+									packSection.set("1-" + key, packSection.getString(key));
+									packSection.set(key, null);
+									saveConfig = true;
+								}
+							} catch (NumberFormatException ignored) {
+							}
+						}
+
+						if (saveConfig) this.saveConfig();
 
 						CustomItemManager.setResourcepack(new MultiVersionPackProvider(packSection));
 					}
@@ -228,6 +255,13 @@ public class Main extends JavaPlugin {
 		loadComplexParts(false);
 		loadVehicles(false);
 
+		tracksManager = new TracksManager(new TracksStorage());
+		tracksManager.loadAll();
+		trackEditorController = new TrackEditorController(this);
+		trainAssignController = new TrainAssignController(this);
+		trackRuntimeController = new TrackRuntimeController(this);
+		trackRuntimeController.start();
+
 		QAVCommand command = new QAVCommand();
 		getCommand("QualityArmoryVehicles").setExecutor(command);
 		getCommand("QualityArmoryVehicles").setTabCompleter(command);
@@ -235,6 +269,10 @@ public class Main extends JavaPlugin {
 			getCommand("garage").setExecutor(new GarageCommand());
 
 		Bukkit.getPluginManager().registerEvents(new QAVListener(this), this);
+		if (HitchManager.isSupported())
+			Bukkit.getPluginManager().registerEvents(new HitchListener(), this);
+		Bukkit.getPluginManager().registerEvents(new TrackEditorListener(trackEditorController), this);
+		Bukkit.getPluginManager().registerEvents(new TrainAssignListener(trainAssignController), this);
 
 		FileConfiguration dataconfig = YamlConfiguration.loadConfiguration(vehicledatayml);
 
@@ -262,13 +300,21 @@ public class Main extends JavaPlugin {
 			ModelEngineHook.init();
 		}
 
-		if (XReflection.supports(21,2)) new ModernInputListener().register();
+		if (XReflection.supports(1, 21, 2)) new ModernInputListener().register();
 		else new LegacyInputListener().register();
 	}
 
 	@Override
 	public void onDisable() {
 		ModernInputListener.unregister();
+
+		if (trackRuntimeController != null) {
+			trackRuntimeController.stop();
+		}
+
+		if (trainAssignController != null) {
+			trainAssignController.shutdown();
+		}
 
 		FileConfiguration yaml = new YamlConfiguration();
 		yaml.set("data",vehicles);

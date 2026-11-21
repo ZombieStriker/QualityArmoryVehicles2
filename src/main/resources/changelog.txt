@@ -1,3 +1,19 @@
+2.6
+  Changelog:
+    - Added Horse-drawn carriages with manual hitching
+
+2.5.1
+  Changelog:
+    - Fixed 26.x support
+
+2.5
+  Changelog:
+    - Added new SeatSize option to change the passenger seat size, this will default to ModelSize
+    - Fixed 1.21.7 support
+    - Fixed allows passengers handling
+    - Implemented tram/underground system
+    - Fixed trains movement
+
 2.4.1
   Changelog:
     - Fixed planes mechanics

@@ -1,20 +1,17 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import me.zombie_striker.qav.api.events.PlayerExitQAVehicleEvent;
 import me.zombie_striker.qav.api.events.VehicleDamageEvent;
 import me.zombie_striker.qav.api.events.VehicleDestroyEvent;
 import me.zombie_striker.qav.api.events.VehicleRepairEvent;
+import me.zombie_striker.qav.hitch.HitchManager;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.menu.OverviewMenu;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.util.ForksUtil;
 import me.zombie_striker.qav.util.VehicleUtils;
-import me.zombie_striker.qav.vehicles.AbstractCar;
-import me.zombie_striker.qav.vehicles.AbstractHelicopter;
-import me.zombie_striker.qav.vehicles.AbstractPlane;
-import me.zombie_striker.qav.vehicles.AbstractVehicle;
+import me.zombie_striker.qav.vehicles.*;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -77,8 +74,19 @@ public class QAVListener implements Listener {
                 return;
             }
 
+            if (tryHitch(e.getPlayer(), e.getHand(), ve)) {
+                return;
+            }
+
             if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
                 new OverviewMenu(e.getPlayer(), ve).open();
+                return;
+            }
+
+            if (ve.isTrackAutomatic() && ve.getType() instanceof AbstractTrain) {
+                if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+                    QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
+                }
                 return;
             }
 
@@ -107,7 +115,14 @@ public class QAVListener implements Listener {
 
             if (vehicle != null) {
                 e.setCancelled(true);
-                VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(vehicle, e.getClickedBlock().getRelative(BlockFace.UP).getLocation(), e.getPlayer());
+                Location spawnLocation = e.getClickedBlock().getRelative(BlockFace.UP).getLocation();
+
+                if (vehicle instanceof AbstractTrain) {
+                    // Train placement should use rail level; spawn routine handles its own offset.
+                    spawnLocation = e.getClickedBlock().getLocation();
+                }
+
+                VehicleEntity ve = QualityArmoryVehicles.spawnVehicle(vehicle, spawnLocation, e.getPlayer());
 
                 if (ve == null) {
                     return;
@@ -141,8 +156,15 @@ public class QAVListener implements Listener {
 
             if (ve != null) {
                 e.setCancelled(true);
+                if (tryHitch(e.getPlayer(), e.getHand(), ve)) {
+                    return;
+                }
                 if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
                     new OverviewMenu(e.getPlayer(), ve).open();
+                } else if (ve.isTrackAutomatic() && ve.getType() instanceof AbstractTrain) {
+                    if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
+                        QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(), false);
+                    }
                 } else {
                     if (ve.allowUserDriver(e.getPlayer().getUniqueId()) && ve.getDriverSeat().getPassenger() == null) {
                         ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
@@ -174,6 +196,10 @@ public class QAVListener implements Listener {
         }
 
         e.setCancelled(true);
+        if (tryHitch(e.getPlayer(), e.getHand(), ve)) {
+            return;
+        }
+        boolean trackAuto = ve.isTrackAutomatic() && ve.getType() instanceof AbstractTrain;
         if (ve.allowUserPassager(e.getPlayer().getUniqueId())) {
             if (e.getPlayer().isSneaking() && ve.allowUserDriver(e.getPlayer().getUniqueId())) {
                 if (e.getPlayer().hasPermission(PermissionHandler.PERM_OPEN_VEHICLE_GUI)) {
@@ -185,14 +211,14 @@ public class QAVListener implements Listener {
             } else {
                 if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
                     QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(),
-                            ve.allowUserDriver(e.getPlayer().getUniqueId()));
+                            !trackAuto && ve.allowUserDriver(e.getPlayer().getUniqueId()));
                 } else {
                     e.getPlayer()
                             .sendMessage(ChatColor.RED + " You do not have permission to use this vehicle.");
                 }
             }
         } else if (e.getPlayer().hasPermission(PermissionHandler.PERM_OVERRIDE_WHITELIST) || VehicleUtils.isOverrideWhitelisted(e.getPlayer().getUniqueId())) {
-            if (ve.getDriverSeat().getPassenger() == null) {
+            if (!trackAuto && ve.getDriverSeat().getPassenger() == null) {
                 if (e.getPlayer().hasPermission("qualityarmoryvehicles.use")) {
                     ve.getDriverSeat().setPassenger(e.getPlayer());
                 } else {
@@ -203,8 +229,17 @@ public class QAVListener implements Listener {
             }
 
             QualityArmoryVehicles.addPlayerToCar(ve, e.getPlayer(),
-                    ve.allowUserDriver(e.getPlayer().getUniqueId()));
+                    !trackAuto && ve.allowUserDriver(e.getPlayer().getUniqueId()));
         }
+    }
+
+    /**
+     * Lets players hitch/unhitch animals by right-clicking a carriage (not sneaking, so the overview menu still opens).
+     */
+    private boolean tryHitch(Player player, EquipmentSlot hand, VehicleEntity ve) {
+        if (!(ve.getType() instanceof AbstractCarriage) || player.isSneaking()) return false;
+        if (hand == EquipmentSlot.OFF_HAND) return false;
+        return HitchManager.handleInteract(player, ve);
     }
 
     @EventHandler

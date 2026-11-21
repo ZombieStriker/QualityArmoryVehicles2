@@ -10,6 +10,7 @@ public enum VehicleTypes {
 	TRAIN("Train"),
 	DRILL("Drill"),
 	TRACTOR("Tractor"),
+	CARRIAGE("Carriage"),
 	INVALID("Invalid");
 
 	private String name;

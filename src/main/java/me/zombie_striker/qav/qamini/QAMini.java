@@ -1,12 +1,12 @@
 package me.zombie_striker.qav.qamini;
 
 import com.cryptomorin.xseries.reflection.XReflection;
+import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
+import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.customitemmanager.AbstractItem;
 import me.zombie_striker.qav.customitemmanager.CustomItemManager;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
-import me.zombie_striker.qav.Main;
-import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -43,7 +43,7 @@ public class QAMini implements Listener {
 	public static String S_ITEM_VARIENTS_NEW = "Variant";
 
 	public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
-		return XReflection.supports(secondVersion);
+		return XReflection.supports(mainVersion, secondVersion, 0);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -445,7 +445,7 @@ public class QAMini implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerJoinEvent e) {
-		if (/* Bukkit.getVersion().contains("1.8") || */ Bukkit.getVersion().contains("1.7")) {
+		if (XReflection.MINOR_NUMBER == 7) {
 			Bukkit.broadcastMessage(Main.prefix
 					+ " QualityArmory does not support versions older than 1.9, and may crash clients");
 			Bukkit.broadcastMessage(

@@ -32,18 +32,23 @@ public class PassengersMenu extends Menu {
             Main.DEBUG("Clicked setaspassager");
             if (event.getCurrentItem() != null && ve != null) {
                 if (event.getCurrentItem().getType() == Material.BRICK_STAIRS) {
-                    Entity driver;
-                    driver = ve.getDriverSeat().getPassenger();
-                    if (driver == null) {
-                        if (!Main.requirePermissionToDrive || PermissionHandler.canDrive(player, ve.getType())) {
-                            ve.getDriverSeat().setPassenger(event.getWhoClicked());
-                            Main.DEBUG("Added player to seat!");
-                        }else{
-                            Main.DEBUG("Stopped player from being added to seat!");
-                        }
+                    if (ve.isTrackAutomatic()) {
+                        QualityArmoryVehicles.addPlayerToCar(ve, (Player) event.getWhoClicked(), false);
+                        Main.DEBUG("Added player to passager seat (track automatic).");
                     } else {
-                        Main.DEBUG("Another passager is already in driver seat : "
-                                + driver.getName());
+                        Entity driver;
+                        driver = ve.getDriverSeat().getPassenger();
+                        if (driver == null) {
+                            if (!Main.requirePermissionToDrive || PermissionHandler.canDrive(player, ve.getType())) {
+                                ve.getDriverSeat().setPassenger(event.getWhoClicked());
+                                Main.DEBUG("Added player to seat!");
+                            } else {
+                                Main.DEBUG("Stopped player from being added to seat!");
+                            }
+                        } else {
+                            Main.DEBUG("Another passager is already in driver seat : "
+                                    + driver.getName());
+                        }
                     }
                 } else {
                     Entity pass;

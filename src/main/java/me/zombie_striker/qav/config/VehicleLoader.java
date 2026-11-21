@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -78,6 +79,9 @@ public class VehicleLoader {
 			case TRACTOR:
 				vehicle = new AbstractTractor(name,id);
 				break;
+			case CARRIAGE:
+				vehicle = new AbstractCarriage(name,id);
+				break;
 			default:
 				throw new InvalidVehicleException("Vehicle type does not exist.");
 		}
@@ -133,7 +137,8 @@ public class VehicleLoader {
 			vehicle.setModelSize(ModelSize.valueOf(c.getString("model.ModelSize")));
 		}else if (c.contains("increaseSize"))
 			vehicle.setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD);
-
+		if(c.contains("model.SeatsSize")) vehicle.setSeatsSize(ModelSize.valueOf(c.getString("model.SeatsSize")));
+		else vehicle.setSeatsSize(vehicle.getModelType());
 		if (c.contains("baseAcceleration"))
 			vehicle.setAccerlationSpeed(c.getDouble("baseAcceleration"));
 		if (c.contains("maxAcceleration"))
@@ -148,9 +153,12 @@ public class VehicleLoader {
 			@SuppressWarnings("unchecked")
 			List<Vector> list = (List<Vector>) c.getList("passagers", new ArrayList<>());
 
-			HashMap<Vector,Integer> sizes = new HashMap<>();
+			// Keep the config order so seat indexes match the order of the passagers list
+			HashMap<Vector,Integer> sizes = new LinkedHashMap<>();
 			for(Vector v3 : list){
-				double size = Math.min(2,v3.getY());
+				// Legacy format: the whole part of y (0-2) is the old seat size and does not move the seat,
+				// the rest is the vertical offset (e.g. 1 -> 0, 1.5 -> +0.5, 3 -> +1, -0.5 -> -0.5)
+				int size = (int) Math.max(0, Math.min(2, Math.floor(v3.getY())));
 				double offset = v3.getY()-size;
 				Vector v2 = v3.clone();
 				v2.setY(offset);
@@ -196,6 +204,9 @@ public class VehicleLoader {
 					}
 				}
 			});
+		}
+		if (vehicle instanceof AbstractCarriage) {
+			((AbstractCarriage) vehicle).loadHitchSettings(c);
 		}
 		registerInput(vehicle, FInput.ClickType.RIGHT, c);
 		registerInput(vehicle, FInput.ClickType.F, c);

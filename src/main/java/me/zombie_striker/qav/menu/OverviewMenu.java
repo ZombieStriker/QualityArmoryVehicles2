@@ -7,6 +7,8 @@ import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.fuel.FuelItemStack;
+import me.zombie_striker.qav.hitch.HitchManager;
+import me.zombie_striker.qav.vehicles.AbstractCarriage;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import me.zombie_striker.qav.util.VehicleUtils;
 import org.bukkit.Bukkit;
@@ -125,6 +127,16 @@ public class OverviewMenu extends Menu {
 
                     VehicleUtils.callback(ve,(Player) e.getWhoClicked(),"pickup_menu");
                 }
+            }));
+        }
+
+        if (ve.getType() instanceof AbstractCarriage && !ve.getHitchedAnimals().isEmpty()) {
+            AbstractCarriage carriage = (AbstractCarriage) ve.getType();
+            this.setItem(13, new GuiItem(ItemFact.a(XMaterial.LEAD.parseMaterial(), MessagesConfig.ICON_UNHITCH,
+                    MessagesConfig.ICONLORE_UNHITCH.replace("%total%", String.valueOf(ve.getHitchedAnimals().size()))
+                            .replace("%max%", String.valueOf(carriage.getHitchPoints().size()))), (e) -> {
+                e.getWhoClicked().closeInventory();
+                HitchManager.unhitchAll(ve, (Player) e.getWhoClicked());
             }));
         }
 

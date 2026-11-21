@@ -26,6 +26,8 @@ public class PermissionHandler {
 
 	public static final String PERM_PICKUP = "qualityarmoryvehicles.pickupvehicle";
 
+	public static final String PERM_HITCH = "qualityarmoryvehicles.hitch";
+
 	public static final String PERM_GIVE = "qualityarmoryvehicles.give";
 	public static final String PERM_SPAWN = "qualityarmoryvehicles.spawnvehicle";
 
