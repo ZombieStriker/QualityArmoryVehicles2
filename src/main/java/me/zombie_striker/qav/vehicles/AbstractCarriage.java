@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class AbstractCarriage extends AbstractCar {
 
-	private final List<Vector> hitchPoints = new ArrayList<>(Collections.singletonList(new Vector(0, 0, 3)));
+	private final List<Vector> hitchPoints = new ArrayList<>(Collections.singletonList(new Vector(2, 0, 0)));
 	private final Set<String> allowedAnimals = new HashSet<>(Arrays.asList("HORSE", "DONKEY", "MULE"));
 	private double hitchRadius = 6;
 	private double speedMultiplier = 2.0;
