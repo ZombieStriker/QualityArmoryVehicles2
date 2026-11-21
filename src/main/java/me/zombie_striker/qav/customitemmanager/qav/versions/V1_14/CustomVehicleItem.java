@@ -367,7 +367,7 @@ public class CustomVehicleItem extends AbstractItem {
 					.setLore("&7Press [Space] to break", "&7Press [LMB] to honk").save();
 			VehicleYML.registerVehicle(VehicleTypes.CARRIAGE, "carriage", 40).setDisplayname("Carriage")
 					.setCenter(new Vector(-0.8, 0, 0.5)).setFrontVectorOffset(1.9).setBackVectorOffset(2.2).setMaterial(Material.RABBIT_HIDE)
-					.setPassagerLocations(new Vector(0, 1, 1), new Vector(-0.8, 1.6, 0), new Vector(-0.8, 1.6, 1), new Vector(-2.5, 1.6, 0), new Vector(-2.5, 1.6, 1))
+					.setPassagerLocations(new Vector(0, 1.6, 1), new Vector(-1, 1.6, 0), new Vector(-1, 1.6, 1), new Vector(-2.2, 1.6, 0), new Vector(-2.2, 1.6, 1))
 					.setHitchPoints(new Vector(1.9, 0, 0.47))
 					.setStaticTurning(false).setRequireFuel(false).setDrivingSounds(false).setTrunkSize(9).setWidth(0.74).setHeight(2.5)
 					.setMaxBackupSpeed(0.3).setMaxHealth(80).setCost(1500)
