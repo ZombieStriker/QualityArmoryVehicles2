@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "9.4.3"
+    id("com.gradleup.shadow") version "9.6.1"
 }
 
 group = "me.zombie_striker"
@@ -30,11 +30,11 @@ repositories {
 
 dependencies {
     // Libraries
-    implementation("com.github.cryptomorin:XSeries:13.8.0")
+    implementation("com.github.cryptomorin:XSeries:14.0.0")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.10")
-    compileOnly("org.jetbrains:annotations:26.0.1")
+    compileOnly("org.jetbrains:annotations:26.1.0")
 
     // API
     compileOnly("net.kyori:adventure-api:4.26.1")
@@ -42,12 +42,12 @@ dependencies {
 
     // Compatibilities
     compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
-    compileOnly("me.zombie_striker:QualityArmory:2.1.3")
-    compileOnly("com.palmergames.bukkit.towny:towny:0.103.0.0")
+    compileOnly("me.zombie_striker:QualityArmory:2.2.0")
+    compileOnly("com.palmergames.bukkit.towny:towny:0.103.2.16")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.ticxo.modelengine:api:R3.2.0")
     compileOnly("org.maxgamer:QuickShop:5.1.2.5")
-    compileOnly("com.viaversion:viaversion-api:5.9.1")
+    compileOnly("com.viaversion:viaversion-api:5.12.2")
 }
 
 tasks {
