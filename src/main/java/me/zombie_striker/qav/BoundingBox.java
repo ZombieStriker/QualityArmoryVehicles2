@@ -11,7 +11,7 @@ public class BoundingBox {
 	private double height;
 
 	public BoundingBox(Location location, double widthRadius, double height) {
-		this.location = location;
+		this.location = location.clone();
 		this.width = widthRadius;
 		this.height = height;
 	}
@@ -49,6 +49,16 @@ public class BoundingBox {
 		Vector distanceVector = direction.clone();
 		distanceVector.normalize().multiply(distance);
 		return intersects(start,distanceVector);
+	}
+
+	/**
+	 * Moves the bounding box to the current position of the vehicle.
+	 */
+	public void setLocation(Location location) {
+		this.location.setWorld(location.getWorld());
+		this.location.setX(location.getX());
+		this.location.setY(location.getY());
+		this.location.setZ(location.getZ());
 	}
 
 	public Location getLocation() {

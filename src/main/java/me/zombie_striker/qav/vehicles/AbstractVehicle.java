@@ -5,6 +5,8 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.attachments.Attachment;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.fuel.FuelItemStack;
+import me.zombie_striker.qav.hitbox.HitboxBox;
+import me.zombie_striker.qav.hitbox.VehicleHitbox;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
@@ -66,6 +68,10 @@ public abstract class AbstractVehicle {
 	private float soundVolume = 1;
 	private int trunksize;
 	private boolean enableFuels = false;
+	private double frontOffset = 0;
+	private double backOffset = 0;
+	private List<HitboxBox> configuredHitbox = null;
+	private transient VehicleHitbox hitbox = null;
 
 	public AbstractVehicle(String name, int id) {
 		this.internalName = name;
@@ -148,6 +154,7 @@ public abstract class AbstractVehicle {
 
 	public void setHeight(double height) {
 		this.height = height;
+		this.hitbox = null;
 	}
 
 	public double getWidthRadius() {
@@ -156,6 +163,7 @@ public abstract class AbstractVehicle {
 
 	public void setWidthRadius(double radius) {
 		this.widthRadius = radius;
+		this.hitbox = null;
 	}
 
 	public boolean enableBodyFix() {
@@ -212,6 +220,80 @@ public abstract class AbstractVehicle {
 
 	public void setCenter(Vector center) {
 		this.center = center;
+		this.hitbox = null;
+	}
+
+	/**
+	 * @return the center of the vehicle relative to the model, used with the front and back offsets. Nullable
+	 */
+	public @Nullable Vector getCenter() {
+		return center == null ? null : center.clone();
+	}
+
+	/**
+	 * @return the distance from the center to the front of the vehicle, 0 if unknown
+	 */
+	public double getFrontOffset() {
+		return frontOffset;
+	}
+
+	public void setFrontOffset(double frontOffset) {
+		this.frontOffset = frontOffset;
+		this.hitbox = null;
+	}
+
+	/**
+	 * @return the distance from the center to the back of the vehicle, 0 if unknown
+	 */
+	public double getBackOffset() {
+		return backOffset;
+	}
+
+	public void setBackOffset(double backOffset) {
+		this.backOffset = backOffset;
+		this.hitbox = null;
+	}
+
+	/**
+	 * @return the hitbox of this vehicle, configured or generated
+	 */
+	public @NotNull VehicleHitbox getHitbox() {
+		VehicleHitbox current = hitbox;
+		if (current == null) {
+			current = configuredHitbox != null && !configuredHitbox.isEmpty()
+					? new VehicleHitbox(configuredHitbox, false)
+					: VehicleHitbox.generate(this);
+			hitbox = current;
+		}
+		return current;
+	}
+
+	/**
+	 * Sets the boxes of the hitbox. Null or empty to generate it from the seats and size of the vehicle.
+	 */
+	public void setHitbox(@Nullable List<HitboxBox> boxes) {
+		this.configuredHitbox = boxes == null ? null : new ArrayList<>(boxes);
+		this.hitbox = null;
+	}
+
+	/**
+	 * @return the position of the driver seat relative to the model
+	 */
+	public @NotNull Vector getDriverSeatLocal() {
+		if (Main.separateModelAndDriver && driverSeat != null) return driverSeat.clone();
+		return new Vector();
+	}
+
+	/**
+	 * @return the positions of the passenger seats relative to the model, by seat index
+	 */
+	public @NotNull List<Vector> getPassagerSeatsLocal() {
+		Vector driver = getDriverSeatLocal();
+		List<Vector> seats = new ArrayList<>();
+		for (Vector spot : getPassagerSpots()) {
+			seats.add(driver.clone().add(spot));
+		}
+		return seats;
 	}
 
 	public String getDisplayname() {
@@ -315,6 +397,7 @@ public abstract class AbstractVehicle {
 
 	public void setDriverSeat(Vector driverSeat) {
 		this.driverSeat = driverSeat;
+		this.hitbox = null;
 	}
 
 	public String getName() {
@@ -669,6 +752,7 @@ public abstract class AbstractVehicle {
 
 	public void setPassagerSpots(HashMap<Vector, Integer> sizes) {
 		this.passagerOffset = sizes;
+		this.hitbox = null;
 	}
 
 	public void setAttachments(List<Attachment> attachments) {
@@ -713,6 +797,7 @@ public abstract class AbstractVehicle {
 				", inputs=" + inputs +
 				", widthRadius=" + widthRadius +
 				", height=" + height +
+				", hitbox=" + getHitbox() +
 				", internalName='" + internalName + '\'' +
 				", bodyFix=" + bodyFix +
 				", rotationDelta=" + rotationDelta +

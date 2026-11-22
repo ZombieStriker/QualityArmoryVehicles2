@@ -29,6 +29,7 @@
 - **Fuel & Repair** - Register fuel items and repair damaged vehicles
 - **Garage** - Store vehicles and call them back with `/garage`
 - **Passenger Seats** - Configurable seats, seat sizes and passenger whitelists
+- **Accurate Hitboxes** - Click anywhere on a vehicle to enter it, or click a seat to sit there
 - **Shop & Crafting** - Buy or craft vehicles from in-game menus
 - **Vehicle Limits** - Cap the number of vehicles per player with permissions
 - **Multi-Version Support** - Runs on Minecraft 1.9 up to the latest releases
@@ -101,6 +102,7 @@ The API lives in the `me.zombie_striker.qav.api` package. `QualityArmoryVehicles
 - `/qav callback` - Call your vehicle back
 - `/qav tracks` - Set up tram/underground tracks
 - `/qav reload` - Reload the configuration
+- `/qav hitbox` - Show the vehicle hitboxes and seats
 - `/garage` - Open your garage
 
 ### Key Permissions

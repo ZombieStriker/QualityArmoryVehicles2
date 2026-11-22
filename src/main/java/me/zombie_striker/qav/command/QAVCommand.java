@@ -27,6 +27,7 @@ public class QAVCommand implements TabExecutor {
         subcommands.add(new DebugCommand(this));
         subcommands.add(new GarageCommand(this));
         subcommands.add(new GiveCommand(this));
+        subcommands.add(new HitboxCommand(this));
         subcommands.add(new LicenseCommand(this));
         subcommands.add(new ListCommand(this));
         subcommands.add(new TracksCommand(this));

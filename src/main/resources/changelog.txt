@@ -2,6 +2,8 @@
   Changelog:
     - Added Horse-drawn carriages with manual hitching
     - Folia support
+    - Reworked hitboxes: click anywhere on a vehicle to enter it, or click a passenger seat to sit there
+    - Fixed vehicles and drivers floating with separateModelAndDriver
 
 2.5.1
   Changelog:

@@ -269,7 +269,7 @@ public class VehicleYML {
 		}
 		verify("soundVolume", 1);
 		verify("driverseat.UseOffsetSeatFromModel", false);
-		verify("driverseat.Offset", new Vector(0, 1, 0));
+		verify("driverseat.Offset", new Vector(0, 0, 0));
 	}
 
 	public VehicleYML setComplexAdditionAt(int index, Vector offset, String complexName){
