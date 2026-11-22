@@ -2,6 +2,10 @@
   Changelog:
     - Added Horse-drawn carriages with manual hitching
     - Folia support
+    - Reworked hitboxes: click anywhere on a vehicle to enter it, or click a passenger seat to sit there
+    - Hitboxes are now rotated boxes that follow the vehicle (they stayed where the vehicle was placed)
+    - Added Interaction entity hitboxes on 1.19.4+ (works with an empty hand)
+    - Added the hitbox vehicle option and the /qav hitbox command
 
 2.5.1
   Changelog:

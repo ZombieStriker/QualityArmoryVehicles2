@@ -8,6 +8,7 @@ import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.exceptions.InvalidVehicleException;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.finput.FInputManager;
+import me.zombie_striker.qav.hitbox.HitboxBox;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.qamini.QAMini;
 import me.zombie_striker.qav.vehicles.*;
@@ -41,6 +42,34 @@ public class VehicleLoader {
 		if(!Main.verboseLogging){
 			QualityArmoryVehicles.getPlugin().getLogger().info("Loaded "+count+" Vehicle types");
 		}
+	}
+
+	/**
+	 * Reads the {@code hitbox} option: a single box or a list of boxes with the keys length, width, height and the optional x, y, z.
+	 *
+	 * @return the boxes, or null to generate the hitbox
+	 */
+	private static List<HitboxBox> loadHitbox(FileConfiguration c, String name) {
+		if (!c.contains("hitbox")) return null;
+
+		List<Object> raw = new ArrayList<>();
+		if (c.isList("hitbox")) {
+			raw.addAll(c.getList("hitbox", new ArrayList<>()));
+		} else if (c.isConfigurationSection("hitbox")) {
+			raw.add(c.getConfigurationSection("hitbox"));
+		}
+
+		List<HitboxBox> boxes = new ArrayList<>();
+		for (Object entry : raw) {
+			HitboxBox box = HitboxBox.fromConfig(entry);
+			if (box == null) {
+				QualityArmoryVehicles.getPlugin().getLogger().warning("Invalid hitbox box in vehicle \"" + name
+						+ "\": length, width and height must be greater than 0");
+				continue;
+			}
+			boxes.add(box);
+		}
+		return boxes.isEmpty() ? null : boxes;
 	}
 
 	public static boolean loadVehicleFile(File f) {
@@ -190,6 +219,11 @@ public class VehicleLoader {
 			vehicle.setStopsMeleeDamage(c.getBoolean("stopMeleeDamage"));
 		if (c.contains("center"))
 			vehicle.setCenter(c.getVector("center"));
+		if (c.contains("front_vector_offset"))
+			vehicle.setFrontOffset(c.getDouble("front_vector_offset"));
+		if (c.contains("back_vector_offset"))
+			vehicle.setBackOffset(c.getDouble("back_vector_offset"));
+		vehicle.setHitbox(loadHitbox(c, name));
 		if (c.contains("rotationMultiplier"))
 			vehicle.setRotationMultiplier(c.getDouble("rotationMultiplier"));
 		if (c.contains("model.Animations")) {

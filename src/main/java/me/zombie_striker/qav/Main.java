@@ -18,6 +18,7 @@ import me.zombie_striker.qav.fuel.FuelItemStack;
 import me.zombie_striker.qav.fuel.RepairItemStack;
 import me.zombie_striker.qav.hitch.HitchListener;
 import me.zombie_striker.qav.hitch.HitchManager;
+import me.zombie_striker.qav.hitbox.HitboxEntities;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.QualityArmoryListener;
 import me.zombie_striker.qav.hooks.QuickShopHook;
@@ -123,6 +124,14 @@ public class Main extends JavaPlugin {
 	public static boolean useDamage = false;
 	public static boolean separateModelAndDriver = false;
 	public static boolean modernPlaneMovements = true;
+	/** Max distance from the eyes to click a vehicle hitbox */
+	public static double hitboxReach = 4.5;
+	/** Max horizontal distance from a seat to enter that seat when clicking the vehicle, 0 to disable */
+	public static double hitboxSeatSelectRadius = 1.0;
+	/** Use Interaction entities as hitboxes on 1.19.4+ */
+	public static boolean hitboxInteractionEntities = true;
+	/** Size of the Interaction entities that make up a hitbox */
+	public static double hitboxCellSize = 1.25;
 
 	public static List<AbstractVehicle> vehicleTypes = new ArrayList<>();
 	public static List<VehicleEntity> vehicles = new CopyOnWriteArrayList<>();
@@ -498,6 +507,10 @@ public class Main extends JavaPlugin {
 		separateModelAndDriver = (boolean) a("unsafe.separateModelAndDriver", separateModelAndDriver);
 		modernPlaneMovements = (boolean) a("modernPlaneMovements", modernPlaneMovements);
 		enable_RequirePermToBuyVehicle = (boolean) a("enable_RequirePermToBuyVehicle", enable_RequirePermToBuyVehicle);
+		hitboxReach = ((Number) a("hitboxes.reach", hitboxReach)).doubleValue();
+		hitboxSeatSelectRadius = ((Number) a("hitboxes.seatSelectRadius", hitboxSeatSelectRadius)).doubleValue();
+		hitboxInteractionEntities = (boolean) a("hitboxes.useInteractionEntities", hitboxInteractionEntities);
+		hitboxCellSize = Math.max(0.5, ((Number) a("hitboxes.interactionEntitySize", hitboxCellSize)).doubleValue());
 
 		DebugManager.setShouldDisplayInConsole((boolean) a("ENABLE_DEBUG", false));
 		enableTrunks = (boolean) a("enable_VehiclesHaveTrunks", enableTrunks);
@@ -525,6 +538,7 @@ public class Main extends JavaPlugin {
 		MessagesConfig.init();
 		ItemFact.init();
 		ForksUtil.init();
+		HitboxEntities.init();
 	}
 
 

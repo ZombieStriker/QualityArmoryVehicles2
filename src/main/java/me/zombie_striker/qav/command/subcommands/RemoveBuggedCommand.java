@@ -5,6 +5,7 @@ import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
+import me.zombie_striker.qav.hitbox.HitboxEntities;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
@@ -60,6 +61,17 @@ public class RemoveBuggedCommand extends SubCommand {
                 .filter(QualityArmoryVehicles::isVehicle)
                 .filter(entity -> QualityArmoryVehicles.getVehicleEntityByEntity(entity) == null)
                 .forEach(entity -> SchedulerUtil.runAtEntity(entity, entity::remove)); // Folia: remove on the owning region
+
+        // Hitbox entities left by removed vehicles
+        if (HitboxEntities.isSupported()) {
+            final Collection<? extends Entity> all = SchedulerUtil.isFolia()
+                    ? player.getNearbyEntities(FOLIA_RADIUS, FOLIA_RADIUS, FOLIA_RADIUS)
+                    : player.getWorld().getEntities();
+            all.stream()
+                    .filter(HitboxEntities::isHitboxEntity)
+                    .filter(entity -> HitboxEntities.getOwner(entity) == null)
+                    .forEach(entity -> SchedulerUtil.runAtEntity(entity, entity::remove));
+        }
 
         sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_REMOVE_BUGGED);
     }

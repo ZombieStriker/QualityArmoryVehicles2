@@ -2,6 +2,8 @@ package me.zombie_striker.qav;
 
 import com.cryptomorin.xseries.XPotion;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.hitbox.HitboxEntities;
+import me.zombie_striker.qav.hitbox.HitboxVisualizer;
 import me.zombie_striker.qav.hitch.HitchManager;
 import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
@@ -55,6 +57,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 	private final Map<Integer, Integer> hitchedMissingTicks = new HashMap<>();
 	// Folia: global tick in which the last region tick was queued, -1 if none is pending
 	private volatile long tickScheduledAt = -1;
+	private long ticksLived = 0;
 
 	public VehicleEntity(AbstractVehicle vehicleType, Location location, UUID owner) {
 		this.vehicleType = vehicleType;
@@ -291,6 +294,13 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public void tick() {
 		vehicleType.tick(this);
+		if (isInvalid()) return;
+
+		if (!modelParts.isEmpty() || driverseat != null) {
+			boundingBox.setLocation((modelParts.isEmpty() ? driverseat : getModelEntity()).getLocation());
+		}
+		HitboxEntities.update(this);
+		HitboxVisualizer.tick(this, ticksLived++);
 	}
 
 	/**
@@ -441,7 +451,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 		if (disabling && SchedulerUtil.isFolia()) {
 			// Folia does not allow removing entities while shutting down: they are saved with the chunk
-			// and found again on the next start (see loadOnFolia)
+			// and found again on the next start (see loadOnFolia). The hitbox entities are not persistent.
+			HitboxEntities.forget(this);
 			driverseat = null;
 			passagers.clear();
 			modelParts.clear();
@@ -451,6 +462,7 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 		vehicleType.playAnimation(this, Animation.AnimationType.DESPAWN);
 		HitchManager.releaseAll(this, disabling);
+		HitboxEntities.remove(this);
 		if (seat != null)
 			seat.remove();
 		driverseat = null;

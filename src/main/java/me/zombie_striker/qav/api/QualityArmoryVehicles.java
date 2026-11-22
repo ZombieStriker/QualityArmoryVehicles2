@@ -6,6 +6,10 @@ import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.api.events.VehicleSpawnEvent;
 import me.zombie_striker.qav.attachments.Attachment;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
+import me.zombie_striker.qav.hitbox.HitResult;
+import me.zombie_striker.qav.hitbox.HitboxEntities;
+import me.zombie_striker.qav.hitbox.HitboxRaycast;
+import me.zombie_striker.qav.hitbox.SeatSelection;
 import me.zombie_striker.qav.hitch.HitchManager;
 import me.zombie_striker.qav.hooks.ProtectionHandler;
 import me.zombie_striker.qav.hooks.model.Animation;
@@ -65,6 +69,9 @@ public class QualityArmoryVehicles {
 
     public static VehicleEntity getVehicleEntityByEntity(Entity entity) {
         if (entity == null) return null;
+
+        VehicleEntity hitboxOwner = HitboxEntities.getOwner(entity);
+        if (hitboxOwner != null) return hitboxOwner;
 
         for (VehicleEntity ve : Main.vehicles) {
             if (ve != null)
@@ -157,13 +164,19 @@ public class QualityArmoryVehicles {
         return ItemFact.getItem(attachment);
     }
 
+    /**
+     * @return the closest vehicle the player is looking at within the hitbox reach, or null
+     */
     public static VehicleEntity getVehiclePlayerLookingAt(Player player) {
-        for (VehicleEntity ve : Main.vehicles) {
-            if (ve.getBoundingBox().intersects(player.getEyeLocation(), player.getLocation().getDirection(), 6)) {
-                return ve;
-            }
-        }
-        return null;
+        HitResult hit = getVehicleHitPlayerLookingAt(player);
+        return hit == null ? null : hit.getVehicle();
+    }
+
+    /**
+     * @return where the player is looking at on the closest vehicle within the hitbox reach, or null
+     */
+    public static @Nullable HitResult getVehicleHitPlayerLookingAt(Player player) {
+        return HitboxRaycast.rayTrace(player, Main.hitboxReach);
     }
 
 
@@ -195,7 +208,7 @@ public class QualityArmoryVehicles {
     }
 
     public static boolean isWithinVehicle(Location to, VehicleEntity ve) {
-        return ve.getBoundingBox().intersects(to);
+        return HitboxRaycast.contains(ve, to);
     }
 
     public static VehicleEntity spawnVehicle(UnlockedVehicle ab, @Nullable Player player) {
@@ -252,53 +265,102 @@ public class QualityArmoryVehicles {
 
     @SuppressWarnings("deprecation")
     public static void addPlayerToCar(VehicleEntity ve, Player player, boolean allowDriverSeat) {
-        if (ve == null)
-            return;
-        if (ve.getDriverSeat() == null) {
-            return;
-        }
-        if ((ve.getDriverSeat().getPassenger() == null && allowDriverSeat)
-                && (!Main.requirePermissionToDrive || PermissionHandler.canDrive(player, ve.getType()))) {
-            PlayerEnterQAVehicleEvent event = new PlayerEnterQAVehicleEvent(ve, player);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCanceled()) {
-                return;
-            }
+        addPlayerToCar(ve, player, allowDriverSeat, SeatSelection.NONE);
+    }
 
-            if (ve.getOwner() == null && Main.setOwnerIfNoneExist) {
-                ve.setOwner(player.getUniqueId());
-                if (MessagesConfig.MESSAGE_NOW_OWN_CAR.length() > 1) {
-                    player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_NOW_OWN_CAR.replace("%car%",
-                            ChatColor.stripColor(ve.getType().getDisplayname())));
-                }
+    /**
+     * Makes a player enter a vehicle.
+     * <p>
+     * The preferred seat is used if it is free. Otherwise the player drives if allowed and the driver seat is free,
+     * or sits in the first free passenger seat.
+     *
+     * @param allowDriverSeat true if the player can drive the vehicle
+     * @param preferredSeat   {@link SeatSelection#DRIVER}, a passenger seat index, or {@link SeatSelection#NONE}
+     * @return true if the player entered the vehicle
+     */
+    @SuppressWarnings("deprecation")
+    public static boolean addPlayerToCar(VehicleEntity ve, Player player, boolean allowDriverSeat, int preferredSeat) {
+        if (ve == null || ve.getDriverSeat() == null)
+            return false;
+
+        int maxPassengers = ve.getType().getPassagerSpots().size();
+        boolean canDrive = allowDriverSeat && ve.getDriverSeat().getPassenger() == null
+                && (!Main.requirePermissionToDrive || PermissionHandler.canDrive(player, ve.getType()));
+
+        if (preferredSeat >= 0 && preferredSeat < maxPassengers && isSeatFree(ve, preferredSeat)) {
+            return enterPassengerSeat(ve, player, preferredSeat);
+        }
+
+        if (canDrive) {
+            return enterDriverSeat(ve, player);
+        }
+
+        int seatId = getFreeSeat(ve);
+        return seatId >= 0 && enterPassengerSeat(ve, player, seatId);
+    }
+
+    /**
+     * @return true if nobody sits in the passenger seat
+     */
+    @SuppressWarnings("deprecation")
+    public static boolean isSeatFree(VehicleEntity ve, int seatId) {
+        Entity seat = ve.getPassager(seatId);
+        return seat == null || !seat.isValid() || seat.getPassenger() == null;
+    }
+
+    /**
+     * @return the index of the first free passenger seat, or -1 if the vehicle is full
+     */
+    public static int getFreeSeat(VehicleEntity ve) {
+        int maxPassengers = ve.getType().getPassagerSpots().size();
+        int seatId = ve.getFirstSeat();
+        if (seatId >= 0 && seatId < maxPassengers) return seatId;
+
+        for (int i = 0; i < maxPassengers; i++) {
+            if (isSeatFree(ve, i)) return i;
+        }
+        return -1;
+    }
+
+    @SuppressWarnings("deprecation")
+    private static boolean enterDriverSeat(VehicleEntity ve, Player player) {
+        PlayerEnterQAVehicleEvent event = new PlayerEnterQAVehicleEvent(ve, player);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCanceled()) {
+            return false;
+        }
+
+        if (ve.getOwner() == null && Main.setOwnerIfNoneExist) {
+            ve.setOwner(player.getUniqueId());
+            if (MessagesConfig.MESSAGE_NOW_OWN_CAR.length() > 1) {
+                player.sendMessage(Main.prefix + MessagesConfig.MESSAGE_NOW_OWN_CAR.replace("%car%",
+                        ChatColor.stripColor(ve.getType().getDisplayname())));
             }
-            ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
-            ve.getDriverSeat().setPassenger(player);
+        }
+        ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, "driver");
+        ve.getDriverSeat().setPassenger(player);
+        return true;
+    }
+
+    @SuppressWarnings("deprecation")
+    private static boolean enterPassengerSeat(VehicleEntity ve, Player player, int seatId) {
+        PlayerEnterQAVehicleEvent event = new PlayerEnterQAVehicleEvent(ve, player);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCanceled()) {
+            return false;
+        }
+
+        ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, seatId + "");
+
+        Entity seat = ve.getPassager(seatId);
+        if (seat != null && seat.isValid() && seat.getPassenger() == null) {
+            // Reuse the empty seat instead of spawning another one on top of it
+            seat.setPassenger(player);
         } else {
-            int maxPassengers = ve.getType().getPassagerSpots().size();
-            if (ve.getPassagers().size() < maxPassengers) {
-                int seatId = ve.getFirstSeat();
-                if (seatId < 0) {
-                    for (int i = 0; i < maxPassengers; i++) {
-                        if (ve.getPassager(i) == null) {
-                            seatId = i;
-                            break;
-                        }
-                    }
-
-                    if (seatId < 0) return;
-                }
-
-                PlayerEnterQAVehicleEvent event = new PlayerEnterQAVehicleEvent(ve, player);
-                Bukkit.getPluginManager().callEvent(event);
-                if (event.isCanceled()) {
-                    return;
-                }
-
-                ve.getType().playAnimation(ve, Animation.AnimationType.ENTER, seatId + "");
-                setAddPassager(ve, player, seatId);
-            }
+            if (seat != null && !seat.isValid()) ve.getPassagers().remove(seatId);
+            setAddPassager(ve, player, seatId);
         }
+        return true;
     }
 
     public static Location getPassagerOffsetLocation(ArmorStand base, AbstractVehicle cartype, int seatID) {
