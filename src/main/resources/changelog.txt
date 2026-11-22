@@ -2,6 +2,7 @@
   Changelog:
     - Added Horse-drawn carriages with manual hitching
     - Folia support
+    - Fixed vehicles and drivers floating with separateModelAndDriver (#326): the driver seat now matches the model's armor stand size, negative driverseat.Offset Y values are ignored, and new vehicle files default to driverseat.Offset (0, 0, 0)
 
 2.5.1
   Changelog:
