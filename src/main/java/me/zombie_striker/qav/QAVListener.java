@@ -335,6 +335,12 @@ public class QAVListener implements Listener {
             return;
         }
 
+        // Riders move with their vehicle and lag a tick behind its hitbox: cancelling their move teleports them back,
+        // which dismounts them
+        if (e.getPlayer().getVehicle() != null) {
+            return;
+        }
+
         for (Entity ent : e.getPlayer().getNearbyEntities(10, 10, 10)) {
             if (QualityArmoryVehicles.isVehicle(ent)) {
                 VehicleEntity ve = QualityArmoryVehicles.getVehicleEntityByEntity(ent);
