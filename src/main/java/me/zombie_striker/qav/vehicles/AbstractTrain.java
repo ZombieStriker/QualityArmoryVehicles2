@@ -143,7 +143,7 @@ public class AbstractTrain extends AbstractVehicle {
 		if (priorVy > 0.1) return;
 
 		Vector seat = ve.getType().getDriverSeat();
-		double seatY = seat != null ? seat.getY() : 1.0;
+		double seatY = seat != null ? Math.max(seat.getY(), 1.0) : 1.0;
 		double targetY = railBlock.getLocation().getY() + seatY - 1.0;
 		double currentY = ve.getDriverSeat().getLocation().getY();
 

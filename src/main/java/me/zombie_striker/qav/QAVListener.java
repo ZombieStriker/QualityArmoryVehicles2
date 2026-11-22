@@ -116,7 +116,7 @@ public class QAVListener implements Listener {
         boolean canDrive = ve.allowUserDriver(uuid) || override;
         boolean canRide = ve.allowUserPassager(uuid) || override;
 
-        if (player.isSneaking() && canDrive) {
+        if (player.isSneaking() && ve.allowUserDriver(uuid)) {
             if (player.hasPermission(PermissionHandler.PERM_OPEN_VEHICLE_GUI)) {
                 new OverviewMenu(player, ve).open();
             } else {
@@ -197,6 +197,10 @@ public class QAVListener implements Listener {
                 e.setCancelled(true);
                 if (e.getPlayer().getVehicle() == null && QualityArmoryVehicles.getVehicleHitPlayerLookingAt(e.getPlayer()) != null) {
                     // Clicked a vehicle, not the block behind it
+                    return;
+                }
+
+                if (!startInteraction(e.getPlayer())) {
                     return;
                 }
                 Location spawnLocation = e.getClickedBlock().getRelative(BlockFace.UP).getLocation();
