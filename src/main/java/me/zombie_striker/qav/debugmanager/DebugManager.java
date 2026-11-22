@@ -6,12 +6,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 
 public class DebugManager {
 
-	private static final List<Player> playerRecievers = new ArrayList<>();
+	private static final List<Player> playerRecievers = new CopyOnWriteArrayList<>();
 	private static boolean displayInConsole = true;
 
 	private static final String debugPrefix = Main.prefix + ChatColor.GREEN + " [DEBUG]" + ChatColor.WHITE + " ";

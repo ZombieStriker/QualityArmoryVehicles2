@@ -44,6 +44,7 @@ public class RemoveNearbyCommand extends SubCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             for (VehicleEntity ve : new ArrayList<>(Main.vehicles)) {
+                if (ve.getDriverSeat() == null || !ve.getDriverSeat().getWorld().equals(player.getWorld())) continue;
                 if (ve.getDriverSeat().getLocation().distanceSquared(player.getLocation()) < radius * radius) {
                     ve.deconstruct(null, "removeNearbyCommand");
                 }

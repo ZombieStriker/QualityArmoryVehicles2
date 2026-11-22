@@ -2,6 +2,7 @@ main: me.zombie_striker.qav.Main
 version: ${version}
 api-version: 1.13
 name: QualityArmoryVehicles2
+folia-supported: true
 softdepend:
   - QualityArmory
   - Vault

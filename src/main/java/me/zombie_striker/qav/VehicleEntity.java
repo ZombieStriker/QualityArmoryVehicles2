@@ -7,9 +7,11 @@ import me.zombie_striker.qav.hooks.model.Animation;
 import me.zombie_striker.qav.hooks.model.ModelEngineHook;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
 import me.zombie_striker.qav.util.ExposeDebug;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -51,6 +53,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 	@ExposeDebug private final Map<Integer, UUID> hitchedAnimals = new HashMap<>();
 	private final Map<Integer, Entity> hitchedAnimalCache = new HashMap<>();
 	private final Map<Integer, Integer> hitchedMissingTicks = new HashMap<>();
+	// Folia: global tick in which the last region tick was queued, -1 if none is pending
+	private volatile long tickScheduledAt = -1;
 
 	public VehicleEntity(AbstractVehicle vehicleType, Location location, UUID owner) {
 		this.vehicleType = vehicleType;
@@ -118,7 +122,46 @@ public class VehicleEntity implements ConfigurationSerializable {
 			}
 		}
 
-		this.spawnOrFind(loc);
+		trackAutomatic = (boolean) data.getOrDefault("trackAutomatic", false);
+
+		if (SchedulerUtil.isFolia()) {
+			// Entities can only be accessed from the region owning them, so spawn/find them there
+			SchedulerUtil.scheduler().runAtLocation(loc, task -> loadOnFolia(loc, 0));
+		} else {
+			this.spawnOrFind(loc);
+		}
+	}
+
+	/**
+	 * Folia: the vehicle entities are not removed on shutdown (Folia does not allow it), so they are saved
+	 * with the chunk. Wait for the chunk entities to be loaded before looking for them, to avoid duplicates.
+	 * Runs on the region owning the location.
+	 */
+	private void loadOnFolia(Location loc, int attempt) {
+		Chunk chunk = loc.getChunk();
+		if (attempt == 0)
+			chunk.addPluginChunkTicket(QualityArmoryVehicles.getPlugin());
+
+		if (!chunk.isEntitiesLoaded() && attempt < 100) {
+			SchedulerUtil.scheduler().runAtLocationLater(loc, () -> loadOnFolia(loc, attempt + 1), 2L);
+			return;
+		}
+
+		try {
+			this.spawnOrFind(loc);
+			if (driverseat == null) return;
+
+			if (trackAutomatic) {
+				// Track trains are respawned by the track runtime: remove the ones left from the previous run
+				deconstruct(null, "Leftover track train");
+				return;
+			}
+
+			if (!Main.vehicles.contains(this))
+				Main.vehicles.add(this);
+		} finally {
+			chunk.removePluginChunkTicket(QualityArmoryVehicles.getPlugin());
+		}
 	}
 
 	@Override
@@ -145,6 +188,8 @@ public class VehicleEntity implements ConfigurationSerializable {
 		}
 		data.put("whitelist", whitelist);
 		data.put("allowsPassagers", allowsPassagers);
+		if (trackAutomatic)
+			data.put("trackAutomatic", true);
 
 		if (!hitchedAnimals.isEmpty()) {
 			List<String> hitched = new ArrayList<>();
@@ -246,6 +291,24 @@ public class VehicleEntity implements ConfigurationSerializable {
 
 	public void tick() {
 		vehicleType.tick(this);
+	}
+
+	/**
+	 * Used on Folia to avoid queueing more than one tick at a time when the owning region is lagging.
+	 *
+	 * @param now the current global tick
+	 * @return true if a new tick can be queued
+	 */
+	public boolean markTickScheduled(long now) {
+		long scheduledAt = tickScheduledAt;
+		// Safety timeout in case a queued tick is dropped (e.g. the entity got removed)
+		if (scheduledAt >= 0 && now - scheduledAt < 20) return false;
+		tickScheduledAt = now;
+		return true;
+	}
+
+	public void markTickDone() {
+		tickScheduledAt = -1;
 	}
 
 
@@ -366,9 +429,30 @@ public class VehicleEntity implements ConfigurationSerializable {
 	}
 
 	public void deconstruct(Player player, String message, boolean disabling) {
+		final Entity seat = driverseat;
+		if (!disabling && seat != null && SchedulerUtil.isFolia() && !SchedulerUtil.isOwned(seat)) {
+			// Folia: the vehicle entities must be removed by the region owning them
+			SchedulerUtil.scheduler().runAtEntity(seat, task -> {
+				if (seat.equals(driverseat))
+					deconstruct(player, message, false);
+			});
+			return;
+		}
+
+		if (disabling && SchedulerUtil.isFolia()) {
+			// Folia does not allow removing entities while shutting down: they are saved with the chunk
+			// and found again on the next start (see loadOnFolia)
+			driverseat = null;
+			passagers.clear();
+			modelParts.clear();
+			Main.DEBUG(this.getVehicleUUID() + " unloaded: " + message);
+			return;
+		}
+
 		vehicleType.playAnimation(this, Animation.AnimationType.DESPAWN);
 		HitchManager.releaseAll(this, disabling);
-		driverseat.remove();
+		if (seat != null)
+			seat.remove();
 		driverseat = null;
 		for (ArmorStand stand : getModelEntities()) {
 			stand.remove();

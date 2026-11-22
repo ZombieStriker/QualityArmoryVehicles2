@@ -3,6 +3,7 @@ package me.zombie_striker.qav.command.subcommands;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.MessagesConfig;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import me.zombie_striker.qav.command.QAVCommand;
 import me.zombie_striker.qav.command.SubCommand;
 import me.zombie_striker.qav.perms.PermissionHandler;
@@ -64,8 +65,15 @@ public class SpawnCommand extends SubCommand {
             return;
         }
 
-        assert location != null;
-        QualityArmoryVehicles.spawnVehicle(ab,location,sender instanceof Player ? (Player) sender : null);
+        if (location == null) {
+            sender.sendMessage(Main.prefix + "Usage /qav " + getName() + " <vehicle> [x] [y] [z]");
+            return;
+        }
+
+        // Folia: the vehicle must be spawned by the region owning the location
+        final Location spawnLocation = location;
+        SchedulerUtil.runAtLocation(spawnLocation, () ->
+                QualityArmoryVehicles.spawnVehicle(ab, spawnLocation, sender instanceof Player ? (Player) sender : null));
     }
 
     @Override

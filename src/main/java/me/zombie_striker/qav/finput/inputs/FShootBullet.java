@@ -6,6 +6,7 @@ import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.finput.FInputManager;
 import me.zombie_striker.qav.qamini.ParticleHandlers;
 import me.zombie_striker.qav.util.BlockCollisionUtil;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import me.zombie_striker.qg.QAMain;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.armor.BulletProtectionUtil;
@@ -309,6 +310,9 @@ public class FShootBullet implements FInput {
 	public static double getTargetedSolidMaxDistance(Vector v, Location start, double maxDistance) {
 		Location test = start.clone();
 		for (int i = 0; i < maxDistance; i++) {
+			// Folia: blocks owned by another region can't be accessed, stop the bullet there
+			if (!SchedulerUtil.isOwned(test))
+				return start.distance(test);
 			if (BlockCollisionUtil.getMaterial(test) != Material.AIR) {
 				if (isSolid(test))
 					return start.distance(test);

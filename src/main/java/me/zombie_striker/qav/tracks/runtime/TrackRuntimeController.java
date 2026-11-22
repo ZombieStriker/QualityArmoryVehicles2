@@ -9,6 +9,8 @@ import me.zombie_striker.qav.tracks.data.Track;
 import me.zombie_striker.qav.tracks.data.TrackStop;
 import me.zombie_striker.qav.tracks.data.TrackTrainAssignment;
 import me.zombie_striker.qav.util.HeadPoseUtil;
+import me.zombie_striker.qav.util.SchedulerUtil;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import me.zombie_striker.qav.vehicles.AbstractTrain;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
@@ -17,18 +19,19 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class TrackRuntimeController {
 
     private final @NotNull Main plugin;
-    private final @NotNull Map<String, List<RuntimeTrain>> runtime = new HashMap<>();
-    private @Nullable BukkitRunnable task;
+    private final @NotNull Map<String, List<RuntimeTrain>> runtime = new ConcurrentHashMap<>();
+    private @Nullable WrappedTask task;
+    private long globalTicks = 0;
 
     public TrackRuntimeController(@NotNull Main plugin) {
         this.plugin = plugin;
@@ -36,13 +39,7 @@ public class TrackRuntimeController {
 
     public void start() {
         if (task != null) return;
-        task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                tick();
-            }
-        };
-        task.runTaskTimer(plugin, 1, 1);
+        task = Main.foliaLib.getScheduler().runTimer(this::tick, 1, 1);
     }
 
     public void stop() {
@@ -52,6 +49,13 @@ public class TrackRuntimeController {
         }
 
         for (List<RuntimeTrain> trains : runtime.values()) {
+            if (SchedulerUtil.isFolia()) {
+                // Folia does not allow removing entities on shutdown: the trains are saved with the other
+                // vehicles (flagged as track trains) and removed on the next start
+                for (RuntimeTrain rt : trains) rt.discarded = true;
+                continue;
+            }
+
             destroyRuntimeTrains(trains, "Runtime controller stopped");
         }
 
@@ -83,6 +87,7 @@ public class TrackRuntimeController {
     }
 
     private void tick() {
+        globalTicks++;
         for (Track track : Main.tracksManager.getTracks()) {
             if (!Main.tracksManager.isRunning(track.getId())) continue;
 
@@ -108,73 +113,127 @@ public class TrackRuntimeController {
             }
 
             int n = sorted.size();
+            final List<TrackStop> stops = sorted;
             for (RuntimeTrain rt : trains) {
-                if (rt.targetStopOrdinal >= n) rt.targetStopOrdinal = rt.targetStopOrdinal % n;
-
-                if (rt.vehicle == null || rt.vehicle.isInvalid()) {
-                    if (rt.vehicle != null)
-                        rt.vehicle = null;
-
-                    if (rt.spawnDelayTicksRemaining > 0) {
-                        rt.spawnDelayTicksRemaining--;
-                        continue;
-                    }
-
-                    rt.vehicle = spawnTrainForTrack(track, sorted, rt.vehicleTypeName, rt.spawnStopOrdinal, rt.spawnDirection);
-                    if (rt.vehicle == null) continue;
-                }
-
-                VehicleEntity ve = rt.vehicle;
-                if (ve.getDriverSeat() == null) {
-                    // Vehicle is no longer valid for runtime control; it will be respawned next tick.
-                    rt.vehicle = null;
+                if (!SchedulerUtil.isFolia()) {
+                    tickTrain(track, stops, rt, n);
                     continue;
                 }
 
-                TrackStop targetStop = sorted.get(rt.targetStopOrdinal);
-                Location driverLoc = ve.getDriverSeat().getLocation();
-
-                if (rt.dwellTicks > 0) {
-                    ve.setSpeed(0);
-                    if (!rt.inDwell) {
-                        rt.inDwell = true;
-                        playStopSound(driverLoc, true);
-                    }
-                    rt.dwellTicks--;
-                    continue;
-                }
-
-                if (rt.inDwell) {
-                    rt.inDwell = false;
-                    playStopSound(driverLoc, false);
-                    advanceToNextStop(track, rt, n);
-                    continue;
-                }
-
-                if (rt.finished) {
-                    ve.setSpeed(0);
-                    continue;
-                }
-
-                double desired = Math.min(0.35, ve.getType().getMaxSpeed());
-                ve.setSpeed(desired);
-
-                if (rt.arrivalCooldownTicks > 0) {
-                    rt.arrivalCooldownTicks--;
-                } else if (targetStop.isSameRailBlock(driverLoc)) {
-                    int dwell = Math.max(0, targetStop.getDwellSeconds());
-                    showStopTitles(track, rt, sorted, ve);
-                    if (dwell == 0) {
-                        advanceToNextStop(track, rt, n);
-                    } else {
-                        rt.dwellTicks = dwell * 20;
-                        ve.setSpeed(0);
-                    }
-                }
+                dispatchTrainTick(w, track, stops, rt, n);
             }
         }
 
         cleanupStoppedTracks();
+    }
+
+    /**
+     * Folia: runs the train logic on the region owning the train (or its spawn point).
+     */
+    private void dispatchTrainTick(@NotNull World w, @NotNull Track track, @NotNull List<TrackStop> sorted,
+                                   @NotNull RuntimeTrain rt, int n) {
+        long now = globalTicks;
+        // Do not queue more than one tick per train (timeout in case a queued tick gets dropped)
+        if (rt.tickScheduledAt >= 0 && now - rt.tickScheduledAt < 20) return;
+
+        VehicleEntity ve = rt.vehicle;
+        Entity seat = ve == null || ve.isInvalid() ? null : ve.getDriverSeat();
+
+        if (seat == null) {
+            rt.vehicle = null;
+            if (rt.spawnDelayTicksRemaining > 0) {
+                rt.spawnDelayTicksRemaining--;
+                return;
+            }
+
+            Location spawn = sorted.get(rt.spawnStopOrdinal % sorted.size()).getRailBlockLocation(w);
+            rt.tickScheduledAt = now;
+            Main.foliaLib.getScheduler().runAtLocation(spawn, task -> runTrainTick(track, sorted, rt, n));
+            return;
+        }
+
+        rt.tickScheduledAt = now;
+        Main.foliaLib.getScheduler().runAtEntityWithFallback(seat, task -> runTrainTick(track, sorted, rt, n),
+                () -> rt.tickScheduledAt = -1);
+    }
+
+    private void runTrainTick(@NotNull Track track, @NotNull List<TrackStop> sorted, @NotNull RuntimeTrain rt, int n) {
+        try {
+            if (!rt.discarded) tickTrain(track, sorted, rt, n);
+        } finally {
+            rt.tickScheduledAt = -1;
+        }
+
+        // The runtime has been rebuilt/stopped while this tick was running: don't leave the train behind
+        if (rt.discarded && rt.vehicle != null && !rt.vehicle.isInvalid()) {
+            rt.vehicle.deconstruct(null, "Tram runtime: discarded");
+            rt.vehicle = null;
+        }
+    }
+
+    private void tickTrain(@NotNull Track track, @NotNull List<TrackStop> sorted, @NotNull RuntimeTrain rt, int n) {
+        if (rt.targetStopOrdinal >= n) rt.targetStopOrdinal = rt.targetStopOrdinal % n;
+
+        if (rt.vehicle == null || rt.vehicle.isInvalid()) {
+            if (rt.vehicle != null)
+                rt.vehicle = null;
+
+            if (rt.spawnDelayTicksRemaining > 0) {
+                rt.spawnDelayTicksRemaining--;
+                return;
+            }
+
+            rt.vehicle = spawnTrainForTrack(track, sorted, rt.vehicleTypeName, rt.spawnStopOrdinal, rt.spawnDirection);
+            if (rt.vehicle == null) return;
+        }
+
+        VehicleEntity ve = rt.vehicle;
+        if (ve.getDriverSeat() == null) {
+            // Vehicle is no longer valid for runtime control; it will be respawned next tick.
+            rt.vehicle = null;
+            return;
+        }
+
+        TrackStop targetStop = sorted.get(rt.targetStopOrdinal);
+        Location driverLoc = ve.getDriverSeat().getLocation();
+
+        if (rt.dwellTicks > 0) {
+            ve.setSpeed(0);
+            if (!rt.inDwell) {
+                rt.inDwell = true;
+                playStopSound(driverLoc, true);
+            }
+            rt.dwellTicks--;
+            return;
+        }
+
+        if (rt.inDwell) {
+            rt.inDwell = false;
+            playStopSound(driverLoc, false);
+            advanceToNextStop(track, rt, n);
+            return;
+        }
+
+        if (rt.finished) {
+            ve.setSpeed(0);
+            return;
+        }
+
+        double desired = Math.min(0.35, ve.getType().getMaxSpeed());
+        ve.setSpeed(desired);
+
+        if (rt.arrivalCooldownTicks > 0) {
+            rt.arrivalCooldownTicks--;
+        } else if (targetStop.isSameRailBlock(driverLoc)) {
+            int dwell = Math.max(0, targetStop.getDwellSeconds());
+            showStopTitles(track, rt, sorted, ve);
+            if (dwell == 0) {
+                advanceToNextStop(track, rt, n);
+            } else {
+                rt.dwellTicks = dwell * 20;
+                ve.setSpeed(0);
+            }
+        }
     }
 
     private void cleanupStoppedTracks() {
@@ -192,6 +251,7 @@ public class TrackRuntimeController {
     private void destroyRuntimeTrains(@Nullable List<RuntimeTrain> trains, @NotNull String reason) {
         if (trains == null || trains.isEmpty()) return;
         for (RuntimeTrain rt : trains) {
+            rt.discarded = true;
             VehicleEntity ve = rt.vehicle;
             if (ve == null || ve.isInvalid()) continue;
             try {
@@ -356,7 +416,10 @@ public class TrackRuntimeController {
         private boolean inDwell = false;
         private boolean finished = false;
         private int arrivalCooldownTicks = 0;
-        private @Nullable VehicleEntity vehicle;
+        private volatile @Nullable VehicleEntity vehicle;
+        // Folia: global tick in which the last region tick was queued, -1 if none is pending
+        private volatile long tickScheduledAt = -1;
+        private volatile boolean discarded = false;
 
         private RuntimeTrain(@NotNull String vehicleTypeName, int spawnStopOrdinal,
                              int targetStopOrdinal, int builtForStopCount,

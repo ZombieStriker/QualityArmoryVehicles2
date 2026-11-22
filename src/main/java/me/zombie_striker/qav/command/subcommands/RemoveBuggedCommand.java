@@ -8,6 +8,7 @@ import me.zombie_striker.qav.command.SubCommand;
 import me.zombie_striker.qav.perms.PermissionHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
+import me.zombie_striker.qav.util.SchedulerUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,8 @@ public class RemoveBuggedCommand extends SubCommand {
         return null;
     }
 
+    private static final double FOLIA_RADIUS = 128;
+
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission(PermissionHandler.PERM_REMOVEDBUGGED)) {
@@ -48,11 +51,15 @@ public class RemoveBuggedCommand extends SubCommand {
         }
 
         Player player = (Player) sender;
-        final Collection<ArmorStand> entities = player.getWorld().getEntitiesByClass(ArmorStand.class);
+        final Collection<? extends Entity> entities = SchedulerUtil.isFolia()
+                // Folia: only the entities of the current region can be accessed
+                ? player.getNearbyEntities(FOLIA_RADIUS, FOLIA_RADIUS, FOLIA_RADIUS)
+                : player.getWorld().getEntitiesByClass(ArmorStand.class);
         entities.stream()
+                .filter(entity -> entity instanceof ArmorStand)
                 .filter(QualityArmoryVehicles::isVehicle)
                 .filter(entity -> QualityArmoryVehicles.getVehicleEntityByEntity(entity) == null)
-                .forEach(Entity::remove);
+                .forEach(entity -> SchedulerUtil.runAtEntity(entity, entity::remove)); // Folia: remove on the owning region
 
         sender.sendMessage(Main.prefix + MessagesConfig.COMMANDMESSAGES_REMOVE_BUGGED);
     }

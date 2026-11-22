@@ -19,9 +19,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ShopMenu extends Menu {
-    private static final Map<UUID,Long> LAST_SHOP = new HashMap<>();
+    private static final Map<UUID,Long> LAST_SHOP = new ConcurrentHashMap<>();
 
     public ShopMenu(@NotNull Player player) {
         super(4, MessagesConfig.MENU_SHOP_TITLE, player);

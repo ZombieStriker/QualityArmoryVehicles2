@@ -11,12 +11,12 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class ModelEngineHook {
-    private static final Map<UUID,ModeledEntity> MODELS = new HashMap<>();
+    private static final Map<UUID,ModeledEntity> MODELS = new ConcurrentHashMap<>();
     private static boolean enabled = false;
 
     public static void init() {

@@ -26,6 +26,7 @@ repositories {
         }
     }
     maven("https://jitpack.io")
+    maven("https://repo.tcoded.com/releases")
 }
 
 dependencies {
@@ -34,6 +35,7 @@ dependencies {
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.10")
+    implementation("com.tcoded:FoliaLib:0.5.1")
     compileOnly("org.jetbrains:annotations:26.1.0")
 
     // API
@@ -66,6 +68,7 @@ tasks {
 
         relocate("com.cryptomorin.xseries", "me.zombie_striker.qav.util.xseries")
         relocate("net.jodah.expiringmap", "me.zombie_striker.qav.util.expiringmap")
+        relocate("com.tcoded.folialib", "me.zombie_striker.qav.util.folialib")
         relocate("org.codemc.worldguardwrapper", "me.zombie_striker.qav.hooks.worldguard")
         relocate("dev.triumphteam.gui", "me.zombie_striker.qav.gui")
     }
