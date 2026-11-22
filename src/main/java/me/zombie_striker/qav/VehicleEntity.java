@@ -252,20 +252,11 @@ public class VehicleEntity implements ConfigurationSerializable {
 		if (Main.separateModelAndDriver) {
 			model.setCustomName(Main.MODEL_PREFIX + vehicleUUID.toString());
 
-			Entity driverSeat;
-
-			if (getType().getModelType().equals(ModelSize.TURTLE)) {
-				try {
-					driverSeat = loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.TURTLE);
-					giveEffects(((LivingEntity) driverSeat));
-				} catch (Exception ignored) {
-					driverSeat = loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.ARMOR_STAND);
-					((ArmorStand) driverSeat).setVisible(false);
-				}
-			} else {
-				driverSeat = loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.ARMOR_STAND);
-				((ArmorStand) driverSeat).setVisible(false);
-			}
+			// The driver seat is the same kind of armor stand as the model, so with a zero Y offset the
+			// driver sits exactly where they would when the model and the driver are not separated.
+			ArmorStand driverSeat = (ArmorStand) loc.getWorld().spawnEntity(loc.clone().add(vehicleType.getDriverSeat()), EntityType.ARMOR_STAND);
+			driverSeat.setSmall(model.isSmall());
+			driverSeat.setVisible(false);
 
 			driverSeat.setCustomName(Main.VEHICLEPREFIX + vehicleUUID.toString());
 			driverSeat.setInvulnerable(true);

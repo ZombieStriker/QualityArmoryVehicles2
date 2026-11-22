@@ -211,8 +211,19 @@ public class VehicleLoader {
 
 			vehicle.setAttachments(attachments);
 		}*/
-		if (c.contains("driverseat.Offset"))
-			vehicle.setDriverSeat(c.getVector("driverseat.Offset"));
+		if (c.contains("driverseat.Offset")) {
+			Vector driverSeat = c.getVector("driverseat.Offset");
+			// With separateModelAndDriver the model follows the driver seat, and the seat cannot go below the
+			// ground, so a negative Y would lift the whole vehicle off the ground.
+			if (driverSeat != null && driverSeat.getY() < 0) {
+				if (Main.separateModelAndDriver) {
+					QualityArmoryVehicles.getPlugin().getLogger().warning("Vehicle \"" + name + "\" has a negative driverseat.Offset Y ("
+							+ driverSeat.getY() + "). This is not supported with separateModelAndDriver and would make the vehicle float: using 0 instead.");
+				}
+				driverSeat = driverSeat.clone().setY(0);
+			}
+			vehicle.setDriverSeat(driverSeat);
+		}
 		if (c.contains("stopProjectileDamage"))
 			vehicle.setStopsProjectileDamage(c.getBoolean("stopProjectileDamage"));
 		if (c.contains("stopMeleeDamage"))
