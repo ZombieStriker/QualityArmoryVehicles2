@@ -37,7 +37,9 @@ public final class NMSUtil {
                 try {
                     teleport = entity.getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
                 } catch (Exception | Error ignored2) {
-                    teleport = SchedulerUtil.isFolia() ? findMojangTeleport(entity) : null;
+                    // Mojang mapped servers (Paper 1.20.5+, Folia). Without it every teleport falls back to
+                    // fallbackTeleport, which ejects the rider: passenger seats then lose their passenger
+                    teleport = findMojangTeleport(entity);
                     if (teleport == null)
                         Main.DEBUG("[NMS] Unable to find teleport method. This may cause bugs. Please report this error.");
                 }
@@ -50,7 +52,7 @@ public final class NMSUtil {
     }
 
     /**
-     * Folia runs on Mojang mappings and does not support {@link Entity#teleport(Location)}, so the position is set directly.
+     * Paper 1.20.5+ and Folia run on Mojang mappings. Folia also does not support {@link Entity#teleport(Location)}, so the position is set directly.
      */
     private static Method findMojangTeleport(Class<?> entity) {
         for (String name : new String[]{"absSnapTo", "absMoveTo"}) {
