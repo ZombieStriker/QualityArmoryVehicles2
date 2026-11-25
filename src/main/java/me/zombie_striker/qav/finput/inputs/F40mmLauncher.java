@@ -12,7 +12,9 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -45,18 +47,19 @@ public class F40mmLauncher implements FInput {
 	public void onInput(@NotNull VehicleEntity ve, @NotNull Player player, @NotNull Location origin, @NotNull Vector direction) {
 		if (!takeAmmo(ve)) return;
 
+		final Stats stats = Stats.resolve();
 		final Vector dir = direction.clone().normalize();
 		final Location s = origin.clone();
 		player.getWorld().playSound(s, "warheadlaunch", 10, 1.0f);
 		// The projectile is handled by the region owning its current position
 		SchedulerUtil.runAtMovingLocationTimer(s, new BooleanSupplier() {
 			boolean resume = false;
-			int distance = 100;
-			final int ticks = 3;
+			int distance = stats.distance;
+			final int ticks = stats.steps;
 
 			@Override
 			public boolean getAsBoolean() {
-				dir.setY(dir.getY() - 0.05);
+				dir.setY(dir.getY() - stats.gravity);
 				for (int tick = 0; tick < ticks; tick++) {
 					if (!resume) {
 						distance--;
@@ -87,7 +90,7 @@ public class F40mmLauncher implements FInput {
 						issolid = BlockCollisionUtil.isSolid(s);
 					}
 					if (issolid || entityNear || distance < 0) {
-						ExplosionHandler.handleAOEExplosion(SchedulerUtil.isOwned(player) ? player : null, s, 100, 3);
+						explode(SchedulerUtil.isOwned(player) ? player : null, s, stats);
 						ParticleHandlers.spawnExplosion(s);
 						try {
 							s.getWorld().playSound(s, "warheadexplode", 10, 1.5f);
@@ -102,6 +105,86 @@ public class F40mmLauncher implements FInput {
 				return true;
 			}
 		});
+	}
+
+	/**
+	 * Damages the entities around the explosion. With QualityArmory the damage goes through its damage handler, like
+	 * the explosive rounds of its guns (armor, kill credit, knockback).
+	 */
+	private static void explode(Entity shooter, Location location, Stats stats) {
+		if (stats.qaDamage) {
+			try {
+				qaExplosion(shooter, location, stats);
+				return;
+			} catch (Error | Exception ignored) {
+			}
+		}
+		ExplosionHandler.handleAOEExplosion(shooter, location, stats.damage, stats.radius);
+	}
+
+	/**
+	 * Same as QualityArmory's {@code ExplosionHandler#handleAOEExplosion}, but it skips the entities owned by another
+	 * region on Folia and it does not deal infinite damage at the center of the explosion.
+	 */
+	private static void qaExplosion(Entity shooter, Location location, Stats stats) {
+		double radius = stats.radius;
+		for (Entity entity : location.getWorld().getNearbyEntities(location, radius, radius, radius)) {
+			if (!(entity instanceof Damageable) || !SchedulerUtil.isOwned(entity)) continue;
+
+			double distance = entity.getLocation().distance(location);
+			me.zombie_striker.qg.handlers.GunDamageHandler.damage((Damageable) entity, stats.damage / Math.max(1, distance),
+					shooter, false);
+
+			if (stats.knockback != 0 && entity instanceof LivingEntity && distance < radius) {
+				// Push the entity away from the explosion: the closer it is, the stronger the push
+				Vector push = entity.getLocation().add(0, 0.5, 0).toVector().subtract(location.toVector());
+				if (push.lengthSquared() < 0.01)
+					push = new Vector(0, 1, 0);
+				entity.setVelocity(entity.getVelocity().add(push.normalize().multiply(stats.knockback * (1 - distance / radius))));
+			}
+		}
+	}
+
+	/**
+	 * The ballistics and damage of the projectile. With QualityArmory they are read from the gun firing 40mm rounds,
+	 * so the cannon matches it, otherwise the built-in values are used.
+	 */
+	private static final class Stats {
+		/**
+		 * The QualityArmory gun the stats are read from
+		 */
+		private static final String GUN = "m79";
+
+		int distance = 100;
+		int steps = 3;
+		double gravity = 0.05;
+		double damage = 100;
+		double radius = 3;
+		double knockback = 0;
+		/**
+		 * Use QualityArmory's damage formula and handler
+		 */
+		boolean qaDamage = false;
+
+		static Stats resolve() {
+			Stats stats = new Stats();
+			try {
+				me.zombie_striker.qg.guns.Gun gun = me.zombie_striker.qg.api.QualityArmory.getGunByName(GUN);
+				if (gun == null) return stats;
+
+				stats.distance = gun.getMaxDistance();
+				stats.steps = Math.max(1, (int) Math.round(gun.getVelocityForRealtimeCalculations()));
+				stats.gravity = me.zombie_striker.qg.QAMain.gravity;
+				stats.damage = gun.getDamage();
+				stats.radius = gun.getExplosionRadius();
+				stats.knockback = gun.getExplosionKnockback();
+				stats.qaDamage = true;
+			} catch (Error | Exception ignored) {
+				// QualityArmory is not installed or is an older version
+				return new Stats();
+			}
+			return stats;
+		}
 	}
 
 	/**
