@@ -5,6 +5,8 @@ import me.zombie_striker.qav.*;
 import me.zombie_striker.qav.api.events.PlayerEnterQAVehicleEvent;
 import me.zombie_striker.qav.api.events.VehicleSpawnEvent;
 import me.zombie_striker.qav.attachments.Attachment;
+import me.zombie_striker.qav.attachments.AttachmentFactory;
+import me.zombie_striker.qav.attachments.AttachmentRegistry;
 import me.zombie_striker.qav.customitemmanager.MaterialStorage;
 import me.zombie_striker.qav.hitbox.HitResult;
 import me.zombie_striker.qav.hitbox.HitboxEntities;
@@ -75,7 +77,8 @@ public class QualityArmoryVehicles {
 
         for (VehicleEntity ve : Main.vehicles) {
             if (ve != null)
-                if (ve.getDriverSeat() == entity || ve.getModelEntities().contains(entity) || ve.getPassagerSeats().contains(entity)) {
+                if (ve.getDriverSeat() == entity || ve.getModelEntities().contains(entity) || ve.getPassagerSeats().contains(entity)
+                        || ve.getAttachments().containsValue(entity)) {
                     return ve;
                 }
         }
@@ -165,6 +168,28 @@ public class QualityArmoryVehicles {
     }
 
     /**
+     * Registers an attachment type for the {@code attachments} section of the vehicle files.
+     * It can be called at any time: vehicles already loaded that use the type are updated.
+     *
+     * @param type    the value of the {@code type} option, case-insensitive
+     * @param factory creates the attachment from its section
+     * @throws IllegalArgumentException if the type is already registered
+     */
+    public static void registerAttachmentType(@NotNull String type, @NotNull AttachmentFactory factory) {
+        AttachmentRegistry.register(type, factory);
+    }
+
+    /**
+     * Adds an attachment to a vehicle type, it is spawned on the vehicles already spawned on their next tick.
+     * Attachments added this way are lost when the vehicles are reloaded.
+     *
+     * @return the index of the attachment in the vehicle type
+     */
+    public static int addAttachment(@NotNull AbstractVehicle type, @NotNull Attachment attachment) {
+        return type.addAttachment(attachment);
+    }
+
+    /**
      * @return the closest vehicle the player is looking at within the hitbox reach, or null
      */
     public static VehicleEntity getVehiclePlayerLookingAt(Player player) {
@@ -196,7 +221,8 @@ public class QualityArmoryVehicles {
     public static boolean isVehicle(Entity e) {
         if (e == null || e.getCustomName() == null)
             return false;
-        return (e.getCustomName().startsWith(Main.VEHICLEPREFIX)) || (e.getCustomName().startsWith(Main.MODEL_PREFIX)) || (e.getCustomName().startsWith(Main.PASSAGER_PREFIX));
+        return (e.getCustomName().startsWith(Main.VEHICLEPREFIX)) || (e.getCustomName().startsWith(Main.MODEL_PREFIX)) || (e.getCustomName().startsWith(Main.PASSAGER_PREFIX))
+                || (e.getCustomName().startsWith(Main.ATTACHMENT_PREFIX));
     }
 
     public static boolean isPassager(Entity e) {

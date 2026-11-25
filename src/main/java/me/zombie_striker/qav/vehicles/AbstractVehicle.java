@@ -47,7 +47,7 @@ public abstract class AbstractVehicle {
 	private double jumphiehgt = 0.2;
 	private Vector driverSeat;
 	private HashMap<Vector, Integer> passagerOffset = new HashMap<>();
-	private List<Attachment> attachments = new ArrayList<>();
+	private List<Attachment> attachments = new java.util.concurrent.CopyOnWriteArrayList<>();
 	private List<Animation> animations = new ArrayList<>();
 
 	private int id;
@@ -656,12 +656,15 @@ public abstract class AbstractVehicle {
 	}
 
 	public void handleOtherStands(VehicleEntity ve, Vector velocity) {
+		// Where the model is moved to, the attachments are placed relative to it
+		Location modelTarget = ve.getDriverSeat().getLocation();
 		if (!ve.getDriverSeat().equals(ve.getModelEntity())) {
 			Location to = this.getDriverSeat() != null
 					? ve.getDriverSeat().getLocation()
 					.subtract(QualityArmoryVehicles.rotateRelToCar(ve, ve.getModelEntity(),
 							this.getDriverSeat(), false))
 					: ve.getDriverSeat().getLocation();
+			modelTarget = to;
 			if (checkDistance(ve.getModelEntity(),to,false)) {
 				HeadPoseUtil.setHeadPoseUsingReflection(ve);
 			}
@@ -690,19 +693,21 @@ public abstract class AbstractVehicle {
 		}
 
 		for (Map.Entry<Integer,Entity> entry : ve.getAttachments().entrySet()) {
+			if (entry.getKey() >= attachments.size()) continue;
 			Attachment attachment = attachments.get(entry.getKey());
-			Location offset = ve.getDriverSeat().getLocation().clone().add(attachment.getVector());
+			Entity stand = entry.getValue();
+			if (!stand.isValid() || !attachment.isSpawnable()) continue;
 
-			offset.add(ve.getDriverSeat().getVelocity());
-			offset.subtract(0, 0.6, 0);
+			attachment.update(ve, entry.getKey());
 
-			Vector newVelo = velocity.clone();
-			checkDistance(entry.getValue(), offset, true);
+			// Moved like the model: same velocity plus the distance from where it should be
+			Location target = attachment.getLocation(ve, entry.getKey(), modelTarget);
+			checkDistance(stand, target, false);
+			Vector velo = velocity.clone().add(target.toVector().subtract(stand.getLocation().toVector()));
+			stand.setVelocity(velo);
 
-			Vector distance = offset.toVector().clone().subtract(entry.getValue().getLocation().toVector());
-			newVelo.add(distance);
-			entry.getValue().setVelocity(newVelo);
-			attachment.animate(ve,(ArmorStand) entry.getValue());
+			if (stand instanceof ArmorStand)
+				attachment.animate(ve, entry.getKey(), (ArmorStand) stand);
 		}
 	}
 
@@ -756,7 +761,17 @@ public abstract class AbstractVehicle {
 	}
 
 	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
+		this.attachments = new java.util.concurrent.CopyOnWriteArrayList<>(attachments);
+	}
+
+	/**
+	 * Adds an attachment to this vehicle type, it is spawned on the vehicles already spawned on their next tick.
+	 *
+	 * @return the index of the attachment, used by {@link VehicleEntity#getAttachmentState(int)}
+	 */
+	public int addAttachment(@NotNull Attachment attachment) {
+		attachments.add(attachment);
+		return attachments.size() - 1;
 	}
 
 	public List<Animation> getAnimations() {
@@ -787,6 +802,17 @@ public abstract class AbstractVehicle {
 
 	public List<Attachment> getAttachments() {
 		return attachments;
+	}
+
+	/**
+	 * @param seat {@link Attachment#DRIVER_SEAT} or the index of a passenger seat
+	 * @return true if an attachment is controlled from the given seat
+	 */
+	public boolean hasAttachmentControlledBy(int seat) {
+		for (Attachment attachment : attachments) {
+			if (attachment.getSeat() == seat) return true;
+		}
+		return false;
 	}
 
 	@Override

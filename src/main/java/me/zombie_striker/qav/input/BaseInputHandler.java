@@ -5,12 +5,11 @@ import com.comphenix.protocol.events.*;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.VehicleEntity;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
-import me.zombie_striker.qav.api.events.PlayerExitQAVehicleEvent;
-import me.zombie_striker.qav.util.SchedulerUtil;
-import me.zombie_striker.qav.util.VehicleUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import me.zombie_striker.qav.attachments.Attachment;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class BaseInputHandler extends PacketAdapter {
 
@@ -34,7 +33,9 @@ public abstract class BaseInputHandler extends PacketAdapter {
         if (ve == null)
             return;
 
-        if (!ve.getDriverSeat().equals(player.getVehicle())) return;
+        // Passengers only control the attachments of their seat (e.g. a turret)
+        Integer seat = ve.getSeatIndex(player.getVehicle());
+        if (seat == null || (seat != Attachment.DRIVER_SEAT && !ve.getType().hasAttachmentControlledBy(seat))) return;
 
         PacketContainer packet = event.getPacket();
         onInputReceived(player, packet);
@@ -43,28 +44,18 @@ public abstract class BaseInputHandler extends PacketAdapter {
     public abstract void onInputReceived(Player player, PacketContainer packet);
 
     public void handleInput(VehicleEntity ve, Player player, boolean forward, boolean backward, boolean left, boolean right, boolean space, boolean shift) {
-        if (right)
-            ve.getType().handleTurnLeft(ve, player);
-        if (left)
-            ve.getType().handleTurnRight(ve, player);
-        if (backward)
-            ve.getType().handleSpeedDecrease(ve, player);
-        if (forward)
-            ve.getType().handleSpeedIncrease(ve, player);
-        if (space)
-            ve.getType().handleSpace(ve, player);
-        if (shift) {
-            PlayerExitQAVehicleEvent event = new PlayerExitQAVehicleEvent(ve, player);
-            Bukkit.getPluginManager().callEvent(event);
+        if (ve == null) return;
 
-            if (Main.antiCheatHook) {
-                Location location = player.getVehicle().getLocation();
-                SchedulerUtil.teleport(player, location);
-            }
+        List<VehicleInput> inputs = new ArrayList<>();
+        if (forward) inputs.add(VehicleInput.FORWARD);
+        if (backward) inputs.add(VehicleInput.BACKWARD);
+        if (left) inputs.add(VehicleInput.LEFT);
+        if (right) inputs.add(VehicleInput.RIGHT);
+        if (space) inputs.add(VehicleInput.SPACE);
+        if (shift) inputs.add(VehicleInput.SHIFT);
 
-            if (Main.removeVehicleOnDismount) {
-                VehicleUtils.callback(ve, player, "Dismount");
-            }
-        }
+        if (inputs.isEmpty()) return;
+
+        ve.handleInput(inputs, player);
     }
 }

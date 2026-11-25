@@ -75,6 +75,7 @@ public class Main extends JavaPlugin {
 
 	public static String PASSAGER_PREFIX = "QA-Passager=";
 	public static String MODEL_PREFIX = "QA-Model=";
+	public static String ATTACHMENT_PREFIX = "QA-Attachment=";
 	public static boolean enableGarage=false;
 	public static boolean enableGarageCallback=false;
 	public static boolean useChatForMessage=false;
@@ -264,7 +265,6 @@ public class Main extends JavaPlugin {
 
 		NMSUtil.init();
 
-		loadComplexParts(false);
 		loadVehicles(false);
 
 		tracksManager = new TracksManager(new TracksStorage());
@@ -559,12 +559,6 @@ public class Main extends JavaPlugin {
 					ve.setType(QualityArmoryVehicles.getVehicle(ve.getType().getName()));
 				} catch (Error | Exception e4) {
 				}
-	}
-
-	public static void loadComplexParts(boolean clearExisting) {
-		/*if (clearExisting)
-			complexAdditions.clear();
-		VehicleLoader.loadComplexFiles();*/
 	}
 
 }

@@ -60,9 +60,11 @@ public class CustomVehicleItem extends AbstractItem {
 					.setPassagerLocations(new Vector(-2, 2, 0), new Vector(-2, 2, 1), new Vector(-2, 2, -1))
 					.setStopMeleeDamage(true).setStopProjectileDamage(true).setRequireFuel(true).setTrunkSize(18)
 					.setWidth(2).setHeight(3).setMaxHealth(300).setCost(5000).setMaterial(Material.RABBIT_HIDE)
-					.setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD).setComplexAdditionAt(0,new Vector(0,0,0),"t50tankcannon")
+					.setModelSize(ModelSize.ADULT_ARMORSTAND_HEAD)
+					.remove("complexadditions").setAttachment("cannon", VehicleYML.t50Cannon())
 					.setLore("&7Press [Space] to break",
-							"&7Enter the passager seat to firte the cannons.")
+							"&7Sit in the first passenger seat to use the cannon:",
+							"&7[A]/[D] to aim, [LMB] to fire")
 					.save();
 			VehicleYML.registerVehicle(VehicleTypes.CAR, "moskvitch", 2).setDisplayname("Moskvitch")
 					.setCenter(new Vector(-0.8, 0, 0.5)).setFrontVectorOffset(3.25).setBackVectorOffset(2.45)

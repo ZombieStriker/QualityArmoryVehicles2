@@ -4,6 +4,9 @@
     - Folia support
     - Reworked hitboxes: click anywhere on a vehicle to enter it, or click a passenger seat to sit there
     - Fixed vehicles and drivers floating with separateModelAndDriver
+    - Re-added the T50 cannon
+    - Added vehicle attachments, old "complexadditions" are converted automatically
+    - Added an API to register custom attachment types
 
 2.5.1
   Changelog:

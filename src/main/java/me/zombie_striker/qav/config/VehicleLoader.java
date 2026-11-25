@@ -5,6 +5,10 @@ import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.ModelSize;
 import me.zombie_striker.qav.VehicleTypes;
 import me.zombie_striker.qav.api.QualityArmoryVehicles;
+import me.zombie_striker.qav.attachments.Attachment;
+import me.zombie_striker.qav.attachments.AttachmentFactory;
+import me.zombie_striker.qav.attachments.AttachmentRegistry;
+import me.zombie_striker.qav.attachments.PendingAttachment;
 import me.zombie_striker.qav.exceptions.InvalidVehicleException;
 import me.zombie_striker.qav.finput.FInput;
 import me.zombie_striker.qav.finput.FInputManager;
@@ -15,10 +19,12 @@ import me.zombie_striker.qav.vehicles.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -196,21 +202,7 @@ public class VehicleLoader {
 
 			vehicle.setPassagerSpots(sizes);
 		}
-/*		if (c.contains("attachments")) {
-			List<Attachment> attachments = new ArrayList<>();
-
-			for (String s : c.getConfigurationSection("attachments").getKeys(false)) {
-				ConfigurationSection c2 = c.getConfigurationSection("attachments." + s);
-
-				switch (AttachmentType.valueOf(c2.getString("type").toUpperCase())) {
-					case WHEEL:
-						attachments.add(new Wheel(c2.getString("model.name"), c2.getStringList("model.lore"), c2.getInt("model.id"), Material.getMaterial(c2.getString("model.material").toUpperCase()), c2.getVector("position")));
-				}
-
-			}
-
-			vehicle.setAttachments(attachments);
-		}*/
+		vehicle.setAttachments(loadAttachments(c, name));
 		if (c.contains("driverseat.Offset")) {
 			Vector driverSeat = c.getVector("driverseat.Offset");
 			// With separateModelAndDriver the model follows the driver seat, and the seat cannot go below the
@@ -265,6 +257,109 @@ public class VehicleLoader {
 			QAMini.registeredItems.add(MaterialStorage.getMS(vehicle.getMaterial(), vehicle.getItemData(), 0));
 		}
 		return true;
+	}
+
+	/**
+	 * Reads the {@code attachments} section, or converts the legacy {@code complexadditions} section when it is missing.
+	 */
+	private static @NotNull List<Attachment> loadAttachments(@NotNull ConfigurationSection c, String vehicleName) {
+		List<Attachment> attachments = new ArrayList<>();
+
+		ConfigurationSection section = c.getConfigurationSection("attachments");
+		if (section != null) {
+			for (String key : section.getKeys(false)) {
+				ConfigurationSection c2 = section.getConfigurationSection(key);
+				if (c2 == null) continue;
+
+				String type = c2.getString("type", "");
+				if (AttachmentRegistry.get(type) == null) {
+					// Registered later by another plugin, see AttachmentRegistry#register
+					attachments.add(new PendingAttachment(type, c2));
+					continue;
+				}
+
+				try {
+					Attachment attachment = loadAttachment(c2);
+					attachments.add(attachment);
+					registerItem(attachment.getMaterial(), attachment.getId());
+				} catch (Exception e) {
+					QualityArmoryVehicles.getPlugin().getLogger().warning("Invalid attachment \"" + key + "\" for vehicle \"" + vehicleName + "\": " + e.getMessage());
+				}
+			}
+			return attachments;
+		}
+
+		ConfigurationSection legacy = c.getConfigurationSection("complexadditions");
+		if (legacy != null) {
+			for (String key : legacy.getKeys(false)) {
+				String legacyName = legacy.getString(key + ".name", "");
+				Vector offset = legacy.getVector(key + ".offset", new Vector());
+				if (legacyName.equalsIgnoreCase("t50tankcannon")) {
+					MemoryConfiguration preset = new MemoryConfiguration();
+					VehicleYML.t50Cannon().forEach(preset::set);
+					preset.set("position", offset);
+
+					Attachment cannon = loadAttachment(preset);
+					attachments.add(cannon);
+					registerItem(cannon.getMaterial(), cannon.getId());
+				} else {
+					QualityArmoryVehicles.getPlugin().getLogger().warning("Unknown complex addition \"" + legacyName + "\" for vehicle \""
+							+ vehicleName + "\": use the attachments section instead.");
+				}
+			}
+		}
+		return attachments;
+	}
+
+	/**
+	 * Creates an attachment from its section with the registered {@link AttachmentRegistry} type.
+	 *
+	 * @throws IllegalArgumentException if an option is not valid or the type is not registered
+	 */
+	public static @NotNull Attachment loadAttachment(@NotNull ConfigurationSection c) {
+		String typeName = c.getString("type");
+		AttachmentFactory factory = AttachmentRegistry.get(typeName);
+		if (factory == null)
+			throw new IllegalArgumentException("unknown type " + typeName);
+
+		String name = c.getString("name", c.getName());
+		int id = c.getInt("id");
+		Material material = null;
+		if (c.contains("material")) {
+			material = Material.matchMaterial(c.getString("material", ""));
+			if (material == null)
+				throw new IllegalArgumentException("unknown material " + c.getString("material"));
+		}
+		Vector position = c.getVector("position", new Vector());
+
+		Attachment attachment = factory.create(name, id, material, position, c);
+
+		String seat = c.getString("seat");
+		if (seat == null) return attachment;
+		if (seat.equalsIgnoreCase("none")) {
+			attachment.setSeat(Attachment.NO_SEAT);
+		} else if (seat.equalsIgnoreCase("driver")) {
+			attachment.setSeat(Attachment.DRIVER_SEAT);
+		} else {
+			try {
+				attachment.setSeat(Integer.parseInt(seat));
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("invalid seat " + seat + " (use driver, none or the passenger seat index)");
+			}
+		}
+		return attachment;
+	}
+
+	/**
+	 * Registers the model item so QualityArmory does not use it
+	 */
+	public static void registerItem(@Nullable Material material, int id) {
+		if (material == null) return;
+		try {
+			me.zombie_striker.qg.api.QualityArmory.registerNewUsedExpansionItem(material, id);
+		} catch (Error | Exception e) {
+			QAMini.registeredItems.add(MaterialStorage.getMS(material, id, 0));
+		}
 	}
 
 	private static void registerInput(AbstractVehicle vehicle, FInput.@NotNull ClickType type, @NotNull ConfigurationSection config) {

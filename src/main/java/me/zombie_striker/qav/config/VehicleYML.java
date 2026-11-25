@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.reflection.XReflection;
 import me.zombie_striker.qav.Main;
 import me.zombie_striker.qav.ModelSize;
 import me.zombie_striker.qav.VehicleTypes;
+import me.zombie_striker.qav.finput.FInputManager;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class VehicleYML {
@@ -272,11 +275,45 @@ public class VehicleYML {
 		verify("driverseat.Offset", new Vector(0, 0, 0));
 	}
 
-	public VehicleYML setComplexAdditionAt(int index, Vector offset, String complexName){
-		set("complexadditions."+index+".name", complexName);
-		set("complexadditions."+index+".offset", offset);
+	/**
+	 * @param key    the name of the attachment in the attachments section
+	 * @param values the options of the attachment, keys can contain dots for sub sections
+	 */
+	public VehicleYML setAttachment(String key, Map<String, Object> values) {
+		for (Map.Entry<String, Object> entry : values.entrySet()) {
+			set("attachments." + key + "." + entry.getKey(), entry.getValue());
+		}
 		return this;
+	}
 
+	/**
+	 * Removes an option if the file was not modified by the user
+	 */
+	public VehicleYML remove(String path) {
+		if (contains(path))
+			set(path, null);
+		return this;
+	}
+
+	/**
+	 * @return the options of the cannon of the T50, it used to be the "t50tankcannon" complex addition
+	 */
+	public static @NotNull Map<String, Object> t50Cannon() {
+		Map<String, Object> cannon = new LinkedHashMap<>();
+		cannon.put("type", "Turret");
+		cannon.put("name", "T50 Cannon");
+		cannon.put("material", Material.RABBIT_HIDE.name());
+		cannon.put("id", 39);
+		cannon.put("position", new Vector(0, 0, 0));
+		// The model is not centered on the armor stand: rotate it around the center of the turret
+		cannon.put("pivot", new Vector(-1.08, 0, 0));
+		cannon.put("muzzle", new Vector(3, 3, 0));
+		cannon.put("seat", 0);
+		cannon.put("turnSpeed", 0.05);
+		cannon.put("maxYaw", 0);
+		cannon.put("cooldown", 40);
+		cannon.put("fire.LMB", FInputManager.LAUNCHER_40mm);
+		return cannon;
 	}
 
 
