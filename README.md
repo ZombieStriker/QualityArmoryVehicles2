@@ -30,6 +30,7 @@
 - **Garage** - Store vehicles and call them back with `/garage`
 - **Passenger Seats** - Configurable seats, seat sizes and passenger whitelists
 - **Accurate Hitboxes** - Click anywhere on a vehicle to enter it, or click a seat to sit there
+- **Turrets & Attachments** - Extra model parts such as wheels or turrets, aimed and fired from a passenger seat (e.g. the T50 cannon)
 - **Shop & Crafting** - Buy or craft vehicles from in-game menus
 - **Vehicle Limits** - Cap the number of vehicles per player with permissions
 - **Multi-Version Support** - Runs on Minecraft 1.9 up to the latest releases
@@ -88,6 +89,35 @@ The API lives in the `me.zombie_striker.qav.api` package. `QualityArmoryVehicles
 - `PlayerEnterQAVehicleEvent`, `PlayerExitQAVehicleEvent`
 - `VehicleChangeSpeedEvent`, `VehicleTurnEvent`
 - `VehicleHitchEvent`, `VehicleUnhitchEvent`
+
+#### Custom attachments
+
+Attachments are extra model parts that follow a vehicle (the built-in types are `Wheel` and `Turret`). Extend
+`me.zombie_striker.qav.attachments.Attachment` and register a type to use it in the `attachments` section of the
+vehicle files. It can be registered at any time, vehicles already loaded are updated:
+
+```java
+QualityArmoryVehicles.registerAttachmentType("Radar", (name, id, material, position, config) -> {
+    RadarAttachment radar = new RadarAttachment(name, id, material, position);
+    radar.setSpeed(config.getDouble("speed", 0.1)); // custom options
+    return radar;
+});
+```
+
+```yaml
+attachments:
+  radar:
+    type: Radar
+    material: RABBIT_HIDE
+    id: 50
+    position: {==: Vector, x: -1.0, y: 0.0, z: 0.0}
+    seat: none # driver, none or a passenger seat index: that player's keys are sent to onInput
+    speed: 0.2
+```
+
+Attachments can also be added to a vehicle type directly with `QualityArmoryVehicles.addAttachment(type, attachment)`.
+Override `update` to change the per-vehicle `AttachmentState` every tick, `getLocation` to move the armor stand,
+`animate` to set its pose and `onInput` to react to the keys of the controlling seat.
 
 ---
 

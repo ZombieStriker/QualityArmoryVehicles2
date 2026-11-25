@@ -1,7 +1,6 @@
 package me.zombie_striker.qav;
 
 import me.zombie_striker.qav.attachments.Attachment;
-import me.zombie_striker.qav.attachments.Wheel;
 import me.zombie_striker.qav.vehicles.AbstractVehicle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -4,6 +4,10 @@
     - Folia support
     - Reworked hitboxes: click anywhere on a vehicle to enter it, or click a passenger seat to sit there
     - Fixed vehicles and drivers floating with separateModelAndDriver
+    - Re-added the T50 cannon: sit in the first passenger seat, aim with [A]/[D] and fire with [LMB]
+    - Added vehicle attachments (wheels and turrets), old "complexadditions" are converted automatically
+    - Fixed wheel attachments: they now roll around their center at the speed of the vehicle and can steer
+    - Added an API to register custom attachment types
 
 2.5.1
   Changelog:

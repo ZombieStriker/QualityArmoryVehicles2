@@ -49,12 +49,19 @@ public class ModernInputListener extends BaseInputHandler implements Listener, R
     }
 
     /**
-     * Handles the input of the driver of the given vehicle. Used on Folia, called by the region ticking the vehicle.
+     * Handles the input of the players sitting in the given vehicle. Used on Folia, called by the region ticking the vehicle.
      */
     public static void handleDriverInput(VehicleEntity ve) {
         if (instance == null || ve.getDriverSeat() == null) return;
 
-        Entity passenger = ve.getDriverSeat().getPassenger();
+        handleSeatInput(ve.getDriverSeat());
+        for (Entity seat : new ArrayList<>(ve.getPassagerSeats())) {
+            handleSeatInput(seat);
+        }
+    }
+
+    private static void handleSeatInput(Entity seat) {
+        Entity passenger = seat.getPassenger();
         if (passenger instanceof Player && instance.lastInput.containsKey(passenger))
             instance.process((Player) passenger);
     }
